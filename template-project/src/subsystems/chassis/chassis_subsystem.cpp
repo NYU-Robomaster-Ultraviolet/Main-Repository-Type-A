@@ -11,6 +11,7 @@ namespace chassis
 
 ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers)
         : tap::control::Subsystem(drivers),
+        //Intializing the motors from DjiMotor class
           frontLeftMotor(drivers, constants.FRONT_LEFT_MOTOR_ID, constants.CAN_BUS_MOTORS, false, "front left motor"),
           frontRightMotor(drivers, constants.FRONT_RIGHT_MOTOR_ID, constants.CAN_BUS_MOTORS, true, "front right motor"),
           backLeftMotor(drivers, constants.BACK_LEFT_MOTOR_ID, constants.CAN_BUS_MOTORS, false, "back left motor"),
@@ -23,6 +24,8 @@ ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers)
           constants.CHASSIS_MOTOR_MAX_IOUT,constants.CHASSIS_MOTOR_MAX_OUT),
           backRightPid(constants.CHASSIS_MOTOR_KP,constants.CHASSIS_MOTOR_KI,constants.CHASSIS_MOTOR_KD,
           constants.CHASSIS_MOTOR_MAX_IOUT,constants.CHASSIS_MOTOR_MAX_OUT),
+
+          //Sets the desired rpm to 0 so the robot doesn't move on start up
           frontLeftDesiredRpm(0),
           frontRightDesiredRpm(0),
           backLeftDesiredRpm(0),
@@ -30,10 +33,13 @@ ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers)
     {}
 
 void ChassisSubsystem::updateWheelvalues(){
+    // PID takes in the the desired the current motor speed and returns back a value between. This request thus allowing for gradual increases in motor speed.
+    //Obtains the RPM for all four motors
     float FRRPM = frontRightMotor.getShaftRPM();
     float FLRPM = frontLeftMotor.getShaftRPM();
     float BRRPM = backRightMotor.getShaftRPM();
     float BLRPM = backLeftMotor.getShaftRPM();
+    // Calclates the position the position of the robot in radians
     float FRPos = wrappedEncoderValueToRadians(frontRightMotor.getEncoderUnwrapped());
     float FLPos = wrappedEncoderValueToRadians(frontLeftMotor.getEncoderUnwrapped());
     float BRPos = wrappedEncoderValueToRadians(backRightMotor.getEncoderUnwrapped());

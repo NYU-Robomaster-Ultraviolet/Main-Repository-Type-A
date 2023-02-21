@@ -173,6 +173,7 @@ void GimbalSubsystem::noInputs(){
     yawMotor.setDesiredOutput(0);
 }
 
+//this function sets the IMU (accel) yaw and pitch
 void GimbalSubsystem::setIMU(float yaw, float pitch){
     imuYaw = yaw;
     imuPitch = pitch;

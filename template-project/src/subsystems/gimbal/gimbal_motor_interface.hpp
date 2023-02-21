@@ -7,6 +7,7 @@ class GimbalInterface{
 public:
     GimbalInterface(GimbalSubsystem* gimbal) : gimbal(gimbal){}
     
+    //getters for current motor positions
     float getYawEncoder() const {return gimbal->getYawEncoder() - YAW_ENCODER_OFFSET;}
     float getPitchEncoder() const {return gimbal->getPitchEncoder();}
 private:
