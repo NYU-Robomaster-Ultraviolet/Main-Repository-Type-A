@@ -63,11 +63,15 @@ public:
 
     const tap::gpio::Pwm::Pin &getFlywheel1() const { return flywheel1; }
     const tap::gpio::Pwm::Pin &getFlywheel2() const { return flywheel2; }
+    const tap::gpio::Pwm::Pin &getFlywheel3() const { return flywheel3; }
+    const tap::gpio::Pwm::Pin &getFlywheel4() const { return flywheel4; }
 
 private:
     ///< Motors.  Use these to interact with any dji style motors.
     tap::gpio::Pwm::Pin flywheel1 = tap::gpio::Pwm::W;
     tap::gpio::Pwm::Pin flywheel2 = tap::gpio::Pwm::X;
+    tap::gpio::Pwm::Pin flywheel3 = tap::gpio::Pwm::W;
+    tap::gpio::Pwm::Pin flywheel4 = tap::gpio::Pwm::X;
 
     // PID controllers for RPM feedback from wheels
     modm::filter::Ramp<float> flywheelRamp;

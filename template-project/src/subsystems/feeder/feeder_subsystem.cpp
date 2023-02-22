@@ -10,25 +10,19 @@ namespace feeder
 
 void FeederSubsystem::initialize()
 {
-    feederMotor1.initialize();
-    feederMotor2.initialize();
+    feederMotor.initialize();
 }
 
 void FeederSubsystem::refresh() {
-    updateFeederPid(&rpmPid, &feederMotor1, &feederMotor2, targetRPM);
+    updateFeederPid(&rpmPid, &feederMotor, targetRPM);
 }
 
-void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor1, tap::motor::DjiMotor* const motor2, float desiredRpm) {
-    if(desiredRpm || motor1->getShaftRPM() > 50 || motor2->getShaftRPM() > 50){
-        pid->update(desiredRpm - motor1->getShaftRPM());
-        pid->update(desiredRpm - motor2->getShaftRPM());
-        motor1->setDesiredOutput(pid->getValue());
-        motor2->setDesiredOutput(pid->getValue()); // 
+void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
+    if(desiredRpm || motor->getShaftRPM() > 50){
+        pid->update(desiredRpm - motor->getShaftRPM());
+        motor->setDesiredOutput(pid->getValue());
     }
-    else {
-        motor1->setDesiredOutput(0);
-        motor2->setDesiredOutput(0);
-    }
+    else motor->setDesiredOutput(0);
 }   
 
 /*

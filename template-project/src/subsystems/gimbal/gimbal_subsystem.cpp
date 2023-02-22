@@ -33,7 +33,7 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
 void GimbalSubsystem::initialize(){
     noTurn = true;
     pastTime = tap::arch::clock::getTimeMilliseconds();
-    setIMU(0, constants.STARTING_PITCH + constants.LEVEL_ANGLE);
+    setIMU(0, constants.STARTING_PITCH + constants.LEVEL_ANGLE); // set yaw and pitch
     yawMotor.initialize();
     yawMotor.setDesiredOutput(0);
     pitchMotor.initialize();

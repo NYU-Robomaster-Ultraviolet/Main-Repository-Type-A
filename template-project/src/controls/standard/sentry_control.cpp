@@ -1,4 +1,4 @@
-#ifdef TARGET_STANDARD
+#ifdef TARGET_SENTRY
 #include "drivers.hpp"
 #include "drivers_singleton.hpp"
 
@@ -11,8 +11,8 @@
 
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
-#include "subsystems/feeder/feeder_subsystem.hpp"
-#include "subsystems/shooter/shooter_subsystem.hpp"
+#include "subsystems/feeder/two_motor_feeder_subsystem.hpp"
+#include "subsystems/shooter/two_shooter_subsystem.hpp"
 
 #include "subsystems/shooter/shoot_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
