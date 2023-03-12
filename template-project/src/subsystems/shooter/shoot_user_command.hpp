@@ -10,10 +10,10 @@ namespace shooter{
 class ShootUserCommand : public tap::control::Command{
 public:
     /**
-     * Initializes the command with the passed in ChassisSubsystem.  Must not
+     * Initializes the command with the passed in ShooterSubsystem.  Must not
      * be nullptr.
      *
-     * @param[in] chassis a pointer to the chassis to be passed in that this
+     * @param[in] shooter a pointer to the shooter to be passed in that this
      *      Command will interact with.
      */
     ShootUserCommand(ShooterSubsystem *const shooter, src::Drivers *drivers);
@@ -35,6 +35,6 @@ private:
     ShooterSubsystem *const shooter;
 
     src::Drivers *drivers;
-}; //class ChassisMovementCommand : public tap::control::Command
-} //namespace Chassis
-#endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
+}; //class ShooterUserCommand : public tap::control::Command
+} //namespace shooter
+#endif //SHOOTER_USER_COMMAND_HPP_ 

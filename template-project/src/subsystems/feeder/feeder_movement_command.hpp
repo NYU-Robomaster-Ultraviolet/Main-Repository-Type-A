@@ -13,7 +13,7 @@ public:
      * Initializes the command with the passed in FeederSubsystem.  Must not
      * be nullptr.
      *
-     * @param[in] feeder a pointer to the chassis to be passed in that this
+     * @param[in] feeder a pointer to the feeder motorto be passed in that this
      *      Command will interact with.
      */
     FeederMovementCommand(FeederSubsystem *const feeder, src::Drivers *drivers);

@@ -26,7 +26,6 @@ namespace src::control{
 
     //float finalX = limitVal<float>((chassisXInput.getInterpolatedValue(currTime)) * X_SENSITIVITY, -X_SENSITIVITY, X_SENSITIVITY);
     float finalX = limitVal<float>((chassisXInput.getInterpolatedValue(currTime)), -1, 1);
-
     return finalX;
     }
     /**

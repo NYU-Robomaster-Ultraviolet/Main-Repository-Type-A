@@ -69,12 +69,12 @@ void ChassisSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r) 
 { 
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR * (-x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+        (constants.RPM_SCALE_FACTOR * (x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR* (x+y-r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
-    backLeftDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR* (x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
-    backRightDesiredRpm = tap::algorithms::limitVal<float>(
         (constants.RPM_SCALE_FACTOR* (-x+y-r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+    backLeftDesiredRpm = tap::algorithms::limitVal<float>(
+        (constants.RPM_SCALE_FACTOR* (-x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+    backRightDesiredRpm = tap::algorithms::limitVal<float>(
+        (constants.RPM_SCALE_FACTOR* (x+y-r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
 }
 } //namespace chassis

@@ -32,7 +32,7 @@ public:
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
 
     /**
-     * Constructs a new ChassisSubsystem with default parameters specified in
+     * Constructs a new shooterSubsystem with default parameters specified in
      * the private section of this class.
      */
     ShooterSubsystem(tap::Drivers *drivers)
@@ -77,9 +77,9 @@ private:
     // Scale factor for converting joystick movement into RPM setpoint
     //static constexpr float RPM_SCALE_FACTOR = 4000.0f;
 
-};  // class ChassisSubsystem
+};  // class shooterSubsystem
 
-}  // namespace chassis
+}  // namespace shooter
 
 
-#endif  // CHASSIS_SUBSYSTEM_HPP_
+#endif  // SHOOTER_SUBSYSTEM_HPP_

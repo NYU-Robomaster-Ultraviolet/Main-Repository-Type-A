@@ -31,7 +31,4 @@ void ShooterSubsystem::setDesiredOutput(float output) {
     drivers->pwm.write(changeVal, flywheel1);
 }
 
-/*
-    Give desired setpoints for chassis movement. +x is forward, +y is right, +r is clockwise (turning right). Expressed in body frame.
-*/
-} //namespace chassis
+} //namespace shooter

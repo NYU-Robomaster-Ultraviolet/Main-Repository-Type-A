@@ -5,6 +5,8 @@
 
 #include "controls/standard/control_interface.hpp"
 
+#include "tap/communication/sensors/buzzer/buzzer.hpp"
+
 namespace chassis
 {
 ChassisMovementCommand::ChassisMovementCommand(
@@ -19,10 +21,13 @@ ChassisMovementCommand::ChassisMovementCommand(
 }
 
 //stop any movement
-void  ChassisMovementCommand::initialize() {chassis->setDesiredOutput(0, 0, 0);}
+void  ChassisMovementCommand::initialize() {
+    chassis->setDesiredOutput(0, 0, 0);
+}
 
 void  ChassisMovementCommand::execute()
 {
+    
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder()); 
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
@@ -40,7 +45,9 @@ void  ChassisMovementCommand::execute()
 }
 
 //stops movement again
-void  ChassisMovementCommand::end(bool) { chassis->setDesiredOutput(0, 0, 0); }
+void  ChassisMovementCommand::end(bool) { 
+    chassis->setDesiredOutput(0, 0, 0); 
+    }
 
 bool  ChassisMovementCommand::isFinished() const { return false; }
 }  // namespace chassis

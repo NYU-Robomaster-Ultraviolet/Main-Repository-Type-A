@@ -28,6 +28,7 @@ public:
 private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
+    bool noTurn;
 }; //GimbalMovementCommand
 
 

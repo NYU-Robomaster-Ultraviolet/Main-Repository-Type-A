@@ -25,7 +25,7 @@ public:
 
     float findRotation(const float& destination) const;
 
-    static int writeToUart(src::Drivers *drivers, std::string s);
+    static int writeToUart(src::Drivers *drivers, const std::string& s);
 
     static int writeToUart(src::Drivers *drivers, char *s, int n);
 
@@ -37,7 +37,7 @@ public:
 
     void updateGimbalError(int pitch, int yaw);
 
-
+    static void delayMS(int ms);
 private:
     typedef struct autoAimStruct {
     unsigned char header;
@@ -51,6 +51,16 @@ private:
     unsigned short footer;
 } AutoAimStructObj, *AutoAimStruct;
 
+typedef struct enableStruct {
+    unsigned char header;
+    unsigned short length;
+    unsigned char empty1;
+    unsigned char empty2;
+    unsigned short msg_type;
+    bool start;
+    unsigned short footer;
+} EnableStructObj, *EnableStruct;
+
 typedef struct header {
     unsigned char header;
     unsigned short length;
@@ -58,6 +68,7 @@ typedef struct header {
     unsigned char empty2;
     unsigned short msg_type;
 } *Header;
+
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
 }; //CvCommand

@@ -31,9 +31,8 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
 
     //initilaizes the gimbal motors and make them not get any power
 void GimbalSubsystem::initialize(){
-    noTurn = true;
     pastTime = tap::arch::clock::getTimeMilliseconds();
-    setIMU(0, constants.STARTING_PITCH + constants.LEVEL_ANGLE); // set yaw and pitch
+    setIMU(0, constants.STARTING_PITCH + constants.LEVEL_ANGLE);
     yawMotor.initialize();
     yawMotor.setDesiredOutput(0);
     pitchMotor.initialize();
@@ -55,6 +54,8 @@ void GimbalSubsystem::refresh(){
     timeError = currentTime - pastTime;
     pastTime = currentTime;
     //if no inputs, lock gimbal
+    drivers->leds.set(drivers->leds.A, !yawOnline());
+    drivers->leds.set(drivers->leds.H, !pitchOnline());
     if(inputsFound){
         if(yawMotor.isMotorOnline()){
             currentYawMotorSpeed = getYawMotorRPM(); //gets the rotational speed from motor
@@ -84,27 +85,20 @@ inline float GimbalSubsystem::wrappedEncoderValueToRadians(int64_t encoderValue)
 //this function will use the angel pid to determine the angel the robot will need to move to, then use a motor speed pid to change
 //the motor speed accordingly
 void GimbalSubsystem::updateYawPid(){
-    float movement = targetYaw;
-    //makes sure that error does not exceded maximum error in either side to maintain better control
-    if(movement - currentYaw > constants.MAX_YAW_ERROR) movement = currentYaw + constants.MAX_YAW_ERROR;
-    else if(movement - currentYaw < -constants.MAX_YAW_ERROR) movement = currentYaw - constants.MAX_YAW_ERROR;
-    //find error
-    yawError = (movement - currentYaw);
-    //makes sure that turn flag matches
-    if(!noTurn){
-        if(rightTurnFlag && yawError < 0) yawError += M_TWOPI;
-        else if(!rightTurnFlag && yawError > 0) yawError -= M_TWOPI;
-    }
+    
+    //find rotation
+    yawError = targetYaw - currentYaw;
+    if (yawError > constants.MAX_YAW_ERROR) yawError -= M_TWOPI;
+    else if(yawError < -constants.MAX_YAW_ERROR) yawError += M_TWOPI;
+    //Keeps within range of radians
     if(-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS){
         yawMotor.setDesiredOutput(0.0f);
-        noTurn = true;
     }
     else{
         yawMotorPid.runController(yawError * constants.MOTOR_SPEED_FACTOR, getYawMotorRPM(), timeError);
         yawMotorOutput = limitVal<float>(yawMotorPid.getOutput(), -constants.MAX_YAW_SPEED, constants.MAX_YAW_SPEED);
         if(-constants.MIN_YAW_SPEED < yawMotorOutput  && yawMotorOutput < constants.MIN_YAW_SPEED) yawMotorOutput = 0;
-        noTurn = false;
-        //yawMotor.setDesiredOutput(yawMotorOutput);
+        else yawMotor.setDesiredOutput(yawMotorOutput);
     }
 }
 
@@ -120,7 +114,7 @@ void GimbalSubsystem::updatePitchPid(){
     }
     pitchMotorOutput += gravityCompensation();
     if(-constants.MIN_PITCH_SPEED < pitchMotorOutput  && pitchMotorOutput < constants.MIN_PITCH_SPEED) pitchMotorOutput = 0;
-    pitchMotor.setDesiredOutput(pitchMotorOutput);
+    else pitchMotor.setDesiredOutput(pitchMotorOutput);
 }
 
 //this method will check if the motor is turning, and will return a new output to try to reach stable position
@@ -132,9 +126,7 @@ float GimbalSubsystem::gravityCompensation(){
 
 //this is the function that is called through the remote control input
 void GimbalSubsystem::controllerInput(float yawInput, float pitchInput){
-    if(yawInput < 0)rightTurnFlag = false;
-    else rightTurnFlag = true;
-    setYawAngle(targetYaw + (yawInput * constants.YAW_SCALE));
+    setYawAngle(targetYaw + limitVal<float>((yawInput * constants.YAW_SCALE), -M_PI_4, M_PI_4));
     setPitchAngle(targetPitch + (pitchInput * constants.PITCH_SCALE));
     inputsFound = true;
 }
@@ -158,9 +150,6 @@ void GimbalSubsystem::cvInput(float yawInput, float pitchInput) {
     } else if (pitchInput < -M_PI) {
         pitchInput += M_TWOPI;
     }
-
-    if(yawInput < 0)rightTurnFlag = false;
-    else rightTurnFlag = true;
     // adds inputted angle to current angle
     setYawAngle(targetYaw + yawInput);
     setPitchAngle(targetPitch + pitchInput);

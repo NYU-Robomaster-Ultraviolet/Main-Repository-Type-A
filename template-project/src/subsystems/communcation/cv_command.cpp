@@ -14,6 +14,8 @@ CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
 }
 void  CvCommand::initialize() {
     gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+    enableStruct activateCV{231, 2, 0, 0, 0, 1, 0};
+    
 }
 
 void  CvCommand::execute() {
@@ -40,17 +42,17 @@ float CvCommand::findRotation(const float& destination) const {
     return rotation;
 }
 
-int CvCommand::writeToUart(src::Drivers *drivers, std::string s)
+int CvCommand::writeToUart(src::Drivers *drivers, const std::string& s)
 {
-    int n = s.length();
+    const int n = s.length();
     // declaring character array
     char char_array[n + 1];
     strncpy(char_array, s.c_str(), n);
     int res = drivers->uart.write(
-        tap::communication::serial::Uart::UartPort::Uart6, //Uart7
+        tap::communication::serial::Uart::UartPort::Uart7, //Uart7
         (uint8_t *)char_array,
         n);
-    modm::delay_ms(100);
+    delayMS(100); //delay for .1 sec
     return res;
 }
 
@@ -58,8 +60,8 @@ int CvCommand::writeToUart(src::Drivers *drivers, char *s, int n)
 {
     // declaring character array
     int res =
-        drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart6, (uint8_t *)s, n); //Uart7
-    modm::delay_ms(100);
+        drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7, (uint8_t *)s, n); //Uart7
+    delayMS(100); //delay for .1 sec
     return res;
 }
 
@@ -71,7 +73,7 @@ int CvCommand::readFromUart(src::Drivers *drivers, char *buffer)
     while (read_flag)
     {
         int res = drivers->uart.read(
-            tap::communication::serial::Uart::UartPort::Uart6, //Uart7
+            tap::communication::serial::Uart::UartPort::Uart7, //Uart7
             (uint8_t *)(buffer + bytes_read));
         // writeToUart(drivers,"bytes read = "+ to_string(res)+"\n");
         if (res > 0)
@@ -79,7 +81,7 @@ int CvCommand::readFromUart(src::Drivers *drivers, char *buffer)
         else
             read_flag = 0;
     }
-    modm::delay_ms(100);
+    delayMS(100); //delay for .1 sec
     return bytes_read;
 }
 
@@ -127,6 +129,13 @@ void CvCommand::updateGimbalError(int pitch, int yaw){
     float yawF = static_cast<float>(yaw / 100);
     if(yawF > M_PI) yawF -= M_TWOPI;
     gimbal->cvInput(yawF, pitchF);
+}
+
+void CvCommand::delayMS(int ms){
+    uint32_t targetTime = tap::arch::clock::getTimeMilliseconds() + ms;
+    while(1){
+        if(targetTime < tap::arch::clock::getTimeMilliseconds()) return;
+    }
 }
 
 }//namespace cv

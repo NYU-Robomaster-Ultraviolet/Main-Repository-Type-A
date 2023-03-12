@@ -38,10 +38,10 @@ struct CHASSIS_CONSTANTS{
     static constexpr float RPM_SCALE_FACTOR = 4000.0f;
 
     ///< Hardware constants, not specific to any particular chassis.
-    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR3;
-    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
-    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR1;
-    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR2;
+    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR2;
+    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR1;
+    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
+    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR3;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
 
     //M3505 motor speed PID 
@@ -50,7 +50,7 @@ struct CHASSIS_CONSTANTS{
     CHASSIS_MOTOR_KI = 0.2f,
     CHASSIS_MOTOR_KD = 0.0f,
     CHASSIS_MOTOR_MAX_IOUT = 2000.0f, //max integral 
-    CHASSIS_MOTOR_MAX_OUT = 16000.0f; //max output
+    CHASSIS_MOTOR_MAX_OUT = 8000.0f; //max output 16000
     
 }; //struct CHASSIS_CONSTANTS
 
@@ -77,7 +77,7 @@ struct GIMBAL_CONSTANTS{
     };
 
     static constexpr tap::algorithms::SmoothPidConfig PITCH_PID = {
-        .kp = 550.0f, //1850.0f
+        .kp = 900.0f, //1850.0f 
         .ki = 0.0f,
         .kd = 150.0f,
         .maxICumulative = 10.0f,
@@ -97,7 +97,7 @@ struct GIMBAL_CONSTANTS{
 static constexpr float MOTOR_SPEED_FACTOR = 200.0f;
 
 //the value in which controller inputs are multiplied by for gimbal movement, basically sensitivity
-static constexpr float YAW_SCALE = 0.25f;
+static constexpr float YAW_SCALE = 0.0125f; //.25
 static constexpr float PITCH_SCALE = 0.01f; // 0.0075f
 //Gimbal Starting angles
 static constexpr float YAW_STARTING_ANGLE = 0.0f;
@@ -109,9 +109,9 @@ static constexpr float PITCH_MAX_ANGLE = 2.61799; //150 degrees
 static constexpr float MIN_YAW_SPEED = 300.0f;
 static constexpr float MAX_YAW_SPEED = 8000.0f; 
 static constexpr float MIN_PITCH_SPEED = 300.0f;
-static constexpr float MAX_PITCH_SPEED = 20000.0f;
+static constexpr float MAX_PITCH_SPEED = 12000.0f; //20000
 //Gimbal minimum angles of movement
-static constexpr float YAW_MINIMUM_RADS = .005f;
+static constexpr float YAW_MINIMUM_RADS = 0.0349066f; // 2 degrees
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
 //minimum value for pitch RPM to be considered stable
 static constexpr float MIN_PITCH_RPM = .0005f;
@@ -120,7 +120,7 @@ static constexpr float  STARTING_PITCH = -0.855211f; //-49 degrees
 //starting YAW Motor rotations
 uint64_t STARTING_YAW_ROT = 10000000; // ten million, cause why not
 //maximum pitch error
-static constexpr float MAX_YAW_ERROR = M_PI / 2; //180 degrees
+static constexpr float MAX_YAW_ERROR = M_PI; //180 degrees
 
 //values for gravity compensation
 static constexpr float LEVEL_ANGLE = 1.5708; //90 degrees

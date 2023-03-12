@@ -9,6 +9,7 @@
 #include "tap/control/setpoint/commands/calibrate_command.hpp"
 #include "tap/control/toggle_command_mapping.hpp"
 
+#include "subsystems/communcation/cv_command.hpp"
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/feeder/feeder_subsystem.hpp"
@@ -46,6 +47,7 @@ GimbalInterface gimbalInterface(&gimbal);
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
+CvCommand cvMovement(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 ShootUserCommand shootUser(&shooter, drivers());
 
@@ -87,7 +89,7 @@ void startupCommands(src::Drivers* drivers) {
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&rightSwitchMid);
-    //drivers->commandMapper.addMap(&rightSwitchUp);
+    drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
 }
@@ -106,5 +108,4 @@ namespace src::control
         registerIOMappings(drivers);
     }
 } //namespace src::Control
-
 #endif

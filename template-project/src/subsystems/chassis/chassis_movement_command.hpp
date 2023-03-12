@@ -58,6 +58,8 @@ private:
     src::Drivers *drivers;
 
     gimbal::GimbalInterface* gimbalInterface;
+
+    bool flag;
 }; //class ChassisMovementCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
