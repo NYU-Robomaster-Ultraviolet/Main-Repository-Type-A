@@ -3,7 +3,7 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "controls/standard/control_interface.hpp"
+#include "controls/control_interface.hpp"
 
 namespace shooter
 {

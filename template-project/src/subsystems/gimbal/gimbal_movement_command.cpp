@@ -3,13 +3,20 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "controls/standard/control_interface.hpp"
+#include "controls/control_interface.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
 
 namespace gimbal
 {
-GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers) 
-: gimbal(gimbal), drivers(drivers) 
+GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
+: gimbal(gimbal), drivers(drivers)
 {
      if (gimbal == nullptr)
     {
@@ -29,7 +36,7 @@ void  GimbalMovementCommand::execute()
         drivers->control_interface.getGimbalPitchInput());
 }
 
-void  GimbalMovementCommand::end(bool) { 
+void  GimbalMovementCommand::end(bool) {
     gimbal->controllerInput(0, 0);
     gimbal->noInputs();
     }

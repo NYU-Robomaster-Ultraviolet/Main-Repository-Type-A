@@ -3,19 +3,27 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "controls/standard/control_interface.hpp"
+#include "controls/control_interface.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 
 namespace gimbal
 {
-CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers) 
-: gimbal(gimbal), drivers(drivers) 
+CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
+: gimbal(gimbal), drivers(drivers)
 {
 }
 void  CvCommand::initialize() {
     gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
     enableStruct activateCV{231, 2, 0, 0, 0, 1, 0};
-    
+
 }
 
 void  CvCommand::execute() {
@@ -29,7 +37,7 @@ void  CvCommand::execute() {
     }
 }
 
-void  CvCommand::end(bool) { 
+void  CvCommand::end(bool) {
 
     }
 
@@ -101,7 +109,7 @@ void CvCommand::UnPackMsgs(src::Drivers *drivers, char *buffer)
         // writeToUart(drivers, to_string(lpsData->pitch) + " ");
         // writeToUart(drivers, to_string(lpsData->yaw) + " ");
         // writeToUart(drivers, to_string(lpsData->hasTarget) + " ");
-        
+
         updateGimbalError(lpsData->pitch, lpsData->yaw);
     }
 }

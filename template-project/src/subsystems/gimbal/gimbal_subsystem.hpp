@@ -5,13 +5,21 @@
 #include "modm/math/filter/pid.hpp"
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 #include "tap/util_macros.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 #include "drivers.hpp"
 #include "tap/algorithms/smooth_pid.hpp"
 #include "tap/architecture/clock.hpp"
-#include "controls/standard/imu_interface.hpp"
+#include "controls/imu_interface.hpp"
 #include "modm/math/geometry/angle.hpp"
 
 using namespace tap::algorithms;
@@ -29,13 +37,13 @@ public:
 
     static inline float wrappedEncoderValueToRadians(int64_t encoderValue);
 
-    void setYawAngle(float angle) { 
+    void setYawAngle(float angle) {
         if(angle > M_TWOPI) angle -= M_TWOPI;
         else if(angle < 0) angle += M_TWOPI;
         float target = angle;
     }
 
-    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE , 
+    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE ,
         constants.PITCH_MAX_ANGLE);}
 
     float getYawMotorRPM() const {return yawMotor.isMotorOnline() ? yawMotor.getShaftRPM() : 0.0f; }
