@@ -5,7 +5,15 @@
 #include "modm/math/filter/pid.hpp"
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 #include "tap/communication/gpio/pwm.hpp"
 #include "tap/algorithms/smooth_pid.hpp"
 #include "tap/drivers.hpp"

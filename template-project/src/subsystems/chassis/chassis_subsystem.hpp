@@ -5,7 +5,15 @@
 #include "modm/math/filter/pid.hpp"
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 #include "drivers.hpp"
 
 namespace chassis
@@ -39,7 +47,7 @@ public:
 
     /**
      * Called when Subsystem is registered
-     * initializes motors 
+     * initializes motors
      */
     void initialize() override;
 
@@ -52,7 +60,7 @@ public:
     /**
      * @param x : right and left inputs from controller
      * @param y : foward and backward inputs from controller
-     * @param r : rotation from left or right inputs from controller 
+     * @param r : rotation from left or right inputs from controller
      * calculate the desired rpm of each wheel to have the desired movement
      */
     void setDesiredOutput(float x, float y, float r);
@@ -67,7 +75,7 @@ public:
     void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 
     //checks if every motor is online
-    bool motorOnline() {return frontLeftMotor.isMotorOnline() && frontRightMotor.isMotorOnline() && 
+    bool motorOnline() {return frontLeftMotor.isMotorOnline() && frontRightMotor.isMotorOnline() &&
     backLeftMotor.isMotorOnline() && backRightMotor.isMotorOnline();}
 
     //converts the motor absolute encoder value to radians

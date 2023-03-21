@@ -48,16 +48,16 @@ FeederMovementCommand feederMovement(&feeder, drivers());
 ShootUserCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
-HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement}, 
+HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&gimbalMovement}, 
+HoldCommandMapping rightSwitchUp(drivers(), {&gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
-HoldCommandMapping leftSwitchUp(drivers(), {&shootUser}, 
+HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){

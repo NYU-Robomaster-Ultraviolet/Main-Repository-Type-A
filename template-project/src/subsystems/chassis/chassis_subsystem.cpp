@@ -1,6 +1,13 @@
 #include "chassis_subsystem.hpp"
 
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 #include "tap/communication/serial/remote.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 
@@ -39,14 +46,14 @@ void ChassisSubsystem::updateWheelvalues(){
     float BRPos = wrappedEncoderValueToRadians(backRightMotor.getEncoderUnwrapped());
     float BLPos = wrappedEncoderValueToRadians(backLeftMotor.getEncoderUnwrapped());
     //format: name,RPM,EncoderPosition(rad);
-    outputString = "FR," + std::to_string(FRRPM) + ',' +  std::to_string(FRPos) + ';' + 
-    "FL," + std::to_string(FLRPM) + ',' +  std::to_string(FLPos) + ';' + 
-    "BR," + std::to_string(BRRPM) + ',' +  std::to_string(BRPos) + ';' + 
+    outputString = "FR," + std::to_string(FRRPM) + ',' +  std::to_string(FRPos) + ';' +
+    "FL," + std::to_string(FLRPM) + ',' +  std::to_string(FLPos) + ';' +
+    "BR," + std::to_string(BRRPM) + ',' +  std::to_string(BRPos) + ';' +
     "BL," + std::to_string(BLRPM) + ',' +  std::to_string(BLPos) + ';' ;
 }
 
 void ChassisSubsystem::initialize()
-{   
+{
     frontLeftMotor.initialize();
     frontRightMotor.initialize();
     backLeftMotor.initialize();
@@ -66,8 +73,8 @@ void ChassisSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
 /*
     Give desired setpoints for chassis movement. +x is forward, +y is right, +r is clockwise (turning right).
 */
-void ChassisSubsystem::setDesiredOutput(float x, float y, float r) 
-{ 
+void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
+{
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
         (constants.RPM_SCALE_FACTOR * (x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(

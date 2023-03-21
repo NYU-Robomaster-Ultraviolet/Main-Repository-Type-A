@@ -5,7 +5,15 @@
 #include "modm/math/filter/pid.hpp"
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
+
+#ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
 #include "drivers.hpp"
 
 namespace feeder{
@@ -14,7 +22,7 @@ class FeederSubsystem : public tap::control::Subsystem
 {
 public:
     FeederSubsystem(tap::Drivers *drivers)
-    : tap::control::Subsystem(drivers), 
+    : tap::control::Subsystem(drivers),
     feederMotor(drivers,
                tap::motor::MOTOR7,
                tap::can::CanBus::CAN_BUS2,
@@ -22,7 +30,7 @@ public:
                "Feeder Motor"),
       targetRPM(0.0f),
       currentFeederMotorSpeed(0.0f),
-      rpmPid(feederPid.PID_KP, feederPid.PID_KI, feederPid.PID_KD, 
+      rpmPid(feederPid.PID_KP, feederPid.PID_KI, feederPid.PID_KD,
       feederPid.PID_MAX_IOUT, feederPid.PID_MAX_OUT)
       {}
 

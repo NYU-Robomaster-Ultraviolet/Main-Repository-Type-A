@@ -3,7 +3,7 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "controls/standard/control_interface.hpp"
+#include "controls/control_interface.hpp"
 
 #include "tap/communication/sensors/buzzer/buzzer.hpp"
 
@@ -27,9 +27,9 @@ void  ChassisMovementCommand::initialize() {
 
 void  ChassisMovementCommand::execute()
 {
-    
+
     //gets current cos and sin of yaw angle from starting point of gimbal
-    float cosYaw = cosf(gimbalInterface->getYawEncoder()); 
+    float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
     //gets the controller inputs
     float xInput = drivers->control_interface.getChassisXInput();
@@ -45,8 +45,8 @@ void  ChassisMovementCommand::execute()
 }
 
 //stops movement again
-void  ChassisMovementCommand::end(bool) { 
-    chassis->setDesiredOutput(0, 0, 0); 
+void  ChassisMovementCommand::end(bool) {
+    chassis->setDesiredOutput(0, 0, 0);
     }
 
 bool  ChassisMovementCommand::isFinished() const { return false; }
