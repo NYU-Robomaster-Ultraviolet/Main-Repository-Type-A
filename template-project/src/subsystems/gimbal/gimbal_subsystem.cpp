@@ -126,7 +126,7 @@ float GimbalSubsystem::gravityCompensation(){
 
 //this is the function that is called through the remote control input
 void GimbalSubsystem::controllerInput(float yawInput, float pitchInput){
-    setYawAngle(targetYaw + limitVal<float>((yawInput * constants.YAW_SCALE), -M_PI_4, M_PI_4));
+    setYawAngle(targetYaw + (yawInput * constants.YAW_SCALE));
     setPitchAngle(targetPitch + (pitchInput * constants.PITCH_SCALE));
     inputsFound = true;
 }

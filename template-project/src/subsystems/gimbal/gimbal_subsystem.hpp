@@ -32,7 +32,7 @@ public:
     void setYawAngle(float angle) { 
         if(angle > M_TWOPI) angle -= M_TWOPI;
         else if(angle < 0) angle += M_TWOPI;
-        float target = angle;
+        targetYaw = angle;
     }
 
     void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE , 
