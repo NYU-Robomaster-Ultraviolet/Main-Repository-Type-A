@@ -44,11 +44,9 @@
 
 /* control includes ---------------------------------------------------------*/
 #include "tap/architecture/clock.hpp"
-
-#include "controls/robot_control.hpp"
-
 #include "tap/util_macros.hpp"
 
+#include "controls/robot_control.hpp"
 
 /* define timers here -------------------------------------------------------*/
 tap::arch::PeriodicMilliTimer sendMotorTimeout(2);
@@ -63,7 +61,7 @@ static void initializeIo(src::Drivers *drivers);
 static void updateIo(src::Drivers *drivers);
 // frequency for mpu6500
 char c = 'c';
-char* strUart = &c;
+char *strUart = &c;
 bool flag = true;
 int main()
 {
@@ -92,7 +90,6 @@ int main()
     {
         // do this as fast as you can
         PROFILE(drivers->profiler, updateIo, (drivers));
-        
 
         //(only in TYPE-C board)
         if (sendMotorTimeout.execute())
@@ -110,8 +107,8 @@ int main()
         if(flag) flag = false;
         else flag = true;
         */
-        //drivers->cv_com.sendAutoAimMsg(1, 1, 1);
-        //drivers->uart.write(tap::communication::serial::Uart::Uart7, (uint8_t *)strUart, 1);
+        // drivers->cv_com.sendAutoAimMsg(1, 1, 1);
+        // drivers->uart.write(tap::communication::serial::Uart::Uart7, (uint8_t *)strUart, 1);
         modm::delay_us(10);
     }
     return 0;
@@ -134,7 +131,6 @@ static void initializeIo(src::Drivers *drivers)
     drivers->uart.init<tap::communication::serial::Uart::Uart7, 9600>();
     drivers->cv_com.init();
 }
-
 
 static void updateIo(src::Drivers *drivers)
 {

@@ -1,24 +1,26 @@
 #include "cv_com.hpp"
-#include "drivers.hpp"
+
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/buzzer/buzzer.hpp"
 
-CVCom::CVCom(src::Drivers *drivers) : drivers(drivers){}
+#include "drivers.hpp"
+// Threads
+#include <thread
 
-void CVCom::init(){
-    timeout.restart(1000);
-}
-int CVCom::writeToUart(const std::string& s)
+CVCom::CVCom(src::Drivers *drivers) : drivers(drivers) {}
+
+void CVCom::init() { timeout.restart(1000); }
+int CVCom::writeToUart(const std::string &s)
 {
     const int n = s.length();
     // declaring character array
     char char_array[n + 1];
     strncpy(char_array, s.c_str(), n);
     int res = drivers->uart.write(
-        tap::communication::serial::Uart::UartPort::Uart7, //Uart7
+        tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
         (uint8_t *)char_array,
         n);
-    //delayMS(100); //delay for .1 sec
+    // delayMS(100); //delay for .1 sec
     timeout.restart(1000);
     return res;
 }
@@ -26,9 +28,11 @@ int CVCom::writeToUart(const std::string& s)
 int CVCom::writeToUart(char *s, int n)
 {
     // declaring character array
-    int res =
-        drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7, (uint8_t *)s, n); //Uart7
-    //delayMS(100); //delay for .1 sec
+    int res = drivers->uart.write(
+        tap::communication::serial::Uart::UartPort::Uart7,
+        (uint8_t *)s,
+        n);  // Uart7
+    // delayMS(100); //delay for .1 sec
     timeout.restart(1000);
     return res;
 }
@@ -38,69 +42,108 @@ int CVCom::readFromUart(char *buffer)
     // declaring character array
     int bytes_read = 0;
     bool read_flag = 1;
-    while (read_flag)
+    size_t i = 0;
+    size_t msg_len = 0;
+    size_t msg_type = 0;
+    Header headerStruct;
+    // get first header, unpack "B" 0xE7
+    if (readingState == WAITING_FOR_HEADER)
     {
         int res = drivers->uart.read(
-            tap::communication::serial::Uart::UartPort::Uart7, //Uart7
-            (uint8_t *)(buffer + bytes_read));
-        // writeToUart(drivers,"bytes read = "+ to_string(res)+"\n");
+            tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+            (uint8_t *)(buffer + bytes_read),
+            1);
         if (res > 0)
+        {
             bytes_read += res;
+            if (buffer[bytes_read] == 0xE7)
+            {
+                readingState = READING_HEADER;
+            }
+        }
         else
-            read_flag = 0;
+        {
+            return bytes_read;
+        }
     }
+
+    if (readingState == READING_HEADER)
+    {
+        // Header_length=5
+        // Read the next 4 bytes
+        int res = drivers->uart.read(
+            tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+            (uint8_t *)(buffer + bytes_read),
+            4);
+        if (bytes_read + 5 > buffer_size)
+        {
+            readingState = WAITING_FOR_HEADER;
+            return bytes_read;
+        }
+        else
+        {
+            // unpack the header
+            headerStruct = (Header)(buffer);
+            msg_len = headerStruct->length;
+            msg_type = headerStruct->msg_type;
+            bytes_read += 5;
+            readingState = READING_DATA;
+        }
+    }
+
+    if (readingState == READING_DATA)
+    {
+        // read the rest of the message
+        int res = drivers->uart.read(
+            tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+            (uint8_t *)(buffer + bytes_read + 1),
+            msg_len);
+        bytes_read += msg_len + 1;
+        switch (headerStruct->msg_type)
+        {
+            // 0: autoaim, 1: align_request, 3:align_finish
+            case 0:
+                // Autoaim
+                AutoAimStruct autoAimStruct = (AutoAimStruct)(buffer);
+                pitch = autoAimStruct->pitch;
+                yaw = autoAimStruct->yaw;
+                validAngle = true;
+                // @TODO: only for debug, remove this
+                for (int z = 0; z < 10; z++)
+                {
+                    drivers->leds.set(drivers->leds.F, false);
+                    drivers->leds.set(drivers->leds.F, true);
+                }
+                break;
+            case 1:
+                // Align request
+                AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
+                break;
+            case 2:
+                // Align finish
+                AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
+                break;
+            default:
+                // INVALID MESSAGE
+                break;
+        }
+
+        // make blinking (rgb)
+        readingState = WAITING_FOR_HEADER;
+    }
+
     timeout.restart(1000);
-    //delayMS(100); //delay for .1 sec
+    // delayMS(100); //delay for .1 sec
     return bytes_read;
 }
 
-void CVCom::UnPackMsgs(char *buffer)
-{
-    Header headerStruct = (Header)buffer;
-    float temp2;
-    memcpy(&temp2, buffer, sizeof(float));
-    char a = 1;
-    char* b = &a;
-    writeToUart(b, 1);
-    pitch = temp2;
-    validAngle = true;
-    //  type 1 for autoaim
-    /*
-    if (headerStruct->msg_type == 1)
-    {
-        AutoAimStruct lpsData = (AutoAimStruct)buffer;
-        // writeToUart(drivers, to_string(lpsData->header) + " ");
-        // writeToUart(drivers, to_string(lpsData->length) + " ");
-        // writeToUart(drivers, to_string(lpsData->empty1) + " ");
-        // writeToUart(drivers, to_string(lpsData->empty2) + " ");
-        // writeToUart(drivers, to_string(lpsData->msg_type) + " ");
-        // writeToUart(drivers, to_string(lpsData->pitch) + " ");
-        // writeToUart(drivers, to_string(lpsData->yaw) + " ");
-        // writeToUart(drivers, to_string(lpsData->hasTarget) + " ");
-        yaw = static_cast<float>(lpsData->yaw);
-        pitch = static_cast<float>(lpsData->pitch);
-        validAngle = true;
-        drivers->leds.set(drivers->leds.F, true);
-    }
-    else {
-        floatingStruct fl = (floatingStruct)buffer;
-        float temp =  *reinterpret_cast<float*>(buffer);
-        float temp2 = 123.213f;
-        memcpy(&temp2, buffer, sizeof(float));
-        writeToUart(reinterpret_cast<char*>(&temp), 4);
-        pitch = fl->pitch * 10;
-        validAngle = true;
-        drivers->leds.set(drivers->leds.F, false);
-    }
-    */
-    
-}
+void CVCom::UnPackMsgs(char *buffer) {}
 
 void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
 {
     AutoAimStructObj autoAimStruct = AutoAimStructObj();
-    autoAimStruct.pitch = pitch * 100;
-    autoAimStruct.yaw = yaw * 100;
+    autoAimStruct.pitch = pitch;
+    autoAimStruct.yaw = yaw;
     autoAimStruct.empty1 = 0;
     autoAimStruct.empty2 = 0;
     autoAimStruct.footer = 0;
@@ -113,18 +156,15 @@ void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
     writeToUart(str, sizeof(autoAimStruct) - 1);
 }
 
-void CVCom::update(){
-    //sendAutoAimMsg(1, 2, 1);
-    char *buffer = new char[32];
+void CVCom::update()
+{
+    char *buffer = new char[buffer_size];
     int bytes_read = readFromUart(buffer);
-    if (bytes_read > 0) {
-            drivers->leds.set(drivers->leds.C, false);
-            char *temp = new char[bytes_read];
-            UnPackMsgs( buffer);
-            //writeToUart(buffer, bytes_read);
-            delete[] temp;
+    if (bytes_read > 0)
+    {
+        drivers->leds.set(drivers->leds.C, false);
     }
-    else drivers->leds.set(drivers->leds.C, true);
+    else
+        drivers->leds.set(drivers->leds.C, true);
     delete[] buffer;
-    
 }

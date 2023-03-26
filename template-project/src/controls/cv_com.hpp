@@ -1,18 +1,20 @@
 #ifndef CV_COM_HPP_
 #define CV_COM_HPP_
-#include "modm/math/geometry/angle.hpp"
 #include "tap/architecture/timeout.hpp"
 
+#include "modm/math/geometry/angle.hpp"
 
-namespace src{
-    class Drivers;
+namespace src
+{
+class Drivers;
 }
 
-class CVCom{
+class CVCom
+{
 public:
-    CVCom(src::Drivers* drivers);
+    CVCom(src::Drivers *drivers);
 
-    int writeToUart(const std::string& s);
+    int writeToUart(const std::string &s);
 
     int writeToUart(char *s, int n);
 
@@ -24,57 +26,94 @@ public:
 
     void update();
 
-    float getYaw() const {return yaw;}
-    float getPitch() const {return pitch;}
+    float getYaw() const { return yaw; }
+    float getPitch() const { return pitch; }
 
-    void invalidateAngle() {validAngle = false;}
+    void invalidateAngle() { validAngle = false; }
 
-    bool validReading() const {return validAngle;}
+    bool validReading() const { return validAngle; }
 
-    bool online() const {return !timeout.isExpired();}
+    bool online() const { return !timeout.isExpired(); }
 
     void init();
 
-    typedef struct autoAimStruct {
-    unsigned char header;
-    unsigned short length;
-    unsigned char empty1;
-    unsigned char empty2;
-    unsigned short msg_type;
-    float pitch;
-    float yaw;
-    unsigned char hasTarget;
-    unsigned short footer;
-} AutoAimStructObj, *AutoAimStruct;
+    typedef struct autoAimStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        float pitch;
+        float yaw;
+        unsigned char hasTarget;
+        unsigned short footer;
+    } AutoAimStructObj, *AutoAimStruct;
 
-typedef struct enableStruct {
-    unsigned char header;
-    unsigned short length;
-    unsigned char empty1;
-    unsigned char empty2;
-    unsigned short msg_type;
-    bool start;
-    unsigned short footer;
-} EnableStructObj, *EnableStruct;
+    // message_type: 1
+    typedef struct alignRequestStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        unsigned short x;
+        unsigned short y;
+        unsigned short r;
+        unsigned short footer;
+    } AlignRequestStructObj, *AlignRequestStruct;
 
-typedef struct header {
-    unsigned char header;
-    unsigned short length;
-    unsigned char empty1;
-    unsigned char empty2;
-    unsigned short msg_type;
-} *Header;
+    // message_type: 2
+    typedef struct alignFinishStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        unsigned char x;
+        unsigned short footer;
+    } AlignFinishStructObj, *AlignFinishStruct;
 
-typedef struct floating {
-    float pitch;
-} floatingObj, *floatingStruct;
+    // Receive
+    typedef struct enableStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        bool start;
+        unsigned short footer;
+    } EnableStructObj, *EnableStruct;
+
+    // Send/recieve
+    typedef struct header
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+    } *Header;
+
 private:
-    src::Drivers* drivers;
+    src::Drivers *drivers;
 
-    //paw then pitch
+    // paw then pitch
     float yaw;
     float pitch;
     bool validAngle = false;
     tap::arch::MilliTimeout timeout;
-}; // class CVCom
+    size_t buffer_size = 32;
+    // reading state enum
+    enum ReadingState
+    {
+        WAITING_FOR_HEADER = 0,
+        READING_HEADER,
+        READING_DATA
+    };
+    ReadingState readingState = WAITING_FOR_HEADER;
+};  // class CVCom
 #endif
