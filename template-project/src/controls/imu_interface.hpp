@@ -10,6 +10,10 @@ use displacement angles when measuring position relative to its starting positio
 due to taproot, yaw = roll, roll = pitch, pitch = yaw
 */
 
+namespace tap{
+    class Drivers;
+}
+
 class ImuRadInterface{
 public:
     ImuRadInterface(tap::Drivers *drivers) : drivers(drivers) {}

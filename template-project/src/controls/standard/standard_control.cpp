@@ -9,6 +9,8 @@
 #include "tap/control/setpoint/commands/calibrate_command.hpp"
 #include "tap/control/toggle_command_mapping.hpp"
 
+#include "controls/cv_com.hpp"
+
 #include "subsystems/communication/cv_command.hpp"
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
@@ -43,6 +45,7 @@ ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 GimbalInterface gimbalInterface(&gimbal);
+CVCom cvCommuicator(drivers());
 
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);

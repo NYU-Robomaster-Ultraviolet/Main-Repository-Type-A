@@ -47,6 +47,8 @@
 
 #include "controls/robot_control.hpp"
 
+#include "tap/util_macros.hpp"
+
 
 /* define timers here -------------------------------------------------------*/
 tap::arch::PeriodicMilliTimer sendMotorTimeout(2);
@@ -60,7 +62,8 @@ static void initializeIo(src::Drivers *drivers);
 // called as frequently.
 static void updateIo(src::Drivers *drivers);
 // frequency for mpu6500
-
+char c = 'c';
+char* strUart = &c;
 int main()
 {
 #ifdef PLATFORM_HOSTED
@@ -88,6 +91,7 @@ int main()
     {
         // do this as fast as you can
         PROFILE(drivers->profiler, updateIo, (drivers));
+        
 
         //(only in TYPE-C board)
         if (sendMotorTimeout.execute())
@@ -97,6 +101,8 @@ int main()
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.encodeAndSendCanData, ());
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
         }
+        //drivers->cv_com.update();
+        drivers->uart.write(tap::communication::serial::Uart::Uart7, (uint8_t *)strUart, 1);
         modm::delay_us(10);
     }
     return 0;
