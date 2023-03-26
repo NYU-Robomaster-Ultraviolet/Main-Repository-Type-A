@@ -98,7 +98,7 @@ void GimbalSubsystem::updateYawPid(){
         yawMotorPid.runController(yawError * constants.MOTOR_SPEED_FACTOR, getYawMotorRPM(), timeError);
         yawMotorOutput = limitVal<float>(yawMotorPid.getOutput(), -constants.MAX_YAW_SPEED, constants.MAX_YAW_SPEED);
         if(-constants.MIN_YAW_SPEED < yawMotorOutput  && yawMotorOutput < constants.MIN_YAW_SPEED) yawMotorOutput = 0;
-        else yawMotor.setDesiredOutput(yawMotorOutput);
+        //else yawMotor.setDesiredOutput(yawMotorOutput);
     }
 }
 

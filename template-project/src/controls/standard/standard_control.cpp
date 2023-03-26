@@ -9,9 +9,6 @@
 #include "tap/control/setpoint/commands/calibrate_command.hpp"
 #include "tap/control/toggle_command_mapping.hpp"
 
-#include "controls/cv_com.hpp"
-
-#include "subsystems/communication/cv_command.hpp"
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/feeder/feeder_subsystem.hpp"
@@ -23,6 +20,7 @@
 #include "subsystems/music/music_player.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 #include "subsystems/feeder/feeder_movement_command.hpp"
+#include "subsystems/communication/cv_command.hpp"
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -45,7 +43,7 @@ ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 GimbalInterface gimbalInterface(&gimbal);
-CVCom cvCommuicator(drivers());
+//CVCom cvCommuicator(drivers());
 
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
@@ -58,7 +56,7 @@ ShootUserCommand shootUser(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&gimbalMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},

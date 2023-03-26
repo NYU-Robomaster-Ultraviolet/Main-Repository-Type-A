@@ -24,7 +24,8 @@ public:
 
     void update();
 
-    const std::pair<float, float> getAngle() const {return angle;}
+    float getYaw() const {return yaw;}
+    float getPitch() const {return pitch;}
 
     void invalidateAngle() {validAngle = false;}
 
@@ -32,15 +33,17 @@ public:
 
     bool online() const {return !timeout.isExpired();}
 
+    void init();
+
     typedef struct autoAimStruct {
     unsigned char header;
     unsigned short length;
     unsigned char empty1;
     unsigned char empty2;
     unsigned short msg_type;
-    unsigned short pitch;
-    unsigned short yaw;
-    bool hasTarget;
+    float pitch;
+    float yaw;
+    unsigned char hasTarget;
     unsigned short footer;
 } AutoAimStructObj, *AutoAimStruct;
 
@@ -61,11 +64,16 @@ typedef struct header {
     unsigned char empty2;
     unsigned short msg_type;
 } *Header;
+
+typedef struct floating {
+    float pitch;
+} floatingObj, *floatingStruct;
 private:
     src::Drivers* drivers;
 
     //paw then pitch
-    std::pair<float, float> angle;
+    float yaw;
+    float pitch;
     bool validAngle = false;
     tap::arch::MilliTimeout timeout;
 }; // class CVCom
