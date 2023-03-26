@@ -1,7 +1,10 @@
 #include "cv_com.hpp"
 #include "drivers.hpp"
+#include "tap/architecture/timeout.hpp"
 
-CVCom::CVCom(src::Drivers *drivers) : drivers(drivers){}
+CVCom::CVCom(src::Drivers *drivers) : drivers(drivers){
+    timeout.restart(1000);
+}
 
 int CVCom::writeToUart(const std::string& s)
 {
@@ -14,6 +17,7 @@ int CVCom::writeToUart(const std::string& s)
         (uint8_t *)char_array,
         n);
     //delayMS(100); //delay for .1 sec
+    timeout.restart(1000);
     return res;
 }
 
@@ -23,6 +27,7 @@ int CVCom::writeToUart(char *s, int n)
     int res =
         drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7, (uint8_t *)s, n); //Uart7
     //delayMS(100); //delay for .1 sec
+    timeout.restart(1000);
     return res;
 }
 
@@ -42,6 +47,7 @@ int CVCom::readFromUart(char *buffer)
         else
             read_flag = 0;
     }
+    timeout.restart(1000);
     //delayMS(100); //delay for .1 sec
     return bytes_read;
 }
@@ -90,14 +96,16 @@ void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
 }
 
 void CVCom::update(){
+    //sendAutoAimMsg(1, 2, 1);
+    
     char *buffer = new char[1024];
     int bytes_read = readFromUart(buffer);
     if (bytes_read > 0) {
             char *temp = new char[bytes_read];
             UnPackMsgs( buffer);
-            writeToUart(buffer, bytes_read);
+            //writeToUart(buffer, bytes_read);
             delete[] temp;
     }
-    sendAutoAimMsg(1, 2, 1);
     delete[] buffer;
+    
 }

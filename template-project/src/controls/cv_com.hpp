@@ -30,6 +30,8 @@ public:
 
     bool validReading() const {return validAngle;}
 
+    bool online() const {return !timeout.isExpired();}
+
     typedef struct autoAimStruct {
     unsigned char header;
     unsigned short length;
@@ -64,6 +66,7 @@ private:
 
     //paw then pitch
     std::pair<float, float> angle;
-    bool validAngle;
+    bool validAngle = false;
+    tap::arch::MilliTimeout timeout;
 }; // class CVCom
 #endif

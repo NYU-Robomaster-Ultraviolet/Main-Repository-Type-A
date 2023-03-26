@@ -25,11 +25,13 @@ void  CvCommand::initialize() {
 }
 
 void  CvCommand::execute() {
+    
     if(drivers->cv_com.validReading()){
         std::pair<float, float> angle = drivers->cv_com.getAngle();
         gimbal->cvInput(angle.first, angle.second);
         drivers->cv_com.invalidateAngle();
     }
+    
 }
 
 void  CvCommand::end(bool) {

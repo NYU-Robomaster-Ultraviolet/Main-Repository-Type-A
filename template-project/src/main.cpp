@@ -64,6 +64,7 @@ static void updateIo(src::Drivers *drivers);
 // frequency for mpu6500
 char c = 'c';
 char* strUart = &c;
+bool flag = true;
 int main()
 {
 #ifdef PLATFORM_HOSTED
@@ -101,7 +102,12 @@ int main()
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.encodeAndSendCanData, ());
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
         }
-        //drivers->cv_com.update();
+        if(drivers->cv_com.online()){
+            drivers->leds.set(drivers->leds.A, flag);
+            drivers->cv_com.update();
+        }
+        if(flag) flag = false;
+        else flag = true;
         drivers->uart.write(tap::communication::serial::Uart::Uart7, (uint8_t *)strUart, 1);
         modm::delay_us(10);
     }
@@ -122,6 +128,7 @@ static void initializeIo(src::Drivers *drivers)
     drivers->terminalSerial.initialize();
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
+    drivers->uart.init<tap::communication::serial::Uart::Uart7, 115200>();
 }
 
 
