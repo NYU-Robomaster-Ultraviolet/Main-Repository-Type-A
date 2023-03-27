@@ -4,8 +4,7 @@
 #include "tap/communication/sensors/buzzer/buzzer.hpp"
 
 #include "drivers.hpp"
-// Threads
-#include <thread
+
 
 CVCom::CVCom(src::Drivers *drivers) : drivers(drivers) {}
 
