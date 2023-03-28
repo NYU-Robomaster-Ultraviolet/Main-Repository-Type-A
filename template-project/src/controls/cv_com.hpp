@@ -33,7 +33,7 @@ public:
 
     bool validReading() const { return validAngle; }
 
-    bool online() const { return !timeout.isExpired(); }
+    bool online() const { return true; }
 
     void init();
 
@@ -106,7 +106,7 @@ private:
     float pitch;
     bool validAngle = false;
     tap::arch::MilliTimeout timeout;
-    size_t buffer_size = 32;
+    size_t buffer_size = 100;
     // reading state enum
     enum ReadingState
     {

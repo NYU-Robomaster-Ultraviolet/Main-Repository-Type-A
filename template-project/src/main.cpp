@@ -100,6 +100,8 @@ int main()
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
         }
         drivers->cv_com.update();
+        // need to call cvInput from the GimbalSunsystem in some way
+
         /*
         if(drivers->cv_com.online()){
             drivers->leds.set(drivers->leds.A, flag);
@@ -128,7 +130,7 @@ static void initializeIo(src::Drivers *drivers)
     drivers->terminalSerial.initialize();
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
-    drivers->uart.init<tap::communication::serial::Uart::Uart7, 9600>();
+    drivers->uart.init<tap::communication::serial::Uart::Uart7, 115200>();
     drivers->cv_com.init();
 }
 

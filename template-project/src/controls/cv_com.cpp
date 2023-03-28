@@ -4,8 +4,6 @@
 #include "tap/communication/sensors/buzzer/buzzer.hpp"
 
 #include "drivers.hpp"
-// Threads
-#include <thread
 
 CVCom::CVCom(src::Drivers *drivers) : drivers(drivers) {}
 
@@ -40,31 +38,34 @@ int CVCom::writeToUart(char *s, int n)
 int CVCom::readFromUart(char *buffer)
 {
     // declaring character array
-    int bytes_read = 0;
+    size_t bytes_read = 0;
     bool read_flag = 1;
     size_t i = 0;
     size_t msg_len = 0;
     size_t msg_type = 0;
-    Header headerStruct;
+    Header headerStruct{};
+    int res = 0;
     // get first header, unpack "B" 0xE7
     if (readingState == WAITING_FOR_HEADER)
     {
-        int res = drivers->uart.read(
-            tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-            (uint8_t *)(buffer + bytes_read),
-            1);
-        if (res > 0)
+        // set led to off
+        do
         {
-            bytes_read += res;
-            if (buffer[bytes_read] == 0xE7)
+            drivers->leds.set(drivers->leds.C, false);
+            int res = drivers->uart.read(
+                tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                (uint8_t *)(buffer + bytes_read),
+                1);
+            if (res > 0)
             {
-                readingState = READING_HEADER;
+                bytes_read += 1;
+                if (buffer[bytes_read] == 0xE7)
+                {
+                    readingState = READING_HEADER;
+                    break;
+                }
             }
-        }
-        else
-        {
-            return bytes_read;
-        }
+        } while (res <= 0);
     }
 
     if (readingState == READING_HEADER)
@@ -75,6 +76,11 @@ int CVCom::readFromUart(char *buffer)
             tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
             (uint8_t *)(buffer + bytes_read),
             4);
+
+        if (res <= 0)
+        {
+            return bytes_read;
+        }
         if (bytes_read + 5 > buffer_size)
         {
             readingState = WAITING_FOR_HEADER;
@@ -82,6 +88,7 @@ int CVCom::readFromUart(char *buffer)
         }
         else
         {
+            timeout.restart(1000);
             // unpack the header
             headerStruct = (Header)(buffer);
             msg_len = headerStruct->length;
@@ -98,34 +105,43 @@ int CVCom::readFromUart(char *buffer)
             tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
             (uint8_t *)(buffer + bytes_read + 1),
             msg_len);
+        if (res <= 0)
+        {
+            return bytes_read;
+        }
         bytes_read += msg_len + 1;
+        // ensure headerStruct is not uninitialized
+        if (headerStruct == nullptr)
+        {
+            readingState = WAITING_FOR_HEADER;
+            return bytes_read;
+        }
+        timeout.restart(1000);
         switch (headerStruct->msg_type)
         {
             // 0: autoaim, 1: align_request, 3:align_finish
             case 0:
+            {
+                drivers->leds.set(drivers->leds.C, false);
                 // Autoaim
                 AutoAimStruct autoAimStruct = (AutoAimStruct)(buffer);
                 pitch = autoAimStruct->pitch;
                 yaw = autoAimStruct->yaw;
                 validAngle = true;
-                // @TODO: only for debug, remove this
-                for (int z = 0; z < 10; z++)
-                {
-                    drivers->leds.set(drivers->leds.F, false);
-                    drivers->leds.set(drivers->leds.F, true);
-                }
                 break;
+            }
             case 1:
+            {
                 // Align request
                 AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
                 break;
+            }
             case 2:
+            {
                 // Align finish
                 AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
                 break;
-            default:
-                // INVALID MESSAGE
-                break;
+            }
         }
 
         // make blinking (rgb)
@@ -158,13 +174,16 @@ void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
 
 void CVCom::update()
 {
+    // set the gimbad subsystem to use the cvcom
     char *buffer = new char[buffer_size];
     int bytes_read = readFromUart(buffer);
-    if (bytes_read > 0)
-    {
-        drivers->leds.set(drivers->leds.C, false);
-    }
-    else
-        drivers->leds.set(drivers->leds.C, true);
+    // if (bytes_read > 0)
+    // {
+
+    // }
+    // else
+    //     drivers->leds.set(drivers->leds.C, true);
+    // need to call cvInput from the GimbalSunsystem in some way
+
     delete[] buffer;
 }
