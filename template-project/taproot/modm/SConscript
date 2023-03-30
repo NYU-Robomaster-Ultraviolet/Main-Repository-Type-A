@@ -41,25 +41,27 @@ c_compiler_name = env["CC"]
 c_compiler_path = shutil.which(c_compiler_name)
 
 if c_compiler_path is None:
-    print(f'Selected compiler "{c_compiler_name}" not found on PATH. Please add its installation directory to the PATH environment variable.')
+    print(
+        f'Selected compiler "{c_compiler_name}" not found on PATH. Please add its installation directory to the PATH environment variable.')
     exit(1)
 
 env["GCC_PATH"] = dirname(dirname(realpath(c_compiler_path)))
 
 # Toolchain configuration
-env.Append(CPPDEFINES = [
+env.Append(CPPDEFINES=[
     "ARM_MATH_CM4",
     "STM32F4",
 ])
 if profile == "debug":
-    env.Append(CPPDEFINES = [
+    env.Append(CPPDEFINES=[
         "MODM_DEBUG_BUILD",
     ])
 
 env["CCFLAGS"] = [
     "-fdata-sections",
     "-ffile-prefix-map={gccpath}=.".format(gccpath=env["GCC_PATH"]),
-    "-ffile-prefix-map={project_source_dir}=.".format(project_source_dir=env["BASEPATH"]),
+    "-ffile-prefix-map={project_source_dir}=.".format(
+        project_source_dir=env["BASEPATH"]),
     "-ffunction-sections",
     "-finline-limit=10000",
     "-fshort-wchar",
@@ -84,11 +86,11 @@ env["CCFLAGS"] = [
     "-Wundef",
 ]
 if profile == "release":
-    env.Append(CCFLAGS = [
+    env.Append(CCFLAGS=[
         "-Os",
     ])
 if profile == "debug":
-    env.Append(CCFLAGS = [
+    env.Append(CCFLAGS=[
         "-fno-move-loop-invariants",
         "-fno-split-wide-types",
         "-fno-tree-loop-optimize",
@@ -158,11 +160,8 @@ env["_LIBFLAGS"] = "-Wl,--start-group " + env["_LIBFLAGS"] + " -Wl,--end-group"
 # From https://sourceware.org/binutils/docs/ld/Options.html#Options:
 #     For each archive mentioned on the command line after the --whole-archive option, include every object
 #     file in the archive in the link, rather than searching the archive for the required object files.
-env["_LIBFLAGS"] = "-Wl,--whole-archive " + env["_LIBFLAGS"] + " -Wl,--no-whole-archive"
-
-
-
-
+env["_LIBFLAGS"] = "-Wl,--whole-archive " + \
+    env["_LIBFLAGS"] + " -Wl,--no-whole-archive"
 
 
 # Device configuration
@@ -176,10 +175,10 @@ env["CONFIG_DEVICE_MEMORY"] = [
     {'name': 'backup', 'access': 'rwx', 'start': 1073889280, 'size': 4096},
 ]
 # Programming configuration
-env.Append(MODM_OPENOCD_CONFIGFILES = "$BASEPATH/modm/openocd.cfg")
-env.Append(MODM_OPENOCD_GDBINIT = "$BASEPATH/modm/openocd_gdbinit")
-env.Append(MODM_GDBINIT = "$BASEPATH/modm/gdbinit")
-env.Append(MODM_GDB_COMMANDS = "dir $GCC_PATH")
+env.Append(MODM_OPENOCD_CONFIGFILES="$BASEPATH/modm/openocd.cfg")
+env.Append(MODM_OPENOCD_GDBINIT="$BASEPATH/modm/openocd_gdbinit")
+env.Append(MODM_GDBINIT="$BASEPATH/modm/gdbinit")
+env.Append(MODM_GDB_COMMANDS="dir $GCC_PATH")
 # XPCC generator tool path
 env["XPCC_SYSTEM_DESIGN"] = "$BASEPATH/modm/tools/xpcc_generator"
 env.AppendUnique(CPPPATH=[
@@ -201,7 +200,8 @@ files = [
     env.File(r"src/modm/communication/xpcc/backend/header.cpp"),
     env.File(r"src/modm/communication/xpcc/communicator.cpp"),
     env.File(r"src/modm/communication/xpcc/dispatcher.cpp"),
-    env.File(r"src/modm/communication/xpcc/postman/dynamic_postman/dynamic_postman.cpp"),
+    env.File(
+        r"src/modm/communication/xpcc/postman/dynamic_postman/dynamic_postman.cpp"),
     env.File(r"src/modm/communication/xpcc/postman/postman.cpp"),
     env.File(r"src/modm/container/smart_pointer.cpp"),
     env.File(r"src/modm/io/iostream.cpp"),
@@ -262,81 +262,156 @@ files = [
     env.File(r"src/modm/ui/menu/scrollable_text.cpp"),
     env.File(r"src/modm/utils/dummy.cpp"),
 ]
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_inverse_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_inverse_f64.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_fast_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_fast_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_q31.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_f32.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_q15.c", **flags))
-flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
-if profile == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
-files.append(env.Object(r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_add_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_cmplx_mult_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_init_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_inverse_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_inverse_f64.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_fast_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_fast_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_mult_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_scale_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_sub_q31.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_f32.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_q15.c", **flags))
+flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'],
+         "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
+if profile == "debug":
+    flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK'])
+files.append(env.Object(
+    r"ext/cmsis/dsp/MatrixFunctions/arm_mat_trans_q31.c", **flags))
 library = env.StaticLibrary(target="modm", source=files)
 
 env.AppendUnique(LIBS=[
@@ -346,19 +421,19 @@ env.AppendUnique(LIBPATH=[
     abspath(str(library[0].get_dir())),
 ])
 for flags in ["CCFLAGS", "CFLAGS", "CXXFLAGS", "ASFLAGS", "ARCHFLAGS", "LINKFLAGS"]:
-	flags_str = ARGUMENTS.get(flags)
-	if flags_str is not None:
-		flags_list = flags_str.split(",")
-		for flag in flags_list:
-			if len(flag) > 1 and flag[0] == "~":
-				try:
-					env[flags].remove(flag[1:])
-				except ValueError:
-					print("'" + flag[1:] + "' does not exist in " + flags +
-						" and therefore can not be removed.")
-					print("Info: " + flags + ": " + ", ".join(env[flags]))
-					exit(1)
-			else:
-				env[flags].append(flag)
+    flags_str = ARGUMENTS.get(flags)
+    if flags_str is not None:
+        flags_list = flags_str.split(",")
+        for flag in flags_list:
+            if len(flag) > 1 and flag[0] == "~":
+                try:
+                    env[flags].remove(flag[1:])
+                except ValueError:
+                    print("'" + flag[1:] + "' does not exist in " + flags +
+                          " and therefore can not be removed.")
+                    print("Info: " + flags + ": " + ", ".join(env[flags]))
+                    exit(1)
+            else:
+                env[flags].append(flag)
 
 Return("library")

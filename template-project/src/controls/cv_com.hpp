@@ -33,7 +33,7 @@ public:
 
     bool validReading() const { return validAngle; }
 
-    bool online() const { return true; }
+    bool online() const { return timeout.isExpired(); }
 
     void init();
 
@@ -91,12 +91,15 @@ public:
     // Send/recieve
     typedef struct header
     {
+        // unsigned char
         unsigned char header;
+        // unsigned short
         unsigned short length;
         unsigned char empty1;
         unsigned char empty2;
         unsigned short msg_type;
     } *Header;
+    tap::arch::MilliTimeout timeout;
 
 private:
     src::Drivers *drivers;
@@ -105,7 +108,7 @@ private:
     float yaw;
     float pitch;
     bool validAngle = false;
-    tap::arch::MilliTimeout timeout;
+
     size_t buffer_size = 100;
     // reading state enum
     enum ReadingState
