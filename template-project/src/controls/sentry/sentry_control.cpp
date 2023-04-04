@@ -12,7 +12,8 @@
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 
-#include "subsystems/shooter/shoot_user_command.hpp"
+// #include "subsystems/shooter/shoot_user_command.hpp"
+#include "subsystems/shooter_sentry/shoot_sentry_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
 #include "subsystems/music/music_player.hpp"
@@ -38,7 +39,7 @@ ChassisSubsystem chassis(drivers());
 GimbalSubsystem gimbal(drivers());
 // FeederSubsystem feeder(drivers());
 FeederSentrySubsystem feeder(drivers());
-ShooterSubsystem shooter(drivers());
+ShooterSentrySubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 GimbalInterface gimbalInterface(&gimbal);
@@ -48,7 +49,7 @@ ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
 FeederSentryMovementCommand feederMovement(&feeder, drivers());
-ShootUserCommand shootUser(&shooter, drivers());
+ShootSentryUserCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},

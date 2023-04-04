@@ -1,13 +1,13 @@
-#ifndef SHOOT_MOVEMENT_COMMAND_HPP_
-#define SHOOT_MOVEMENT_COMMAND_HPP_
+#ifndef SHOOT_SENTRY_MOVEMENT_COMMAND_HPP_
+#define SHOOT_SENTRY_MOVEMENT_COMMAND_HPP_
 
 #include "tap/control/command.hpp"
 
-#include "shooter_subsystem.hpp"
+#include "shooter_sentry_subsystem.hpp"
 #include "drivers.hpp"
 namespace shooter{
 
-class ShootUserCommand : public tap::control::Command{
+class ShootSentryUserCommand : public tap::control::Command{
 public:
     /**
      * Initializes the command with the passed in ShooterSubsystem.  Must not
@@ -16,11 +16,11 @@ public:
      * @param[in] shooter a pointer to the shooter to be passed in that this
      *      Command will interact with.
      */
-    ShootUserCommand(ShooterSubsystem *const shooter, src::Drivers *drivers);
+    ShootSentryUserCommand(ShooterSentrySubsystem *const shooter, src::Drivers *drivers);
 
-    ShootUserCommand(const ShootUserCommand &other) = delete;
+    ShootSentryUserCommand(const ShootSentryUserCommand &other) = delete;
 
-    ShootUserCommand &operator=(const ShootUserCommand &other) = delete;
+    ShootSentryUserCommand &operator=(const ShootSentryUserCommand &other) = delete;
 
     void initialize() override;
 
@@ -32,9 +32,9 @@ public:
 
     bool isFinished() const override;
 private:
-    ShooterSubsystem *const shooter;
+    ShooterSentrySubsystem *const shooter;
 
     src::Drivers *drivers;
-}; //class ShooterUserCommand : public tap::control::Command
+}; //class ShooterSentryUserCommand : public tap::control::Command
 } //namespace shooter
-#endif //SHOOTER_USER_COMMAND_HPP_ 
+#endif  // SHOOT_SENTRY_MOVEMENT_COMMAND_HPP_

@@ -1,4 +1,4 @@
-#include "shooter_subsystem.hpp"
+#include "shooter_sentry_subsystem.hpp"
 
 #include "tap/communication/serial/remote.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
@@ -8,25 +8,29 @@ using namespace tap;
 namespace shooter
 {
 
-void ShooterSubsystem::initialize()
+void ShooterSentrySubsystem::initialize()
 {
     drivers->pwm.write(0.25f, flywheel1);
     drivers->pwm.write(0.25f, flywheel2);
+    drivers->pwm.write(0.25f, flywheel3);
+    drivers->pwm.write(0.25f, flywheel4);
 }
-void ShooterSubsystem::refresh() {
+void ShooterSentrySubsystem::refresh() {
     //setDesiredOutput(&flywheel1Ramp, flywheel1);
     //setDesiredOutput(&flywheel2Ramp, flywheel2);
 }
 
-float ShooterSubsystem::findRampOutput(float output)
+float ShooterSentrySubsystem::findRampOutput(float output)
 {
     flywheelRamp.setTarget(output);
     flywheelRamp.update();
     return flywheelRamp.getValue();
 }
 
-void ShooterSubsystem::setDesiredOutput(float output) {
+void ShooterSentrySubsystem::setDesiredOutput(float output) {
     float changeVal = findRampOutput(output);
+    drivers->pwm.write(changeVal, flywheel4);
+    drivers->pwm.write(changeVal, flywheel3);
     drivers->pwm.write(changeVal, flywheel2);
     drivers->pwm.write(changeVal, flywheel1);
 }
