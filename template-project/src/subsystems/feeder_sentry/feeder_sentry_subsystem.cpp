@@ -8,16 +8,23 @@ using namespace tap;
 namespace feeder
 {
 
-void FeederSubsystem::initialize()
+void FeederSentrySubsystem::initialize()
 {
-    feederMotor.initialize();
+    feederMotor1.initialize();
+    feederMotor2.initialize();
 }
 
-void FeederSubsystem::refresh() {
-    updateFeederPid(&rpmPid, &feederMotor, targetRPM);
+void FeederSentrySubsystem::refresh()
+{
+    updateFeederPid(&rpmPid1, &feederMotor1, motor1TargetRPM);
+    updateFeederPid(&rpmPid2, &feederMotor2, motor2TargetRPM);
 }
 
-void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
+void FeederSentrySubsystem::updateFeederPid(
+    modm::Pid<float>* pid,
+    tap::motor::DjiMotor* const motor,
+    float desiredRpm)
+{
     if(desiredRpm || motor->getShaftRPM() > 50){
         pid->update(desiredRpm - motor->getShaftRPM());
         motor->setDesiredOutput(pid->getValue());
@@ -28,8 +35,9 @@ void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMoto
 /*
     The target RPM should be a constant.
 */
-void FeederSubsystem::setTargetRPM(float RPM)
+void FeederSentrySubsystem::setTargetRPM(float RPM)
 {
-    targetRPM = RPM;
+    motor1TargetRPM = RPM;
+    motor2TargetRPM = RPM;
 }
 } //namespace feeder

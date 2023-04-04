@@ -3,11 +3,11 @@
 
 #include "tap/control/command.hpp"
 
-#include "feeder_subsystem.hpp"
+#include "feeder_sentry_subsystem.hpp"
 #include "drivers.hpp"
 namespace feeder{
 
-class FeederMovementCommand : public tap::control::Command{
+class FeederSentryMovementCommand : public tap::control::Command{
 public:
     /**
      * Initializes the command with the passed in FeederSubsystem.  Must not
@@ -16,11 +16,11 @@ public:
      * @param[in] feeder a pointer to the feeder motorto be passed in that this
      *      Command will interact with.
      */
-    FeederMovementCommand(FeederSubsystem *const feeder, src::Drivers *drivers);
+    FeederSentryMovementCommand(FeederSentrySubsystem *const feeder, src::Drivers *drivers);
 
-    FeederMovementCommand(const FeederMovementCommand &other) = delete;
+    FeederSentryMovementCommand(const FeederSentryMovementCommand &other) = delete;
 
-    FeederMovementCommand &operator=(const FeederMovementCommand &other) = delete;
+    FeederSentryMovementCommand &operator=(const FeederSentryMovementCommand &other) = delete;
 
     void initialize() override;
 
@@ -32,11 +32,11 @@ public:
 
     bool isFinished() const override;
 private:
-    FeederSubsystem *const feeder;
+    FeederSentrySubsystem *const feeder;
 
     src::Drivers *drivers;
-}; //class FeederMovementCommand : public tap::control::Command
+}; //class FeederSentryMovementCommand : public tap::control::Command
 
 } //namespace Feeder
 
-#endif //FEEDER_MOVEMENT_COMMAND_HPP_ 
+#endif //FEEDER_MOVEMENT_COMMAND_HPP_

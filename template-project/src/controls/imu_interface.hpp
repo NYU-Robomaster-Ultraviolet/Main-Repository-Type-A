@@ -2,10 +2,17 @@
 #define IMU_INTERFACE_HPP_
 #include "drivers.hpp"
 #include "modm/math/geometry/angle.hpp"
-#include "controls/standard/standard_constants.hpp"
 
-/* 
-ImuRadInterfrace is a class that will return the values of imu readings in radians. It will also 
+#ifdef TARGET_STANDARD
+#include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
+/*
+ImuRadInterfrace is a class that will return the values of imu readings in radians. It will also
 use displacement angles when measuring position relative to its starting position.
 due to taproot, yaw = roll, roll = pitch, pitch = yaw
 */
@@ -18,7 +25,7 @@ class ImuRadInterface{
 public:
     ImuRadInterface(tap::Drivers *drivers) : drivers(drivers) {}
 
-    //getters for offset from angles from starting position from radians 
+    //getters for offset from angles from starting position from radians
     float getYaw() const{return modm::toRadian(drivers->mpu6500.getYaw()) + startingYaw;}
     float getPitch() const{return modm::toRadian(drivers->mpu6500.getPitch()) + startingPitch;}
     float getRoll() const{return modm::toRadian(drivers->mpu6500.getRoll()) + startingRoll;}
@@ -34,7 +41,7 @@ public:
     float getAZ() const {return modm::toRadian(drivers->mpu6500.getAz());}
 
     bool ready() const {
-        return tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED == 
+        return tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED ==
         drivers->mpu6500.getImuState();}
 
 private:

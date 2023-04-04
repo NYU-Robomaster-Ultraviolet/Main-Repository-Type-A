@@ -6,10 +6,6 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
 
-#ifdef TARGET_STANDARD
-#include "controls/standard/standard_constants.hpp"
-#endif
-
 #ifdef TARGET_SENTRY
 #include "controls/sentry/sentry_constants.hpp"
 #endif
@@ -18,20 +14,29 @@
 
 namespace feeder{
 
-class FeederSubsystem : public tap::control::Subsystem
+class FeederSentrySubsystem : public tap::control::Subsystem
 {
 public:
-    FeederSubsystem(tap::Drivers *drivers)
+    FeederSentrySubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
-    feederMotor(drivers,
+    feederMotor1(drivers,
                tap::motor::MOTOR7,
                tap::can::CanBus::CAN_BUS2,
                false,
-               "Feeder Motor"),
-      targetRPM(0.0f),
-      currentFeederMotorSpeed(0.0f),
-      rpmPid(feederPid.PID_KP, feederPid.PID_KI, feederPid.PID_KD,
-      feederPid.PID_MAX_IOUT, feederPid.PID_MAX_OUT)
+               "Feeder Motor 1"),
+    feederMotor2(drivers,
+            tap::motor::MOTOR8, // either 6 or 8
+            tap::can::CanBus::CAN_BUS2,
+            false,
+            "Feeder Motor 2"),
+      motor1TargetRPM(0.0f),
+      motor2TargetRPM(0.0f),
+      currentFeederMotor1Speed(0.0f),
+      currentFeederMotor2Speed(0.0f),
+      rpmPid1(feederPid.PID_KP, feederPid.PID_KI, feederPid.PID_KD,
+        feederPid.PID_MAX_IOUT, feederPid.PID_MAX_OUT),
+      rpmPid2(feederPid.PID_KP, feederPid.PID_KI, feederPid.PID_KD,
+        feederPid.PID_MAX_IOUT, feederPid.PID_MAX_OUT)
       {}
 
     void initialize() override;
@@ -41,23 +46,30 @@ public:
 
     void setTargetRPM(float RPM);
 
-    float getFeederMotorRPM() const {return feederMotor.isMotorOnline() ? feederMotor.getShaftRPM() : 0.0f; }
+    float getFeederMotorRPM() const {return feederMotor1.isMotorOnline() ? feederMotor1.getShaftRPM() : 0.0f; }
+
+    float getFeederMotor2RPM() const {return feederMotor2.isMotorOnline() ? feederMotor2.getShaftRPM() : 0.0f; }
 
     void updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 
-    bool motorOnline(){ return feederMotor.isMotorOnline();
-    }
+    bool motor1Online() { return feederMotor1.isMotorOnline(); }
+
+    bool motor2Online() { return feederMotor2.isMotorOnline(); }
 
 private:
-    tap::motor::DjiMotor feederMotor;
+    tap::motor::DjiMotor feederMotor1;
+    tap::motor::DjiMotor feederMotor2;
 
     //target RPM, idk the range of its value
-    float targetRPM;
+    float motor1TargetRPM;
+    float motor2TargetRPM;
 
     //motor speed given in revolutions / min
-    float currentFeederMotorSpeed;
+    float currentFeederMotor1Speed;
+    float currentFeederMotor2Speed;
 
-    modm::Pid<float> rpmPid;
+    modm::Pid<float> rpmPid1;
+    modm::Pid<float> rpmPid2;
 
     //PID constants
     FEEDER_PID feederPid;
