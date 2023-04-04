@@ -1,5 +1,5 @@
-#ifndef FEEDER_SUBSYSTEM_HPP_
-#define FEEDER_SUBSYSTEM_HPP_
+#ifndef FEEDER_SENTRY_SUBSYSTEM_HPP_
+#define FEEDER_SENTRY_SUBSYSTEM_HPP_
 
 #include "tap/control/subsystem.hpp"
 #include "modm/math/filter/pid.hpp"
@@ -76,7 +76,7 @@ private:
 
     bool inputsFound = false;
 
-};  //class FeederSubsystem
+};  //class FeederSentrySubsystem
 
 }   //namespace feeder
 
