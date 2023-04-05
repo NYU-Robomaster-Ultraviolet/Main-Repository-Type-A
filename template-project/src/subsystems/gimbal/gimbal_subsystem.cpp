@@ -113,7 +113,7 @@ void GimbalSubsystem::updateYawPid()
             constants.MAX_YAW_SPEED);
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
-        // else yawMotor.setDesiredOutput(yawMotorOutput);
+        //else yawMotor.setDesiredOutput(yawMotorOutput);
     }
 }
 
