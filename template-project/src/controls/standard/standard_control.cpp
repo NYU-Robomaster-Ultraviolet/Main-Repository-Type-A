@@ -41,9 +41,8 @@ GimbalSubsystem gimbal(drivers());
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
-MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
+MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 GimbalInterface gimbalInterface(&gimbal);
-//CVCom cvCommuicator(drivers());
 
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
