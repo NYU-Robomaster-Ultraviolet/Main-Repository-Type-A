@@ -55,6 +55,7 @@ int CVCom::readFromUart()
     }
     timeout.restart(100);
 
+    //reads single byte
     res = drivers->uart.read(
                 tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
                 (uint8_t *)(&buffer[byteIndex]),
@@ -62,7 +63,6 @@ int CVCom::readFromUart()
     if (res != 1) return 0; //maybe this is not sufficient
     // write back
     writeToUart(buffer, byteIndex + 1);
-    // writeToUart(buffer, bytes_read);
     //  get first header, unpack "B" 0xE7
 
     switch (readingState)
