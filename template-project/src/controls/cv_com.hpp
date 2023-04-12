@@ -46,8 +46,8 @@ public:
         unsigned char empty1;
         unsigned char empty2;
         unsigned short msg_type;
-        float pitch;
-        float yaw;
+        int pitch;
+        int yaw;
         unsigned char hasTarget;
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
@@ -110,9 +110,9 @@ private:
     float yaw;
     float pitch;
     bool validAngle = false;
-    size_t byteIndex;
+    size_t byteIndex = 0;
     size_t buffer_size = 100;
-    char* buffer;
+    char *buffer;
     // reading state enum
     enum ReadingState
     {

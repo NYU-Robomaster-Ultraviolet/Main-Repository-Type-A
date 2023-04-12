@@ -5,9 +5,11 @@
 
 #include "drivers.hpp"
 
-CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new char[buffer_size]) {}
+CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new char[buffer_size])
+{
+}
 
-CVCom::~CVCom(){delete[] buffer;}
+CVCom::~CVCom() { delete[] buffer; }
 
 void CVCom::init()
 {
@@ -30,10 +32,8 @@ int CVCom::writeToUart(const std::string &s)
 int CVCom::writeToUart(char *s, int n)
 {
     // declaring character array
-    int res = drivers->uart.write(
-        tap::communication::serial::Uart::UartPort::Uart7,
-        (uint8_t *)s,
-        n);
+    int res =
+        drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7, (uint8_t *)s, n);
     return res;
 }
 
@@ -45,7 +45,7 @@ int CVCom::readFromUart()
     size_t i = 0;
     size_t msg_len = 0;
     size_t msg_type = 0;
-    Header headerStruct{};
+    header headerStruct{};
     int res = 0;
     // wait for timeout
     // if timeout not reached, return
@@ -64,131 +64,128 @@ int CVCom::readFromUart()
     // write back
     writeToUart(buffer, byteIndex + 1);
     //  get first header, unpack "B" 0xE7
+    readingState = WAITING_FOR_HEADER;
 
     switch (readingState)
     {
         case WAITING_FOR_HEADER:
         {
+            byteIndex = 0;
             // read the next byte
             // drivers->leds.set(drivers->leds.C, false);
-            // res = drivers->uart.read(
-            //     tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-            //     (uint8_t *)(&buffer[byteIndex]),
-            //     1);
-            // if (res != 1) return 0; //maybe this is not sufficient
-            // // write back
-            // writeToUart(buffer, byteIndex + 1);
-            //looking for header
-            if(buffer[byteIndex] != 0xE7) {
-                bytes_read += 1;
-                readingState = READING_HEADER;
+            res = drivers->uart.read(
+                tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                (uint8_t *)(&buffer[byteIndex]),
+                1);
+            // if (res != 1) return 0;
+            //  looking for header
+            short count = 0;
+            while (buffer[byteIndex] != 0xE7 && count < 10)
+            {
+                // drivers->leds.set(drivers->leds.C, true);
+                res = drivers->uart.read(
+                    tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                    (uint8_t *)(buffer),
+                    1);
+                count++;
             }
-            else byteIndex++;
-            break;
-            // while (*reinterpret_cast<uint8_t *>(buffer + bytes_read) != 0xE7) //breaks if Jetson not connected
-            // {
-            //     // read the next byte
-            //     res = drivers->uart.read(
-            //         tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-            //         (uint8_t *)(buffer),
-            //         1);
-            //     if (res != 1) return 0;
-            //     writeToUart(buffer, bytes_read);
-            // }
-            // bytes_read += 1;
-            // readingState = READING_HEADER;
+            if (buffer[byteIndex] != 0xE7)
+            {
+                timeout.restart(100);
+                return 1;
+            }
+            bytes_read += 1;
+            readingState = READING_HEADER;
+            byteIndex++;
         }
         case READING_HEADER:
-        {  
-            byteIndex++;
+        {
             // Header_length=5
             // Read the next 4 bytes
-            // int res = drivers->uart.read(
-            //     tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-            //     (uint8_t *)(buffer + 1),
-            //     4);
+            int res = drivers->uart.read(
+                tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                (uint8_t *)(buffer + 1),
+                4);
 
-            // if (res <= 0)
-            // {
-            //     timeout.restart(100);
-            //     return bytes_read;
-            // }
-
-            // unpack the header
-            if(byteIndex == 4) {
-                headerStruct = *reinterpret_cast<Header *>(buffer);
-                msg_len = headerStruct->length;
-                msg_type = headerStruct->msg_type;
-                //bytes_read += 4;
-                readingState = READING_DATA;
+            if (res <= 0)
+            {
+                timeout.restart(100);
+                return bytes_read;
             }
-            break;
+
+            headerStruct = *reinterpret_cast<header *>(buffer);
+            msg_len = headerStruct.length;
+            msg_type = headerStruct.msg_type;
+            // write back
+
+            // bytes_read += 4;
+            readingState = READING_DATA;
         }
         case READING_DATA:
         {
-            byteIndex++;
             // Read the next msg_len bytes
-            // do
-            // {
-            //     res = drivers->uart.read(
-            //         tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-            //         (uint8_t *)(buffer + 5),
-            //         msg_len);
-            // } while (res <= 0);
+            short count = 0;
+            do
+            {
+                res = drivers->uart.read(
+                    tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                    (uint8_t *)(buffer + 5),
+                    msg_len);
+                count++;
+            } while (res <= 0 && count < 10);
 
-            // if (res <= 0)
-            // {
-            //     // timeout.restart(10);
-            //     return bytes_read;
-            // }
-            switch (headerStruct->msg_type)
+            if (res <= 0)
+            {
+                timeout.restart(100);
+                return bytes_read;
+            }
+
+            switch (headerStruct.msg_type)
             {
                 // 0: autoaim, 1: align_request, 3:align_finish
-                case 0:
-                {   
-                    // Autoaim
-                    if(byteIndex == sizeof(AutoAimStruct)){
-                        AutoAimStruct autoAimStruct = *reinterpret_cast<AutoAimStruct *>(buffer);
-                        pitch = autoAimStruct->pitch;
-                        // yaw = autoAimStruct->yaw;
-                        if (pitch > 0.45 && pitch < 0.55)
-                        {
-                            drivers->leds.set(drivers->leds.C, false);
-                            validAngle = true;
-                        }
-                        readingState = WAITING_FOR_HEADER;
-                    }
-                    break;
-                }
                 case 1:
                 {
-                    // Align request
-                    if(byteIndex == sizeof(alignRequestStruct)){
-                        AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
-                        readingState = WAITING_FOR_HEADER;
-                    }        
+                    // Autoaim
+                    autoAimStruct a = *reinterpret_cast<autoAimStruct *>(buffer);
+                    // convert *100 pitch int values to float without truncating
+                    pitch = (a.pitch) / 100.0;
+                    yaw = (a.yaw) / 100.0;
+                    // yaw = autoAimStruct->yaw;
+
+                    drivers->leds.set(drivers->leds.C, false);
+                    validAngle = true;
+
+                    writeToUart(buffer, 1);
+                    readingState = WAITING_FOR_HEADER;
+                    byteIndex = 0;
+
                     break;
                 }
                 case 2:
-                {   
+                {
+                    // Align request
+                    // if (byteIndex == sizeof(alignRequestStruct))
+                    // {
+                    //     AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
+                    //     readingState = WAITING_FOR_HEADER;
+                    // }
+                    break;
+                }
+                case 3:
+                {
                     // Align finish
-                    if(byteIndex == sizeof(alignFinishStruct)){
-                    AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
-                    readingState = WAITING_FOR_HEADER;
-                    }
+                    // if (byteIndex == sizeof(alignFinishStruct))
+                    // {
+                    //     AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
+                    //     readingState = WAITING_FOR_HEADER;
+                    // }
                     break;
                 }
                 break;
             }
-
-            // make blinking (rgb)
-
-            // // unpack the header
-            // bytes_read += msg_len;
-            // timeout.restart(1000);
-            // break;
         }
     }
+    timeout.restart(100);
 
     return byteIndex;
 }
@@ -222,5 +219,4 @@ void CVCom::update()
     // }
     // else
     //     drivers->leds.set(drivers->leds.C, true);
-
 }
