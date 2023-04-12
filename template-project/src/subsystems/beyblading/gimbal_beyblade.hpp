@@ -29,6 +29,9 @@ private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
     bool noTurn;
+    float offset = 1.7;
+    float rotation = (0.2 / offset);
+
 }; //GimbalBeybladeCommand
 
 

@@ -32,7 +32,7 @@ void  GimbalBeybladeCommand::initialize() {
 void  GimbalBeybladeCommand::execute()
 {
     gimbal->setIMU(drivers->imu_rad_interface.getYaw(), drivers->imu_rad_interface.getPitch());
-    gimbal->controllerInput(drivers->control_interface.getGimbalYawInput() + 1,
+    gimbal->controllerInput(drivers->control_interface.getGimbalYawInput() - rotation,
         drivers->control_interface.getGimbalPitchInput());
 }
 
