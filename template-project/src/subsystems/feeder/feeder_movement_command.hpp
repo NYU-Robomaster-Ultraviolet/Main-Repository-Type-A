@@ -39,4 +39,4 @@ private:
 
 } //namespace Feeder
 
-#endif //FEEDER_MOVEMENT_COMMAND_HPP_ 
+#endif //FEEDER_MOVEMENT_COMMAND_HPP_

@@ -10,10 +10,6 @@
 #include "controls/standard/standard_constants.hpp"
 #endif
 
-#ifdef TARGET_SENTRY
-#include "controls/sentry/sentry_constants.hpp"
-#endif
-
 #include "drivers.hpp"
 
 namespace feeder{
