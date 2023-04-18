@@ -60,6 +60,8 @@ private:
     gimbal::GimbalInterface* gimbalInterface;
 
     bool flag;
+
+    float rotation = 0.2;
 }; //class ChassisBeybladeCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
