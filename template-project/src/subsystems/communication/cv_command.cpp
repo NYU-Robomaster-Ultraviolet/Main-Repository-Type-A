@@ -30,11 +30,18 @@ void  CvCommand::initialize() {
 }
 
 void  CvCommand::execute() {
-    
+
     if(drivers->cv_com.validReading()){
         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
         drivers->cv_com.invalidateAngle();
     }
+
+    float yaw = gimbal->getImuYaw();
+    float pitch = gimbal->getImuPitch();
+
+    // 'c' is a random char used as header to fit the format
+    std::string input = 'c' + std::to_string(yaw) + std::to_string(pitch);
+    drivers->cv_com.writeToUart(input);
 }
 
 void  CvCommand::end(bool) {
