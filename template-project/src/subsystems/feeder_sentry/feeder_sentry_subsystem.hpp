@@ -20,12 +20,12 @@ public:
     FeederSentrySubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
     feederMotor1(drivers,
-               tap::motor::MOTOR7,
+               tap::motor::MOTOR1,
                tap::can::CanBus::CAN_BUS2,
-               false,
+               true,
                "Feeder Motor 1"),
     feederMotor2(drivers,
-            tap::motor::MOTOR8, // either 6 or 8
+            tap::motor::MOTOR2, // either 6 or 8
             tap::can::CanBus::CAN_BUS2,
             false,
             "Feeder Motor 2"),
