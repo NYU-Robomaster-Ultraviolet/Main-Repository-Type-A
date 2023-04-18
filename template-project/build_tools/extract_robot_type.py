@@ -31,6 +31,10 @@ def get_robot_type():
     if robot_type == None:
         with open(ROBOT_TYPE_FILE, "r") as robot_type_file_reader:
             for word in robot_type_file_reader.read().splitlines():
+                # ignore lines with inline comments
+                if word.strip().startswith('//'):
+                    continue
+
                 if "#" in word and "define" in word and "TARGET_" in word:
                     robot_type = word.split()[-1]
                     break
