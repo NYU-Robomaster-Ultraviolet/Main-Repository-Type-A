@@ -60,9 +60,6 @@ static void initializeIo(src::Drivers *drivers);
 // called as frequently.
 static void updateIo(src::Drivers *drivers);
 // frequency for mpu6500
-char c = 'c';
-char *strUart = &c;
-bool flag = true;
 int main()
 {
 #ifdef PLATFORM_HOSTED
@@ -99,18 +96,10 @@ int main()
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.encodeAndSendCanData, ());
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
         }
+        // #ifdef CV_ACTIVE
+        // drivers->cv_com.update();
+        // #endif
         drivers->cv_com.update();
-        // need to call cvInput from the GimbalSunsystem in some way
-
-        /*
-        if(drivers->cv_com.online()){
-            drivers->leds.set(drivers->leds.A, flag);
-        }
-        if(flag) flag = false;
-        else flag = true;
-        */
-        // drivers->cv_com.sendAutoAimMsg(1, 1, 1);
-        // drivers->uart.write(tap::communication::serial::Uart::Uart7, (uint8_t *)strUart, 1);
         modm::delay_us(10);
     }
     return 0;

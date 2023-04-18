@@ -3,4 +3,5 @@
 #define TARGET_STANDARD
 // two motor - two shooter system
 // #define TARGET_SENTRY
+#define CV_ACTIVE
 #endif

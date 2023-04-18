@@ -125,9 +125,6 @@ private:
     float motorSpeedFactor;
     //checks if there are inputs or not
     bool inputsFound = false;
-
-    //imu interface
-    ImuRadInterface imu;
 }; //class GimbalSubsystem
 }//namespace gimbal
 

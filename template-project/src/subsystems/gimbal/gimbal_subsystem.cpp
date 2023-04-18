@@ -22,8 +22,7 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
       currentYawMotorSpeed(0.0f),
       currentPitchMotorSpeed(0.0f),
       yawMotorPid(constants.YAW_PID),
-      pitchMotorPid(constants.PITCH_PID),
-      imu(drivers)
+      pitchMotorPid(constants.PITCH_PID)
 {
 }
 
@@ -53,9 +52,9 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
+    drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch());
+    drivers->leds.set(drivers->leds.H, drivers->mpu6500.getPitch());
     // if no inputs, lock gimbal
-    drivers->leds.set(drivers->leds.A, !yawOnline());
-    drivers->leds.set(drivers->leds.H, !pitchOnline());
     if (inputsFound)
     {
         if (yawMotor.isMotorOnline())
@@ -113,7 +112,7 @@ void GimbalSubsystem::updateYawPid()
             constants.MAX_YAW_SPEED);
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
-        // else yawMotor.setDesiredOutput(yawMotorOutput);
+        else yawMotor.setDesiredOutput(yawMotorOutput);
     }
 }
 

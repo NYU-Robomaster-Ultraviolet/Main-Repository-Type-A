@@ -5,7 +5,11 @@
 
 #include "drivers.hpp"
 
-CVCom::CVCom(src::Drivers *drivers) : drivers(drivers) {}
+CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new char[buffer_size])
+{
+}
+
+CVCom::~CVCom() { delete[] buffer; }
 
 void CVCom::init()
 {
@@ -22,24 +26,18 @@ int CVCom::writeToUart(const std::string &s)
         tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
         (uint8_t *)char_array,
         n);
-    // delayMS(100); //delay for .1 sec
-    // timeout.restart(1000);
     return res;
 }
 
 int CVCom::writeToUart(char *s, int n)
 {
     // declaring character array
-    int res = drivers->uart.write(
-        tap::communication::serial::Uart::UartPort::Uart7,
-        (uint8_t *)s,
-        n);  // Uart7
-    // delayMS(100); //delay for .1 sec
-    // timeout.restart(1000);
+    int res =
+        drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7, (uint8_t *)s, n);
     return res;
 }
 
-int CVCom::readFromUart(char *buffer)
+int CVCom::readFromUart()
 {
     // declaring character array
     size_t bytes_read = 0;
@@ -47,7 +45,7 @@ int CVCom::readFromUart(char *buffer)
     size_t i = 0;
     size_t msg_len = 0;
     size_t msg_type = 0;
-    Header headerStruct{};
+    header headerStruct{};
     int res = 0;
     // wait for timeout
     // if timeout not reached, return
@@ -56,36 +54,49 @@ int CVCom::readFromUart(char *buffer)
         return 0;
     }
     timeout.restart(100);
-    // writeToUart(buffer, bytes_read);
+
+    //reads single byte
+    res = drivers->uart.read(
+                tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                (uint8_t *)(&buffer[byteIndex]),
+                1);
+    if (res != 1) return 0; //maybe this is not sufficient
+    // write back
+    writeToUart(buffer, byteIndex + 1);
     //  get first header, unpack "B" 0xE7
+    readingState = WAITING_FOR_HEADER;
 
     switch (readingState)
     {
         case WAITING_FOR_HEADER:
         {
+            byteIndex = 0;
             // read the next byte
             // drivers->leds.set(drivers->leds.C, false);
             res = drivers->uart.read(
                 tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-                (uint8_t *)(buffer + bytes_read),
+                (uint8_t *)(&buffer[byteIndex]),
                 1);
-
-            if (res != 1) return 0;
-            // write back
-            writeToUart(buffer, bytes_read);
-
-            while (*reinterpret_cast<uint8_t *>(buffer + bytes_read) != 0xE7)
+            // if (res != 1) return 0;
+            //  looking for header
+            short count = 0;
+            while (buffer[byteIndex] != 0xE7 && count < 10)
             {
-                // read the next byte
+                // drivers->leds.set(drivers->leds.C, true);
                 res = drivers->uart.read(
                     tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
                     (uint8_t *)(buffer),
                     1);
-                if (res != 1) return 0;
-                writeToUart(buffer, bytes_read);
+                count++;
+            }
+            if (buffer[byteIndex] != 0xE7)
+            {
+                timeout.restart(100);
+                return 1;
             }
             bytes_read += 1;
             readingState = READING_HEADER;
+            byteIndex++;
         }
         case READING_HEADER:
         {
@@ -102,71 +113,81 @@ int CVCom::readFromUart(char *buffer)
                 return bytes_read;
             }
 
-            // unpack the header
-            headerStruct = *reinterpret_cast<Header *>(buffer);
-            msg_len = headerStruct->length;
-            msg_type = headerStruct->msg_type;
-            bytes_read += 4;
+            headerStruct = *reinterpret_cast<header *>(buffer);
+            msg_len = headerStruct.length;
+            msg_type = headerStruct.msg_type;
+            // write back
+
+            // bytes_read += 4;
             readingState = READING_DATA;
         }
         case READING_DATA:
         {
             // Read the next msg_len bytes
+            short count = 0;
             do
             {
                 res = drivers->uart.read(
                     tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
                     (uint8_t *)(buffer + 5),
                     msg_len);
-            } while (res <= 0);
+                count++;
+            } while (res <= 0 && count < 10);
 
-            // if (res <= 0)
-            // {
-            //     // timeout.restart(10);
-            //     return bytes_read;
-            // }
-            switch (headerStruct->msg_type)
+            if (res <= 0)
+            {
+                timeout.restart(100);
+                return bytes_read;
+            }
+
+            switch (headerStruct.msg_type)
             {
                 // 0: autoaim, 1: align_request, 3:align_finish
-                case 0:
-                {
-                    // Autoaim
-                    AutoAimStruct autoAimStruct = *reinterpret_cast<AutoAimStruct *>(buffer);
-                    pitch = autoAimStruct->pitch;
-                    // yaw = autoAimStruct->yaw;
-                    if (pitch > 0.45 && pitch < 0.55)
-                    {
-                        drivers->leds.set(drivers->leds.C, false);
-                        validAngle = true;
-                    }
-
-                    break;
-                }
                 case 1:
                 {
-                    // Align request
-                    AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
+                    // Autoaim
+                    autoAimStruct a = *reinterpret_cast<autoAimStruct *>(buffer);
+                    // convert *100 pitch int values to float without truncating
+                    pitch = (a.pitch) / 100.0;
+                    yaw = (a.yaw) / 100.0;
+                    // yaw = autoAimStruct->yaw;
+
+                    drivers->leds.set(drivers->leds.C, false);
+                    validAngle = true;
+
+                    writeToUart(buffer, 1);
+                    readingState = WAITING_FOR_HEADER;
+                    byteIndex = 0;
+
                     break;
                 }
                 case 2:
                 {
-                    // Align finish
-                    AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
+                    // Align request
+                    // if (byteIndex == sizeof(alignRequestStruct))
+                    // {
+                    //     AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
+                    //     readingState = WAITING_FOR_HEADER;
+                    // }
                     break;
                 }
+                case 3:
+                {
+                    // Align finish
+                    // if (byteIndex == sizeof(alignFinishStruct))
+                    // {
+                    //     AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
+                    //     readingState = WAITING_FOR_HEADER;
+                    // }
+                    break;
+                }
+                break;
             }
-
-            // make blinking (rgb)
-            readingState = WAITING_FOR_HEADER;
-
-            // unpack the header
-            bytes_read += msg_len;
-            timeout.restart(1000);
-            break;
         }
     }
+    timeout.restart(100);
 
-    return bytes_read;
+    return byteIndex;
 }
 
 void CVCom::UnPackMsgs(char *buffer) {}
@@ -190,15 +211,12 @@ void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
 
 void CVCom::update()
 {
-    // set the gimbad subsystem to use the cvcom
-    char *buffer = new char[buffer_size];
-    int bytes_read = readFromUart(buffer);
+    // set the gimbal subsystem to use the cvcom
+    int bytes_read = readFromUart();
     // if (bytes_read > 0)
     // {
 
     // }
     // else
     //     drivers->leds.set(drivers->leds.C, true);
-
-    delete[] buffer;
 }

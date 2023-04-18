@@ -14,11 +14,13 @@ class CVCom
 public:
     CVCom(src::Drivers *drivers);
 
+    ~CVCom();
+
     int writeToUart(const std::string &s);
 
     int writeToUart(char *s, int n);
 
-    int readFromUart(char *buffer);
+    int readFromUart();
 
     void UnPackMsgs(char *buffer);
 
@@ -44,8 +46,8 @@ public:
         unsigned char empty1;
         unsigned char empty2;
         unsigned short msg_type;
-        float pitch;
-        float yaw;
+        int pitch;
+        int yaw;
         unsigned char hasTarget;
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
@@ -108,8 +110,9 @@ private:
     float yaw;
     float pitch;
     bool validAngle = false;
-
+    size_t byteIndex = 0;
     size_t buffer_size = 100;
+    char *buffer;
     // reading state enum
     enum ReadingState
     {
