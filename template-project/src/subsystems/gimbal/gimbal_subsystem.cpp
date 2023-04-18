@@ -37,10 +37,10 @@ void GimbalSubsystem::initialize()
     pitchMotor.setDesiredOutput(0);
     uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
     uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
-    startingPitchEncoder = wrappedEncoderValueToRadians(currentPitchEncoder);
-    startingYawEncoder = wrappedEncoderValueToRadians(currentYawEncoder);
-    startingPitch = startingPitchEncoder;
-    startingYaw = startingYawEncoder;
+    encoderPitch = wrappedEncoderValueToRadians(currentPitchEncoder);
+    encoderYaw = wrappedEncoderValueToRadians(currentYawEncoder);
+    startingPitch = encoderPitch;
+    startingYaw = encoderYaw;
     currentYaw = startingYaw;
     currentPitch = startingPitch;
     targetYaw = startingYaw;
@@ -52,23 +52,31 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
-    drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch());
-    drivers->leds.set(drivers->leds.H, drivers->mpu6500.getPitch());
+    if(isCalibrated()){
+        setPitchImu();
+        setYawImu();
+        drivers->leds.set(drivers->leds.A, imuPitch > modm::toRadian(90));
+        drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
+        drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
+        drivers->leds.set(drivers->leds.G, imuYaw < modm::toRadian(180));
+    }
     // if no inputs, lock gimbal
     if (inputsFound)
     {
         if (yawMotor.isMotorOnline())
         {
             currentYawMotorSpeed = getYawMotorRPM();  // gets the rotational speed from motor
-            uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
-            currentYaw = wrappedEncoderValueToRadians(currentYawEncoder);
+            encoderYaw = wrappedEncoderValueToRadians(yawMotor.getEncoderWrapped());
+            //currentYaw = isCalibrated() ? imuYaw : encoderYaw;
+            currentYaw = encoderYaw;
             updateYawPid();
         }
         if (pitchMotor.isMotorOnline())
         {
             currentPitchMotorSpeed = getPitchMotorRPM();
-            uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
-            currentPitch = wrappedEncoderValueToRadians(currentPitchEncoder);
+            encoderPitch = wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped());
+            //currentPitch = isCalibrated() ? imuPitch : encoderPitch;
+            currentPitch = encoderPitch;
             updatePitchPid();
         }
     }

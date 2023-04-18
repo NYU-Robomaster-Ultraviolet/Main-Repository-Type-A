@@ -24,6 +24,7 @@
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 #include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
+#include "subsystems/communication/cv_feeder_command.hpp"
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -53,7 +54,8 @@ ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 CvCommand cvMovement(&gimbal, drivers());
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
-FeederMovementCommand feederMovement(&feeder, drivers());
+// FeederMovementCommand feederMovement(&feeder, drivers());
+CVFeeder feederMovement(&feeder, drivers());
 ShootUserCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
