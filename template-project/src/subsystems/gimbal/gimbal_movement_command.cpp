@@ -26,14 +26,25 @@ GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src:
 }
 void  GimbalMovementCommand::initialize() {
         gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
-        noTurn = 0;
+        if(!gimbal->isCalibrated()) timeout.restart(2500);
+        else timeout.restart(20);
     }
 
 void  GimbalMovementCommand::execute()
 {
-    gimbal->setIMU(drivers->imu_rad_interface.getYaw(), drivers->imu_rad_interface.getPitch());
-    gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
-        drivers->control_interface.getGimbalPitchInput());
+    if(timeout.isExpired()){
+        if(!gimbal->isCalibrated()) {
+            drivers->mpu6500.requestCalibration();
+            gimbal->calibrateImu();
+            timeout.restart(50);
+        }
+        else{
+            //drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch() > 0);
+            gimbal->setIMU(drivers->imu_rad_interface.getYaw(), drivers->imu_rad_interface.getPitch());
+            gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
+                drivers->control_interface.getGimbalPitchInput());
+        }
+    }
 }
 
 void  GimbalMovementCommand::end(bool) {

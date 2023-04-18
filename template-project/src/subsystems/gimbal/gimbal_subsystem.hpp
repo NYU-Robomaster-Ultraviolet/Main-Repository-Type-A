@@ -37,11 +37,27 @@ public:
 
     static inline float wrappedEncoderValueToRadians(int64_t encoderValue);
 
+
     void setYawAngle(float angle) {
         if(angle > M_TWOPI) angle -= M_TWOPI;
         else if(angle < 0) angle += M_TWOPI;
         targetYaw = angle;
     }
+
+    float getImuPitch(){ 
+        float pitch = modm::toRadian(drivers->mpu6500.getPitch());
+        float roll = modm::toRadian(drivers->mpu6500.getRoll());
+        tap::algorithms::rotateVector(&pitch, &roll, getImuYaw());
+        return -pitch;
+    }
+
+    float getImuYaw() const {
+        return  -modm::toRadian(drivers->mpu6500.getYaw() - 180);
+    }
+
+
+    void setYawImu(){ currPitchImu = getImuYaw();}
+    void setPitchImu(){ currPitchImu = getImuPitch();}
 
     void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE ,
         constants.PITCH_MAX_ANGLE);}
@@ -54,8 +70,8 @@ public:
     float getPitchVelocity() const {return (M_PI / 120) * pitchMotor.getShaftRPM();}
 
     //getters for current motor positions
-    float getYawEncoder() const {return currentYaw;}
-    float getPitchEncoder() const {return currentPitch;}
+    float getYawEncoder() const {return encoderYaw;}
+    float getPitchEncoder() const {return encoderPitch;}
 
     //these methods will update both PID calculators and set motor speeds
     void updateYawPid();
@@ -79,6 +95,10 @@ public:
     //this method sets the IMU pitch angles
     void setIMU(float yaw, float p);
 
+    //these are used for calibrating the IMU
+    void calibrateImu() {calibrated = true;}
+    bool isCalibrated() const {return calibrated;}
+
 private:
     tap::motor::DjiMotor yawMotor;
     tap::motor::DjiMotor pitchMotor;
@@ -89,12 +109,15 @@ private:
 
     float startingPitch;
     float startingYaw;
-    //current angles in radians from motor encoder data
+    //current angles in radians used for error calculations
     float targetYaw;
     float targetPitch;
     //current angles in radians from IMU
     float imuYaw;
     float imuPitch;
+    //current angles in radians from encoder
+    float encoderYaw;
+    float encoderPitch;
     //motor speed given in revolutions / min
     float currentYawMotorSpeed;
     float currentPitchMotorSpeed;
@@ -106,6 +129,10 @@ private:
     //current angles in radians
     float currentYaw;
     float currentPitch;
+
+    //current angles in IMU data
+    float currYawImu;
+    float currPitchImu;
 
     //desired error angles
     float yawError;
@@ -125,6 +152,11 @@ private:
     float motorSpeedFactor;
     //checks if there are inputs or not
     bool inputsFound = false;
+
+    //checks if gimbal imu is calibrated or not
+    bool calibrated = false;
+
+    bool imuMovementReady = false;
 }; //class GimbalSubsystem
 }//namespace gimbal
 

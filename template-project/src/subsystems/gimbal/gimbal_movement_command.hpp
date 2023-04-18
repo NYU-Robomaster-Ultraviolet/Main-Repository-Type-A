@@ -2,9 +2,10 @@
 #define GIMBAL_MOVEMENT_COMMAND_HPP_
 
 #include "tap/control/command.hpp"
-
+#include "tap/architecture/timeout.hpp"
 #include "gimbal_subsystem.hpp"
 #include "drivers.hpp"
+
 namespace gimbal{
 class GimbalMovementCommand : public tap::control::Command {
 public:
@@ -29,6 +30,7 @@ private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
     bool noTurn;
+    tap::arch::MilliTimeout timeout;
 }; //GimbalMovementCommand
 
 

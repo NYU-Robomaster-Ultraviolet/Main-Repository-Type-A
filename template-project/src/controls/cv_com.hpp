@@ -35,6 +35,8 @@ public:
 
     bool validReading() const { return validAngle; }
 
+    bool foundTarget() const {return hasTarget;}
+
     bool online() const { return timeout.isExpired(); }
 
     void init();
@@ -110,6 +112,7 @@ private:
     float yaw;
     float pitch;
     bool validAngle = false;
+    bool hasTarget = false;
     size_t byteIndex = 0;
     size_t buffer_size = 100;
     char *buffer;

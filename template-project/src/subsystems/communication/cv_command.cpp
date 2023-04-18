@@ -35,7 +35,6 @@ void  CvCommand::execute() {
         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
         drivers->cv_com.invalidateAngle();
     }
-    
 }
 
 void  CvCommand::end(bool) {

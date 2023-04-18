@@ -41,7 +41,7 @@ void  ChassisBeybladeCommand::execute()
     chassis->setDesiredOutput(
         xOutput,
         yOutput,
-        drivers->control_interface.getChassisRotationInput() - 1);
+        -1);
 }
 
 //stops movement again

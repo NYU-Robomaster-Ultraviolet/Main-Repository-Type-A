@@ -150,9 +150,10 @@ int CVCom::readFromUart()
                     // convert *100 pitch int values to float without truncating
                     pitch = (a.pitch) / 100.0;
                     yaw = (a.yaw) / 100.0;
+                    hasTarget = a.hasTarget;
                     // yaw = autoAimStruct->yaw;
 
-                    drivers->leds.set(drivers->leds.C, false);
+                    //drivers->leds.set(drivers->leds.C, false);
                     validAngle = true;
 
                     writeToUart(buffer, 1);
