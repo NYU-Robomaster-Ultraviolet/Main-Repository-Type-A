@@ -11,21 +11,16 @@
 
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
-// #include "subsystems/feeder/feeder_subsystem.hpp"
-// #include "subsystems/shooter/shooter_subsystem.hpp"
-#include "subsystems/shooter_sentry/shooter_sentry_subsystem.hpp"
-#include "subsystems/feeder_sentry/feeder_sentry_subsystem.hpp"
+#include "subsystems/feeder/feeder_subsystem.hpp"
+#include "subsystems/shooter/shooter_subsystem.hpp"
 
-
+#include "subsystems/shooter/shoot_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
 #include "subsystems/music/music_player.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
-// #include "subsystems/feeder/feeder_movement_command.hpp"
-// #include "subsystems/shooter/shoot_user_command.hpp"
+#include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
-#include "subsystems/feeder_sentry/feeder_sentry_movement_command.hpp"
-#include "subsystems/shooter_sentry/shoot_sentry_user_command.hpp"
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -43,8 +38,8 @@ namespace src::control{
 // Define subsystems here ------------------------------------------------
 ChassisSubsystem chassis(drivers());
 GimbalSubsystem gimbal(drivers());
-FeederSentrySubsystem feeder(drivers());
-ShooterSentrySubsystem shooter(drivers());
+FeederSubsystem feeder(drivers());
+ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 GimbalInterface gimbalInterface(&gimbal);
@@ -54,8 +49,8 @@ GimbalInterface gimbalInterface(&gimbal);
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 CvCommand cvMovement(&gimbal, drivers());
-FeederSentryMovementCommand feederMovement(&feeder, drivers());
-ShootSentryUserCommand shootUser(&shooter, drivers());
+FeederMovementCommand feederMovement(&feeder, drivers());
+ShootUserCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
