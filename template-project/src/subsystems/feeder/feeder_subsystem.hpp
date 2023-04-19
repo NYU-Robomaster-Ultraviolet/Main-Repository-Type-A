@@ -10,6 +10,10 @@
 #include "controls/standard/standard_constants.hpp"
 #endif
 
+#ifdef TARGET_HERO
+#include "controls/hero/hero_constants.hpp"
+#endif
+
 #ifdef TARGET_SENTRY
 #include "controls/sentry/sentry_constants.hpp"
 #endif
@@ -24,9 +28,9 @@ public:
     FeederSubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
     feederMotor(drivers,
-               tap::motor::MOTOR7,
+               tap::motor::MOTOR1,
                tap::can::CanBus::CAN_BUS2,
-               false,
+               true,
                "Feeder Motor"),
       targetRPM(0.0f),
       currentFeederMotorSpeed(0.0f),

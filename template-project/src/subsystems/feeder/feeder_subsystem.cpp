@@ -23,6 +23,8 @@ void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMoto
         motor->setDesiredOutput(pid->getValue());
     }
     else motor->setDesiredOutput(0);
+    drivers->leds.set(drivers->leds.E, feederMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.F, !feederMotor.isMotorOnline());
 }   
 
 /*

@@ -80,6 +80,8 @@ private:
     // PID controllers for RPM feedback from wheels
     modm::filter::Ramp<float> flywheelRamp;
 
+    bool online = false;
+
     ///< Any user input is translated into desired RPM for each motor.
 
     // Scale factor for converting joystick movement into RPM setpoint

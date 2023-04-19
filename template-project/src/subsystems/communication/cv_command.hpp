@@ -4,6 +4,19 @@
 #include "tap/control/command.hpp"
 #include "drivers.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
+
+#ifdef TARGET_STANDARD
+#include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
+#ifdef TARGET_HERO
+#include "controls/hero/hero_constants.hpp"
+#endif
+
 namespace gimbal{
 class CvCommand : public tap::control::Command {
 public:

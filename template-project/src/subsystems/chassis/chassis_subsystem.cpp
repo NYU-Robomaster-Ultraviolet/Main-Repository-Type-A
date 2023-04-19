@@ -1,13 +1,5 @@
 #include "chassis_subsystem.hpp"
 
-#ifdef TARGET_STANDARD
-#include "controls/standard/standard_constants.hpp"
-#endif
-
-#ifdef TARGET_SENTRY
-#include "controls/sentry/sentry_constants.hpp"
-#endif
-
 #include "tap/communication/serial/remote.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 

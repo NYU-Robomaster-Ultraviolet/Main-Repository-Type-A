@@ -103,7 +103,7 @@ public:
         unsigned char empty2;
         unsigned short msg_type;
     } *Header;
-    tap::arch::MilliTimeout timeout;
+   tap::arch::MilliTimeout timeout;
 
 private:
     src::Drivers *drivers;

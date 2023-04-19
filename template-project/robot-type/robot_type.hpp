@@ -1,6 +1,4 @@
 #ifndef __ROBOT_TYPE_HPP__
 #define __ROBOT_TYPE_HPP__
-#define TARGET_STANDARD
-//#define TARGET_SENTRY // two motor - two shooter system
-#define CV_ACTIVE
+#define TARGET_HERO
 #endif
