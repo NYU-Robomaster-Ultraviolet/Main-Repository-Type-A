@@ -55,10 +55,10 @@ void GimbalSubsystem::refresh()
     if(isCalibrated()){
         setPitchImu();
         setYawImu();
-        drivers->leds.set(drivers->leds.A, imuPitch > modm::toRadian(90));
-        drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
-        drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
-        drivers->leds.set(drivers->leds.G, imuYaw < modm::toRadian(180));
+        // drivers->leds.set(drivers->leds.A, imuPitch > modm::toRadian(90));
+        // drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
+        // drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
+        // drivers->leds.set(drivers->leds.G, imuYaw < modm::toRadian(180));
     }
     // if no inputs, lock gimbal
     if (inputsFound)

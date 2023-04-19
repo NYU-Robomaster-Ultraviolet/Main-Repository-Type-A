@@ -10,6 +10,10 @@
 #include "controls/standard/standard_constants.hpp"
 #endif
 
+#ifdef TARGET_HERO
+#include "controls/hero/hero_constants.hpp"
+#endif
+
 #ifdef TARGET_SENTRY
 #include "controls/sentry/sentry_constants.hpp"
 #endif
@@ -47,7 +51,7 @@ public:
     float getImuPitch(){ 
         float pitch = modm::toRadian(drivers->mpu6500.getPitch());
         float roll = modm::toRadian(drivers->mpu6500.getRoll());
-        tap::algorithms::rotateVector(&pitch, &roll, getImuYaw());
+        tap::algorithms::rotateVector(&pitch, &roll, getImuYaw() - M_PI);
         return -pitch;
     }
 

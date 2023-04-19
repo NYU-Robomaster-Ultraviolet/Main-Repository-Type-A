@@ -6,6 +6,19 @@
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "drivers.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
+
+#ifdef TARGET_STANDARD
+#include "controls/standard/standard_constants.hpp"
+#endif
+
+#ifdef TARGET_SENTRY
+#include "controls/sentry/sentry_constants.hpp"
+#endif
+
+#ifdef TARGET_HERO
+#include "controls/hero/hero_constants.hpp"
+#endif
+
 namespace chassis{
 
 class ChassisBeybladeCommand : public tap::control::Command{

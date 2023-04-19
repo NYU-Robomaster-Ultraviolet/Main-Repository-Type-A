@@ -1,4 +1,4 @@
-#ifdef TARGET_STANDARD
+#ifdef TARGET_HERO
 #include "drivers.hpp"
 #include "drivers_singleton.hpp"
 
@@ -15,9 +15,9 @@
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/feeder/feeder_subsystem.hpp"
-#include "subsystems/shooter/shooter_subsystem.hpp"
+#include "subsystems/shooter/hero_shooter_subsystem.hpp"
 
-#include "subsystems/shooter/shoot_user_command.hpp"
+#include "subsystems/shooter/hero_shooter_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
 #include "subsystems/music/music_player.hpp"
@@ -43,7 +43,7 @@ namespace src::control{
 ChassisSubsystem chassis(drivers());
 GimbalSubsystem gimbal(drivers());
 FeederSubsystem feeder(drivers());
-ShooterSubsystem shooter(drivers());
+HeroShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 GimbalInterface gimbalInterface(&gimbal);
@@ -56,7 +56,7 @@ CvCommand cvMovement(&gimbal, drivers());
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
-ShootUserCommand shootUser(&shooter, drivers());
+HeroShooterCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},

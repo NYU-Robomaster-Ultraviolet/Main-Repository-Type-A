@@ -11,6 +11,10 @@
 #include "controls/sentry/sentry_constants.hpp"
 #endif
 
+#ifdef TARGET_HERO
+#include "controls/hero/hero_constants.hpp"
+#endif
+
 /*
 ImuRadInterfrace is a class that will return the values of imu readings in radians. It will also
 use displacement angles when measuring position relative to its starting position.

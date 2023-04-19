@@ -5,13 +5,6 @@
 
 #include "controls/control_interface.hpp"
 
-#ifdef TARGET_STANDARD
-#include "controls/standard/standard_constants.hpp"
-#endif
-
-#ifdef TARGET_SENTRY
-#include "controls/sentry/sentry_constants.hpp"
-#endif
 
 namespace gimbal
 {
