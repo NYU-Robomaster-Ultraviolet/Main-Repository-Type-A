@@ -37,4 +37,4 @@ private:
     src::Drivers *drivers;
 }; //class ShooterUserCommand : public tap::control::Command
 } //namespace shooter
-#endif //SHOOTER_USER_COMMAND_HPP_ 
+#endif  // SHOOT_MOVEMENT_COMMAND_HPP_
