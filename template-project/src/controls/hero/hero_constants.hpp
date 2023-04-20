@@ -153,8 +153,5 @@ struct SHOOTER_PID
     PID_MAX_IOUT = 9000.0f;
 };  // struct FEEDER_PID
 
-tap::motor::MotorId FEEDER_ID = tap::motor::MOTOR7;
-tap::can::CanBus FEEDER_CAN = tap::can::CanBus::CAN_BUS2;
-
 #endif
 #endif
