@@ -4,6 +4,7 @@
 #include "tap/errors/create_errors.hpp"
 
 #include "controls/control_interface.hpp"
+#ifdef TARGET_SENTRY
 
 namespace feeder
 {
@@ -31,3 +32,4 @@ void  FeederSentryMovementCommand::end(bool) { feeder->setTargetRPM(0); }
 
 bool  FeederSentryMovementCommand::isFinished() const { return false; }
 }  // namespace feeder
+#endif

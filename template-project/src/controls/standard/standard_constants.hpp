@@ -1,5 +1,6 @@
 #ifndef STANDARD_CONSTANTS_HPP_
 #define STANDARD_CONSTANTS_HPP_
+#ifdef TARGET_STANDARD
 
 #include "tap/algorithms/smooth_pid.hpp"
 #include "modm/math/geometry/angle.hpp"
@@ -139,5 +140,7 @@ struct FEEDER_PID
     PID_MAX_OUT = 10000.0f,
     PID_MAX_IOUT = 9000.0f;
 };  // struct FEEDER_PID
-
+tap::motor::MotorId FEEDER_ID = tap::motor::MOTOR7;
+tap::can::CanBus FEEDER_CAN = tap::can::CanBus::CAN_BUS2;
+#endif
 #endif

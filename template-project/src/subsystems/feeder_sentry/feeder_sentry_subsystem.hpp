@@ -1,4 +1,6 @@
-#ifndef FEEDER_SENTRY_SUBSYSTEM_HPP_
+#ifdef TARGET_SENTRY
+
+#ifndef FEEDER_SENTRY_SUBSYSTEM_HPP_ 
 #define FEEDER_SENTRY_SUBSYSTEM_HPP_
 
 #include "tap/control/subsystem.hpp"
@@ -6,9 +8,7 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
 
-#ifdef TARGET_SENTRY
 #include "controls/sentry/sentry_constants.hpp"
-#endif
 
 #include "drivers.hpp"
 
@@ -80,4 +80,5 @@ private:
 
 }   //namespace feeder
 
+#endif
 #endif

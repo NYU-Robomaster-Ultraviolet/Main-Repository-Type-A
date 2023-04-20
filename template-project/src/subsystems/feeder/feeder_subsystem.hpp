@@ -29,9 +29,9 @@ public:
     FeederSubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
     feederMotor(drivers,
-               tap::motor::MOTOR1,
+               tap::motor::MOTOR7,
                tap::can::CanBus::CAN_BUS2,
-               true,
+               false,
                "Feeder Motor"),
       targetRPM(0.0f),
       currentFeederMotorSpeed(0.0f),

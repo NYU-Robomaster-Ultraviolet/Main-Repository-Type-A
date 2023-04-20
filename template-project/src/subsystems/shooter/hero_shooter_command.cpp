@@ -1,3 +1,4 @@
+#ifdef TARGET_HERO
 #include "hero_shooter_command.hpp"
 
 #include "tap/algorithms/math_user_utils.hpp"
@@ -34,3 +35,4 @@ void  HeroShooterCommand::end(bool) { shooter->setDesiredOutput(0); }
 
 bool  HeroShooterCommand::isFinished() const { return false; }
 }  // namespace shooter
+#endif

@@ -1,5 +1,6 @@
 #ifndef HERO_SHOOTER_SUBSYSTEM_HPP_
 #define HERO_SHOOTER_SUBSYSTEM_HPP_
+#ifdef TARGET_HERO
 
 #include "tap/control/subsystem.hpp"
 #include "modm/math/filter/pid.hpp"
@@ -108,5 +109,5 @@ private:
 
 }  // namespace shooter
 
-
+#endif
 #endif  // SHOOTER_SUBSYSTEM_HPP_

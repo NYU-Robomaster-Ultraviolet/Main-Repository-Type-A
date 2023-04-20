@@ -33,7 +33,6 @@ void  GimbalMovementCommand::execute()
         }
         else{
             //drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch() > 0);
-            gimbal->setIMU(drivers->imu_rad_interface.getYaw(), drivers->imu_rad_interface.getPitch());
             gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
                 drivers->control_interface.getGimbalPitchInput());
         }

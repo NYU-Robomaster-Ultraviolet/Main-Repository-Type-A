@@ -1,6 +1,7 @@
 #include "feeder_sentry_subsystem.hpp"
 
 #include "tap/communication/serial/remote.hpp"
+#ifdef TARGET_SENTRY
 //#include "tap/algorithms/math_user_utils.hpp"
 
 using namespace tap;
@@ -41,3 +42,4 @@ void FeederSentrySubsystem::setTargetRPM(float RPM)
     motor2TargetRPM = RPM;
 }
 } //namespace feeder
+#endif

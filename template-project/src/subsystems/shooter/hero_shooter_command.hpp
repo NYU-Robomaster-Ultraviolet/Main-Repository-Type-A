@@ -1,3 +1,4 @@
+#ifdef TARGET_HERO
 #ifndef HERO_SHOOT_COMMAND_HPP_
 #define HERO_SHOOT_COMMAND_HPP_
 
@@ -39,4 +40,5 @@ private:
     src::Drivers *drivers;
 }; //class ShooterUserCommand : public tap::control::Command
 } //namespace shooter
+#endif
 #endif //SHOOTER_USER_COMMAND_HPP_ 

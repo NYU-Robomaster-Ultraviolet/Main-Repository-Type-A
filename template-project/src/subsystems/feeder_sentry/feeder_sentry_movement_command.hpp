@@ -1,5 +1,6 @@
 #ifndef FEEDER_SENTRY_MOVEMENT_COMMAND_HPP_
 #define FEEDER_SENTRY_MOVEMENT_COMMAND_HPP_
+#ifdef TARGET_SENTRY
 
 #include "tap/control/command.hpp"
 
@@ -40,3 +41,4 @@ private:
 } //namespace Feeder
 
 #endif //FEEDER_SENTRY_MOVEMENT_COMMAND_HPP_
+#endif

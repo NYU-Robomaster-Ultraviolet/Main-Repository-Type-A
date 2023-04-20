@@ -1,6 +1,9 @@
 #ifndef HERO_CONSTANTS_HPP_
 #define HERO_CONSTANTS_HPP_
 
+#ifdef TARGET_HERO
+
+
 #include "tap/algorithms/smooth_pid.hpp"
 #include "modm/math/geometry/angle.hpp"
 #include "tap/motor/dji_motor.hpp"
@@ -150,4 +153,8 @@ struct SHOOTER_PID
     PID_MAX_IOUT = 9000.0f;
 };  // struct FEEDER_PID
 
+tap::motor::MotorId FEEDER_ID = tap::motor::MOTOR7;
+tap::can::CanBus FEEDER_CAN = tap::can::CanBus::CAN_BUS2;
+
+#endif
 #endif

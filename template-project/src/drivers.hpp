@@ -22,7 +22,6 @@
 
 #include "tap/drivers.hpp"
 #include "controls/control_interface.hpp"
-#include "controls/imu_interface.hpp"
 #include "controls/cv_com.hpp"
 
 namespace src
@@ -37,13 +36,11 @@ public:
     Drivers() :
         tap::Drivers(),
         control_interface(this),
-        imu_rad_interface(this),
         cv_com(this)
          {}
 
 public:
     src::control::ControlInterface control_interface;
-    ImuRadInterface imu_rad_interface;
     CVCom cv_com;
 
 };  // class Drivers

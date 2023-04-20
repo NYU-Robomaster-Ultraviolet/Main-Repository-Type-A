@@ -1,3 +1,4 @@
+#ifdef TARGET_HERO
 #include "hero_shooter_subsystem.hpp"
 
 #include "tap/communication/serial/remote.hpp"
@@ -39,3 +40,4 @@ void HeroShooterSubsystem::setDesiredOutput(float output) {
 }
 
 } //namespace shooter
+#endif

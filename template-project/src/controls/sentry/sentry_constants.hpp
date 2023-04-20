@@ -1,5 +1,6 @@
 #ifndef SENTRY_CONSTANTS_HPP_
 #define SENTRY_CONSTANTS_HPP_
+#ifdef TARGET_SENTRY
 
 #include "tap/algorithms/smooth_pid.hpp"
 #include "modm/math/geometry/angle.hpp"
@@ -140,4 +141,5 @@ struct FEEDER_PID
     PID_MAX_IOUT = 9000.0f;
 };  // struct FEEDER_PID
 
+#endif
 #endif
