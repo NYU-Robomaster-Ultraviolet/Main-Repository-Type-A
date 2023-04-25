@@ -55,6 +55,16 @@ void GimbalSubsystem::refresh()
     if(isCalibrated()){
         setPitchImu();
         setYawImu();
+
+        imuData.yaw = getImuYaw();
+        imuData.pitch = getImuPitch();
+        imuData.x_acceleration = drivers->mpu6500.getAx();
+        imuData.y_acceleration = drivers->mpu6500.getAy();
+        imuData.z_acceleration = drivers->mpu6500.getAz();
+        imuData.x_gyroscope = drivers->mpu6500.getGx();
+        imuData.y_gyroscope = drivers->mpu6500.getGy();
+        imuData.z_gyroscope = drivers->mpu6500.getGz();
+        
         // drivers->leds.set(drivers->leds.A, imuPitch > modm::toRadian(90));
         // drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
         // drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
@@ -79,6 +89,7 @@ void GimbalSubsystem::refresh()
             currentPitch = encoderPitch;
             updatePitchPid();
         }
+        
     }
     else
     {

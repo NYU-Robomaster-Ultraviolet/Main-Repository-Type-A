@@ -161,7 +161,22 @@ private:
     bool calibrated = false;
 
     bool imuMovementReady = false;
+
+    struct IMUData {
+        float yaw;
+        float pitch;
+        float x_gyroscope;
+        float y_gyroscope;
+        float z_gyroscope;
+        float x_acceleration;
+        float y_acceleration;
+        float z_acceleration;
+    };
+
+    IMUData imuData;
+
 }; //class GimbalSubsystem
+
 }//namespace gimbal
 
 
