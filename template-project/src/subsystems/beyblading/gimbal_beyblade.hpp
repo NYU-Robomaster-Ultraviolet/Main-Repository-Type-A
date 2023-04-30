@@ -29,7 +29,7 @@ public:
 
     void initialize() override;
 
-    const char *getName() const { return "gimbal movement command"; }
+    const char *getName() const { return "gimbal beyblade command"; }
 
     void execute() override;
 

@@ -73,6 +73,13 @@ RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+
+HoldCommandMapping shooterMouse(drivers(), {&shootUser},
+RemoteMapState(RemoteMapState::MouseButton::LEFT));
+
+HoldCommandMapping feederMouse(drivers(), {&feederMovement},
+RemoteMapState(RemoteMapState::MouseButton::RIGHT));
+
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
     drivers->commandScheduler.registerSubsystem(&chassis);
@@ -82,11 +89,11 @@ void registerSubsystems(src::Drivers *drivers){
 }
 // Initialize subsystems here ---------------------------------------------
 void initializeSubsystems() {
-    //sound_track.execute();
     chassis.initialize();
     gimbal.initialize();
     feeder.initialize();
     shooter.initialize();
+    sound_track.init();
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
@@ -103,6 +110,8 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
+    drivers->commandMapper.addMap(&shooterMouse);
+    drivers->commandMapper.addMap(&feederMouse);
 }
 }//namespace src::control
 

@@ -27,6 +27,7 @@ class MusicPlayer{
         void resetSong() {
             resting = false;
             index = 0;
+            init();
         }
 
         void init(){timeout.restart(1);}

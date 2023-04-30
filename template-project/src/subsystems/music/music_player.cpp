@@ -6,7 +6,7 @@ MusicPlayer::MusicPlayer(src::Drivers *drivers, const vector<pair<float, float>>
     drivers(drivers), yourSong(score), tempo(tempo), index(0), resting(false), isFinished(false) {}
 
 void MusicPlayer::execute() {
-    if(!timeout.isExpired()) return;
+    if(!timeout.isExpired() || isFinished) return;
     if(index < yourSong.size()){
         if(!resting){
             tap::buzzer::playNote(&drivers->pwm, (yourSong[index]).first);

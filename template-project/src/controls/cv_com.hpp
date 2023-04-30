@@ -41,6 +41,14 @@ public:
 
     void init();
 
+    void setAngles(int p, int y){imuPitch = p; imuYaw = y;}
+    
+    void setColor(bool c) {color = c;}
+
+    void updateHP(unsigned int h) {hp = h;}
+
+    void sendColorMsg();
+
     typedef struct autoAimStruct
     {
         unsigned char header;
@@ -53,6 +61,18 @@ public:
         unsigned char hasTarget;
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
+
+
+    typedef struct colorStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        unsigned char color;
+        unsigned short footer;
+    } ColorStructObj, *ColorStruct;
 
     // message_type: 1
     typedef struct alignRequestStruct
@@ -108,14 +128,18 @@ public:
 private:
     src::Drivers *drivers;
 
-    // paw then pitch
+    // yaw then pitch
     float yaw;
     float pitch;
+    int imuYaw = 0;
+    int imuPitch = 0;
     bool validAngle = false;
     bool hasTarget = false;
     size_t byteIndex = 0;
     size_t buffer_size = 100;
     char *buffer;
+    bool color = 0; // 0: red 1: blue for enemy color
+    unsigned int hp;
     // reading state enum
     enum ReadingState
     {

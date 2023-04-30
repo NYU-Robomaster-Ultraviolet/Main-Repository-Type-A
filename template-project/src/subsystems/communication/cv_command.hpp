@@ -18,6 +18,7 @@
 #endif
 
 namespace gimbal{
+
 class CvCommand : public tap::control::Command {
 public:
     CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers);

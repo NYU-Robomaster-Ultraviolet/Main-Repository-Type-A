@@ -26,11 +26,14 @@ void  CvCommand::execute() {
         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
         drivers->cv_com.invalidateAngle();
     }
+    int yaw = int(gimbal->getImuYaw() * 100);
+    int pitch = int(gimbal->getImuPitch() * 100);
+    drivers->cv_com.setAngles(pitch, yaw);
 }
 
 void  CvCommand::end(bool) {
 
-    }
+}
 
 bool  CvCommand::isFinished() const { return false; }
 

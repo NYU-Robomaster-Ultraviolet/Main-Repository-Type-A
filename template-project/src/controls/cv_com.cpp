@@ -12,8 +12,10 @@ CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new
 CVCom::~CVCom() { delete[] buffer; }
 
 void CVCom::init()
-{
-    timeout.restart(100);
+{   
+    setColor(!drivers->refSerial.isBlueTeam);
+    sendColorMsg();
+    timeout.restart(100); //sets up timer
     // thread for CVCom::update()
 }
 int CVCom::writeToUart(const std::string &s)
@@ -55,6 +57,9 @@ int CVCom::readFromUart()
     }
     timeout.restart(100);
 
+    //for debugging imu
+    sendAutoAimMsg(imuPitch, imuYaw, 0);
+    
     //reads single byte
     res = drivers->uart.read(
                 tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
@@ -89,6 +94,7 @@ int CVCom::readFromUart()
                     1);
                 count++;
             }
+            //failed to find header return
             if (buffer[byteIndex] != 0xE7)
             {
                 timeout.restart(100);
@@ -112,7 +118,7 @@ int CVCom::readFromUart()
                 timeout.restart(100);
                 return bytes_read;
             }
-
+            
             headerStruct = *reinterpret_cast<header *>(buffer);
             msg_len = headerStruct.length;
             msg_type = headerStruct.msg_type;
@@ -193,21 +199,32 @@ int CVCom::readFromUart()
 
 void CVCom::UnPackMsgs(char *buffer) {}
 
-void CVCom::sendAutoAimMsg(int pitch, int yaw, int hasTarget)
+void CVCom::sendAutoAimMsg(int p, int y, int hasTarget)
 {
     AutoAimStructObj autoAimStruct = AutoAimStructObj();
-    autoAimStruct.pitch = pitch;
-    autoAimStruct.yaw = yaw;
+    autoAimStruct.pitch = p;
+    autoAimStruct.yaw = y;
     autoAimStruct.empty1 = 0;
     autoAimStruct.empty2 = 0;
     autoAimStruct.footer = 0;
-    autoAimStruct.header = 5;
-    autoAimStruct.msg_type = 1;
-    autoAimStruct.length = 5;
+    autoAimStruct.header = 0xE7;
+    autoAimStruct.msg_type = 5;
+    autoAimStruct.length = 11;
 
     char str[sizeof(autoAimStruct)];
     memcpy(str, &autoAimStruct, sizeof(autoAimStruct));
     writeToUart(str, sizeof(autoAimStruct) - 1);
+}
+
+void CVCom::sendColorMsg(){
+    ColorStructObj sending = ColorStructObj();
+    sending.color = color;
+    sending.msg_type = 2;
+    sending.header = 0xE7;
+    sending.length = 4;
+    char str[sizeof(sending)];
+    memcpy(str, &sending, sizeof(sending));
+    writeToUart(str, sizeof(sending) - 1);
 }
 
 void CVCom::update()
