@@ -16,10 +16,10 @@ void HeroShooterSubsystem::initialize()
     flywheel2.initialize();
 }
 void HeroShooterSubsystem::refresh() {
-    drivers->leds.set(drivers->leds.A, flywheel1Online());
-    drivers->leds.set(drivers->leds.B, !flywheel1Online());
-    drivers->leds.set(drivers->leds.C, flywheel2Online());
-    drivers->leds.set(drivers->leds.D, !flywheel2Online());
+    // drivers->leds.set(drivers->leds.A, flywheel1Online());
+    // drivers->leds.set(drivers->leds.B, !flywheel1Online());
+    // drivers->leds.set(drivers->leds.C, flywheel2Online());
+    // drivers->leds.set(drivers->leds.D, !flywheel2Online());
     updateRpmPid(&pid1, &flywheel1, targetRPM);
     updateRpmPid(&pid2, &flywheel2, targetRPM);
 }

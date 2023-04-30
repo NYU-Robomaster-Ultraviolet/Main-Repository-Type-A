@@ -19,7 +19,7 @@ GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src:
 }
 void  GimbalMovementCommand::initialize() {
         gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
-        if(!gimbal->isCalibrated()) timeout.restart(2500);
+        if(!gimbal->isCalibrated()) timeout.restart(4000);
         else timeout.restart(20);
     }
 
@@ -33,6 +33,9 @@ void  GimbalMovementCommand::execute()
         }
         else{
             //drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch() > 0);
+            int yaw = int(gimbal->getImuYaw() * 100);
+            int pitch = int(gimbal->getImuPitch() * 100);
+            drivers->cv_com.setAngles(pitch, yaw);
             gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
                 drivers->control_interface.getGimbalPitchInput());
         }

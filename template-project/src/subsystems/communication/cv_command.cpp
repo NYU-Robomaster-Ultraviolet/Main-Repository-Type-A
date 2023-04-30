@@ -18,6 +18,7 @@ CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
 }
 void  CvCommand::initialize() {
     gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+    drivers->cv_com.changeCV(1);
 }
 
 void  CvCommand::execute() {
@@ -32,7 +33,7 @@ void  CvCommand::execute() {
 }
 
 void  CvCommand::end(bool) {
-
+    drivers->cv_com.changeCV(0);
 }
 
 bool  CvCommand::isFinished() const { return false; }

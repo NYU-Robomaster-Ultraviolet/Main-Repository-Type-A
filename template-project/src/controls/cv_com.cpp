@@ -15,7 +15,8 @@ void CVCom::init()
 {   
     setColor(!drivers->refSerial.isBlueTeam);
     sendColorMsg();
-    timeout.restart(100); //sets up timer
+    receivingTimeout.restart(RECEIVING_TIME); //sets up timer
+    sendingTimeout.restart(100);
     // thread for CVCom::update()
 }
 int CVCom::writeToUart(const std::string &s)
@@ -39,6 +40,15 @@ int CVCom::writeToUart(char *s, int n)
     return res;
 }
 
+bool CVCom::sendingLoop(){
+    if(!sendingTimeout.isExpired()) return 0;
+    sendingTimeout.restart(SENDING_TIME);
+    sendAutoAimMsg(int(modm::toRadian(drivers->mpu6500.getPitch()) * 100), int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
+    sendColorMsg();
+    sendEnableMsg(cv_on);
+    return 1;
+}
+
 int CVCom::readFromUart()
 {
     // declaring character array
@@ -51,15 +61,14 @@ int CVCom::readFromUart()
     int res = 0;
     // wait for timeout
     // if timeout not reached, return
-    if (!timeout.isExpired())
+    if (!receivingTimeout.isExpired())
     {
         return 0;
     }
-    timeout.restart(100);
-
+    receivingTimeout.restart(RECEIVING_TIME);
+    drivers->leds.set(drivers->leds.D, flag);
+    flag = !flag;
     //for debugging imu
-    sendAutoAimMsg(imuPitch, imuYaw, 0);
-    
     //reads single byte
     res = drivers->uart.read(
                 tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
@@ -97,7 +106,7 @@ int CVCom::readFromUart()
             //failed to find header return
             if (buffer[byteIndex] != 0xE7)
             {
-                timeout.restart(100);
+                receivingTimeout.restart(RECEIVING_TIME);
                 return 1;
             }
             bytes_read += 1;
@@ -115,7 +124,7 @@ int CVCom::readFromUart()
 
             if (res <= 0)
             {
-                timeout.restart(100);
+                receivingTimeout.restart(RECEIVING_TIME);
                 return bytes_read;
             }
             
@@ -142,7 +151,7 @@ int CVCom::readFromUart()
 
             if (res <= 0)
             {
-                timeout.restart(100);
+                receivingTimeout.restart(READING_DATA);
                 return bytes_read;
             }
 
@@ -192,16 +201,16 @@ int CVCom::readFromUart()
             }
         }
     }
-    timeout.restart(100);
+    receivingTimeout.restart(RECEIVING_TIME);
 
     return byteIndex;
 }
 
 void CVCom::UnPackMsgs(char *buffer) {}
 
-void CVCom::sendAutoAimMsg(int p, int y, int hasTarget)
+void CVCom::sendAutoAimMsg(int p, int y)
 {
-    AutoAimStructObj autoAimStruct = AutoAimStructObj();
+    SendingAngleStructObj autoAimStruct = SendingAngleStructObj();
     autoAimStruct.pitch = p;
     autoAimStruct.yaw = y;
     autoAimStruct.empty1 = 0;
@@ -209,7 +218,7 @@ void CVCom::sendAutoAimMsg(int p, int y, int hasTarget)
     autoAimStruct.footer = 0;
     autoAimStruct.header = 0xE7;
     autoAimStruct.msg_type = 5;
-    autoAimStruct.length = 11;
+    autoAimStruct.length = 8;
 
     char str[sizeof(autoAimStruct)];
     memcpy(str, &autoAimStruct, sizeof(autoAimStruct));
@@ -218,19 +227,43 @@ void CVCom::sendAutoAimMsg(int p, int y, int hasTarget)
 
 void CVCom::sendColorMsg(){
     ColorStructObj sending = ColorStructObj();
+    sending.header = 0xE7;
     sending.color = color;
     sending.msg_type = 2;
-    sending.header = 0xE7;
-    sending.length = 4;
+    sending.length = 1;
+    sending.empty1 = 0;
+    sending.empty2 = 0;
+    sending.footer = 0;
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
-    writeToUart(str, sizeof(sending) - 1);
+    drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                    (uint8_t *)(str),
+                    sizeof(sending));
+    //writeToUart(str, sizeof(sending) - 1);
+}
+
+void CVCom::sendEnableMsg(bool start){
+    ColorStructObj sending = ColorStructObj();
+    sending.header = 0xE7;
+    sending.color = start;
+    sending.msg_type = 1;
+    sending.length = 1;
+    sending.empty1 = 0;
+    sending.empty2 = 0;
+    sending.footer = 0;
+    char str[sizeof(sending)];
+    memcpy(str, &sending, sizeof(sending));
+    drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+                    (uint8_t *)(str),
+                    sizeof(sending));
+    //writeToUart(str, sizeof(sending) - 1);
 }
 
 void CVCom::update()
 {
     // set the gimbal subsystem to use the cvcom
     int bytes_read = readFromUart();
+    sendingLoop();
     // if (bytes_read > 0)
     // {
 

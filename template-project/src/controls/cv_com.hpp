@@ -24,7 +24,9 @@ public:
 
     void UnPackMsgs(char *buffer);
 
-    void sendAutoAimMsg(int pitch, int yaw, int hasTarget);
+    void sendAutoAimMsg(int pitch, int yaw);
+
+    void sendEnableMsg(bool start);
 
     void update();
 
@@ -37,7 +39,9 @@ public:
 
     bool foundTarget() const {return hasTarget;}
 
-    bool online() const { return timeout.isExpired(); }
+    bool online() const { return receivingTimeout.isExpired(); }
+
+    bool sendingLoop();
 
     void init();
 
@@ -48,6 +52,8 @@ public:
     void updateHP(unsigned int h) {hp = h;}
 
     void sendColorMsg();
+
+    void changeCV(bool on) {cv_on = on;}
 
     typedef struct autoAimStruct
     {
@@ -62,6 +68,18 @@ public:
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
 
+    typedef struct sendingAngleStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type;
+        int pitch;
+        int yaw;
+        char footer;
+    } SendingAngleStructObj, *SendingAngleStruct;
+
 
     typedef struct colorStruct
     {
@@ -71,7 +89,7 @@ public:
         unsigned char empty2;
         unsigned short msg_type;
         unsigned char color;
-        unsigned short footer;
+        char footer;
     } ColorStructObj, *ColorStruct;
 
     // message_type: 1
@@ -123,7 +141,10 @@ public:
         unsigned char empty2;
         unsigned short msg_type;
     } *Header;
-   tap::arch::MilliTimeout timeout;
+   tap::arch::MilliTimeout receivingTimeout;
+   tap::arch::MilliTimeout sendingTimeout;
+   const unsigned int SENDING_TIME = 100;
+   const unsigned int RECEIVING_TIME = 100;
 
 private:
     src::Drivers *drivers;
@@ -140,6 +161,8 @@ private:
     char *buffer;
     bool color = 0; // 0: red 1: blue for enemy color
     unsigned int hp;
+    bool cv_on = 0;
+    bool flag = 0;
     // reading state enum
     enum ReadingState
     {

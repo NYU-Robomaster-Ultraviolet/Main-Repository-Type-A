@@ -23,6 +23,7 @@
 #include "tap/drivers.hpp"
 #include "controls/control_interface.hpp"
 #include "controls/cv_com.hpp"
+#include "controls/ref_interface.hpp"
 
 namespace src
 {
@@ -36,12 +37,14 @@ public:
     Drivers() :
         tap::Drivers(),
         control_interface(this),
-        cv_com(this)
+        cv_com(this),
+        ref_interace(this)
          {}
 
 public:
     src::control::ControlInterface control_interface;
     CVCom cv_com;
+    RefInterface ref_interace;
 
 };  // class Drivers
 

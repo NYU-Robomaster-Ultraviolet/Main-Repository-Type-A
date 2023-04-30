@@ -27,7 +27,7 @@ void  HeroShooterCommand::execute()
 {   
     if(flag) flag = false;
     else flag = true;
-    drivers->leds.set(drivers->leds.G, flag);
+    // drivers->leds.set(drivers->leds.G, flag);
     shooter->setDesiredOutput(16000);
 }
 
