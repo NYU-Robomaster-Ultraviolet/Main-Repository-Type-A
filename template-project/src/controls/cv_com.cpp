@@ -66,6 +66,7 @@ int CVCom::readFromUart()
         return 0;
     }
     receivingTimeout.restart(RECEIVING_TIME);
+    sendColorMsg();
     drivers->leds.set(drivers->leds.D, flag);
     flag = !flag;
     //for debugging imu
