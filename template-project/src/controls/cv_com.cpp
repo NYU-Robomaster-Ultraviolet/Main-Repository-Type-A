@@ -180,6 +180,13 @@ int CVCom::readFromUart()
                 }
                 case 2:
                 {
+                    chassisMoveStruct c = *reinterpret_cast<chassisMoveStruct *>(buffer);
+                    chassisX = c.chassisX / 1000.0;
+                    chassisY = c.chassisY / 1000.0;
+                    chassisR = c.chassisR / 1000.0;
+                    chassisReadFlag = true;
+
+                    mode = c.mode;
                     // Align request
                     // if (byteIndex == sizeof(alignRequestStruct))
                     // {
@@ -197,6 +204,14 @@ int CVCom::readFromUart()
                     //     readingState = WAITING_FOR_HEADER;
                     // }
                     break;
+                }
+                case 4:
+                {
+                    gimbalMoveStruct g = *reinterpret_cast<gimbalMoveStruct *>(buffer);
+                    gimbalX = g.gimbalX / 1000.0;
+                    gimbalY = g.gimbalY / 1000.0;
+                    gimbalReadFlag = true;
+                    mode = g.mode;
                 }
                 break;
             }

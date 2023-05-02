@@ -55,6 +55,12 @@ public:
 
     void changeCV(bool on) {cv_on = on;}
 
+    bool getChassisReadFlag() const { return chassisReadFlag; }
+    void resetChassisReadFlag() { chassisReadFlag=0; }
+
+    bool getChassisReadFlag() const { return gimbalReadFlag; }
+    void resetChassisReadFlag() { gimbalReadFlag=0; }
+
     typedef struct autoAimStruct
     {
         unsigned char header;
@@ -181,6 +187,20 @@ public:
 
 private:
     src::Drivers *drivers;
+
+    // chassisMoveValues
+    float chassisX;
+    float chassisY;
+    float chassisR;
+    bool chassisReadFlag=0;
+
+    // gimbalMoveValues
+    float gimbalX;
+    float gimbalY;
+    bool gimbalReadFlag=0;
+
+    unsigned char mode = 0;
+
 
     // yaw then pitch
     float yaw;
