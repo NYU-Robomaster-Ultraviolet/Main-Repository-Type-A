@@ -58,8 +58,8 @@ public:
     bool getChassisReadFlag() const { return chassisReadFlag; }
     void resetChassisReadFlag() { chassisReadFlag=0; }
 
-    bool getChassisReadFlag() const { return gimbalReadFlag; }
-    void resetChassisReadFlag() { gimbalReadFlag=0; }
+    bool getGimbalReadFlag() const { return gimbalReadFlag; }
+    void resetGimbalReadFlag() { gimbalReadFlag=0; }
 
     typedef struct autoAimStruct
     {
