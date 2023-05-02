@@ -23,10 +23,10 @@ void  CvCommand::initialize() {
 
 void  CvCommand::execute() {
     
-    if(drivers->cv_com.validReading()){
-        gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
-        drivers->cv_com.invalidateAngle();
-    }
+     if(drivers->cv_com.validReading()){
+         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
+         drivers->cv_com.invalidateAngle();
+     }
     if(drivers->cv_com.getGimbalReadFlag()){
         float xInput = drivers->cv_com.getGimbalX();
         float yInput = drivers->cv_com.getGimbalY();

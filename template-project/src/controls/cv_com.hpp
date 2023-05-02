@@ -80,38 +80,6 @@ public:
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
 
-    typedef struct chassisMoveStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type; //2
-        //value should be between -1000 and 1000;
-        int chassisX; //chassis x axis movement
-        int chassisY; //chassis y axis movement
-        int chassisR; //rotational movement
-        //0 : default movement
-        unsigned char mode; //used to switch command behavior  
-        unsigned short footer;
-    } ChassisMoveStructObj, *ChassisMoveStruct;
-
-    typedef struct gimbalMoveStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type; //4
-        //value should be between -1000 and 1000;
-        int gimbalX; //gimbal yaw movement
-        int gimbalY; //gimbal pitch movement
-        // 0: no target, 1: has target
-        unsigned char hasTarget;
-        //0 : default movement
-        unsigned char mode; //used to switch command behavior  
-        unsigned short footer;
-    } GimbalMoveStructObj, *GimbalMoveStruct;
 
     typedef struct sendingAngleStruct
     {
@@ -151,7 +119,8 @@ public:
         unsigned short footer;
     } AlignRequestStructObj, *AlignRequestStruct;
 
-    // message_type: 2
+
+    // message_type: 3
     typedef struct alignFinishStruct
     {
         unsigned char header;
@@ -162,6 +131,39 @@ public:
         unsigned char x;
         unsigned short footer;
     } AlignFinishStructObj, *AlignFinishStruct;
+
+    // message_type: 2
+    typedef struct chassisMoveStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type; //2
+        //value should be between -1000 and 1000;
+        int chassisX; //chassis x axis movement
+        int chassisY; //chassis y axis movement
+        int chassisR; //rotational movement
+        //0 : default movement
+        unsigned char mode; //used to switch command behavior  
+        unsigned short footer;
+    } ChassisMoveStructObj, *ChassisMoveStruct;
+
+    //message_type: 4
+    typedef struct gimbalMoveStruct
+    {
+        unsigned char header;
+        unsigned short length;
+        unsigned char empty1;
+        unsigned char empty2;
+        unsigned short msg_type; //4
+        //value should be between -1000 and 1000;
+        int gimbalX; //gimbal yaw movement
+        int gimbalY; //gimbal pitch movement
+        //0 : default movement, 1 : beyblade, 2 : beyblade backwards
+        unsigned char mode; //used to switch command behavior  
+        unsigned short footer;
+    } GimbalMoveStructObj, *GimbalMoveStruct;
 
     // Receive
     typedef struct enableStruct

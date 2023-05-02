@@ -6,6 +6,7 @@
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "drivers.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
+#include "tap/util_macros.hpp"
 namespace chassis{
 
 class CVChassisCommand : public tap::control::Command{

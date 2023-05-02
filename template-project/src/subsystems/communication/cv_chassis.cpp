@@ -32,8 +32,8 @@ void  CVChassisCommand::execute()
         float cosYaw = cosf(gimbalInterface->getYawEncoder());
         float sinYaw = sinf(gimbalInterface->getYawEncoder());
         //gets the cv inputs if valid
-        float xInput = drivers->cv_com.getChassisX();
-        float yInput = drivers->cv_com.getChassisY();
+        float xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
+        float yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
         //invalidate flag
         drivers->cv_com.resetChassisReadFlag();
         //applies rotation matrix to inputs to change inputs based on gimbal position
@@ -43,7 +43,7 @@ void  CVChassisCommand::execute()
         chassis->setDesiredOutput(
             xOutput,
             yOutput,
-            drivers->cv_com.getChassisR());
+            limitVal<float>(drivers->cv_com.getChassisY(), -1, 1));
     }
 }
 

@@ -167,9 +167,6 @@ int CVCom::readFromUart()
                     pitch = (a.pitch) / 100.0;
                     yaw = (a.yaw) / 100.0;
                     hasTarget = a.hasTarget;
-                    // yaw = autoAimStruct->yaw;
-
-                    //drivers->leds.set(drivers->leds.C, false);
                     validAngle = true;
 
                     writeToUart(buffer, 1);
@@ -180,6 +177,7 @@ int CVCom::readFromUart()
                 }
                 case 2:
                 {
+                    //chassisMovement
                     chassisMoveStruct c = *reinterpret_cast<chassisMoveStruct *>(buffer);
                     chassisX = c.chassisX / 1000.0;
                     chassisY = c.chassisY / 1000.0;
@@ -187,31 +185,32 @@ int CVCom::readFromUart()
                     chassisReadFlag = true;
 
                     mode = c.mode;
-                    // Align request
-                    // if (byteIndex == sizeof(alignRequestStruct))
-                    // {
-                    //     AlignRequestStruct alignRequestStruct = (AlignRequestStruct)(buffer);
-                    //     readingState = WAITING_FOR_HEADER;
-                    // }
                     break;
                 }
                 case 3:
                 {
-                    // Align finish
-                    // if (byteIndex == sizeof(alignFinishStruct))
-                    // {
-                    //     AlignFinishStruct alignFinishStruct = (AlignFinishStruct)(buffer);
-                    //     readingState = WAITING_FOR_HEADER;
-                    // }
+                    //Align finish
+                    alignFinishStruct a = *reinterpret_cast<alignFinishStruct *>(buffer);
+                    gimbalReadFlag = true;
+                    validAngle = true;
+                    chassisReadFlag = true;
+                    yaw = 0;
+                    pitch = 0;
+                    gimbalX = 0;
+                    gimbalY = 0;
+                    chassisX = 0;
+                    chassisY = 0;
+                    chassisR = 0;
                     break;
                 }
                 case 4:
                 {
                     gimbalMoveStruct g = *reinterpret_cast<gimbalMoveStruct *>(buffer);
-                    gimbalX = g.gimbalX / 1000.0;
-                    gimbalY = g.gimbalY / 1000.0;
+                    gimbalX = g.gimbalX / 100.0;
+                    gimbalY = g.gimbalY / 100.0;
                     gimbalReadFlag = true;
                     mode = g.mode;
+                    break;
                 }
                 break;
             }
