@@ -25,6 +25,7 @@
 #include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
 #include "subsystems/communication/cv_feeder_command.hpp"
+#include "subsystems/communication/cv_chassis.hpp"
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -57,12 +58,13 @@ GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
 ShootUserCommand shootUser(&shooter, drivers());
+CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},

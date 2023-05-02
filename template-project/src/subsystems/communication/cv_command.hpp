@@ -42,6 +42,7 @@ public:
 private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
+
 }; //CvCommand
 
 

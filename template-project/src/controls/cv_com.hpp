@@ -57,6 +57,12 @@ public:
 
     bool getChassisReadFlag() const { return chassisReadFlag; }
     void resetChassisReadFlag() { chassisReadFlag=0; }
+    float getChassisX() const { return chassisX;}
+    float getChassisY() const {return chassisY;}
+    float getChassisR() const {return chassisR;}
+
+    float getGimbalX() const {return gimbalX;}
+    float getGimbalY() const {return gimbalY;}
 
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
     void resetGimbalReadFlag() { gimbalReadFlag=0; }
@@ -81,7 +87,7 @@ public:
         unsigned char empty1;
         unsigned char empty2;
         unsigned short msg_type; //2
-        //value should be between -10000 and 10000;
+        //value should be between -1000 and 1000;
         int chassisX; //chassis x axis movement
         int chassisY; //chassis y axis movement
         int chassisR; //rotational movement

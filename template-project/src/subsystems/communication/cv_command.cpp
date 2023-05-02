@@ -27,6 +27,12 @@ void  CvCommand::execute() {
         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
         drivers->cv_com.invalidateAngle();
     }
+    if(drivers->cv_com.getGimbalReadFlag()){
+        float xInput = drivers->cv_com.getGimbalX();
+        float yInput = drivers->cv_com.getGimbalY();
+        gimbal->controllerInput(xInput, yInput);
+        drivers->cv_com.resetGimbalReadFlag();
+    }
     int yaw = int(gimbal->getImuYaw() * 100);
     int pitch = int(gimbal->getImuPitch() * 100);
     drivers->cv_com.setAngles(pitch, yaw);
