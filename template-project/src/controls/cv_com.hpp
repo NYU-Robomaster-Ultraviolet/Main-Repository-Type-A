@@ -192,7 +192,7 @@ public:
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
     const unsigned int SENDING_TIME = 100;
-    const unsigned int RECEIVING_TIME = 50;
+    const unsigned int RECEIVING_TIME = 150;
 
 private:
     src::Drivers *drivers;
