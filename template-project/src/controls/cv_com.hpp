@@ -37,7 +37,7 @@ public:
 
     bool validReading() const { return validAngle; }
 
-    bool foundTarget() const {return hasTarget;}
+    bool foundTarget() const { return hasTarget; }
 
     bool online() const { return receivingTimeout.isExpired(); }
 
@@ -45,27 +45,31 @@ public:
 
     void init();
 
-    void setAngles(int p, int y){imuPitch = p; imuYaw = y;}
-    
-    void setColor(bool c) {color = c;}
+    void setAngles(int p, int y)
+    {
+        imuPitch = p;
+        imuYaw = y;
+    }
 
-    void updateHP(unsigned int h) {hp = h;}
+    void setColor(bool c) { color = c; }
+
+    void updateHP(unsigned int h) { hp = h; }
 
     void sendColorMsg();
 
-    void changeCV(bool on) {cv_on = on;}
+    void changeCV(bool on) { cv_on = on; }
 
     bool getChassisReadFlag() const { return chassisReadFlag; }
-    void resetChassisReadFlag() { chassisReadFlag=0; }
-    float getChassisX() const { return chassisX;}
-    float getChassisY() const {return chassisY;}
-    float getChassisR() const {return chassisR;}
+    void resetChassisReadFlag() { chassisReadFlag = 0; }
+    float getChassisX() const { return chassisX; }
+    float getChassisY() const { return chassisY; }
+    float getChassisR() const { return chassisR; }
 
-    float getGimbalX() const {return gimbalX;}
-    float getGimbalY() const {return gimbalY;}
+    float getGimbalX() const { return gimbalX; }
+    float getGimbalY() const { return gimbalY; }
 
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
-    void resetGimbalReadFlag() { gimbalReadFlag=0; }
+    void resetGimbalReadFlag() { gimbalReadFlag = 0; }
 
     typedef struct autoAimStruct
     {
@@ -80,7 +84,6 @@ public:
         unsigned short footer;
     } AutoAimStructObj, *AutoAimStruct;
 
-
     typedef struct sendingAngleStruct
     {
         unsigned char header;
@@ -92,7 +95,6 @@ public:
         int yaw;
         char footer;
     } SendingAngleStructObj, *SendingAngleStruct;
-
 
     typedef struct colorStruct
     {
@@ -119,7 +121,6 @@ public:
         unsigned short footer;
     } AlignRequestStructObj, *AlignRequestStruct;
 
-
     // message_type: 3
     typedef struct alignFinishStruct
     {
@@ -139,29 +140,29 @@ public:
         unsigned short length;
         unsigned char empty1;
         unsigned char empty2;
-        unsigned short msg_type; //2
-        //value should be between -1000 and 1000;
-        int chassisX; //chassis x axis movement
-        int chassisY; //chassis y axis movement
-        int chassisR; //rotational movement
-        //0 : default movement
-        unsigned char mode; //used to switch command behavior  
+        unsigned short msg_type;  // 2
+        // value should be between -1000 and 1000;
+        int chassisX;  // chassis x axis movement
+        int chassisY;  // chassis y axis movement
+        int chassisR;  // rotational movement
+        // 0 : default movement
+        unsigned char mode;  // used to switch command behavior
         unsigned short footer;
     } ChassisMoveStructObj, *ChassisMoveStruct;
 
-    //message_type: 4
+    // message_type: 4
     typedef struct gimbalMoveStruct
     {
         unsigned char header;
         unsigned short length;
         unsigned char empty1;
         unsigned char empty2;
-        unsigned short msg_type; //4
-        //value should be between -1000 and 1000;
-        int gimbalX; //gimbal yaw movement
-        int gimbalY; //gimbal pitch movement
-        //0 : default movement, 1 : beyblade, 2 : beyblade backwards
-        unsigned char mode; //used to switch command behavior  
+        unsigned short msg_type;  // 4
+        // value should be between -1000 and 1000;
+        int gimbalX;  // gimbal yaw movement
+        int gimbalY;  // gimbal pitch movement
+        // 0 : default movement, 1 : beyblade, 2 : beyblade backwards
+        unsigned char mode;  // used to switch command behavior
         unsigned short footer;
     } GimbalMoveStructObj, *GimbalMoveStruct;
 
@@ -188,10 +189,10 @@ public:
         unsigned char empty2;
         unsigned short msg_type;
     } *Header;
-   tap::arch::MilliTimeout receivingTimeout;
-   tap::arch::MilliTimeout sendingTimeout;
-   const unsigned int SENDING_TIME = 100;
-   const unsigned int RECEIVING_TIME = 100;
+    tap::arch::MilliTimeout receivingTimeout;
+    tap::arch::MilliTimeout sendingTimeout;
+    const unsigned int SENDING_TIME = 100;
+    const unsigned int RECEIVING_TIME = 100;
 
 private:
     src::Drivers *drivers;
@@ -200,15 +201,14 @@ private:
     float chassisX;
     float chassisY;
     float chassisR;
-    bool chassisReadFlag=0;
+    bool chassisReadFlag = 0;
 
     // gimbalMoveValues
     float gimbalX;
     float gimbalY;
-    bool gimbalReadFlag=0;
+    bool gimbalReadFlag = 0;
 
     unsigned char mode = 0;
-
 
     // yaw then pitch
     float yaw;
@@ -220,7 +220,7 @@ private:
     size_t byteIndex = 0;
     size_t buffer_size = 100;
     char *buffer;
-    bool color = 0; // 0: red 1: blue for enemy color
+    bool color = 0;  // 0: red 1: blue for enemy color
     unsigned int hp;
     bool cv_on = 0;
     bool flag = 0;

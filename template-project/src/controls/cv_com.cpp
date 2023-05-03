@@ -12,10 +12,10 @@ CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new
 CVCom::~CVCom() { delete[] buffer; }
 
 void CVCom::init()
-{   
+{
     setColor(!drivers->refSerial.isBlueTeam);
     sendColorMsg();
-    receivingTimeout.restart(RECEIVING_TIME); //sets up timer
+    receivingTimeout.restart(RECEIVING_TIME);  // sets up timer
     sendingTimeout.restart(100);
     // thread for CVCom::update()
 }
@@ -40,10 +40,13 @@ int CVCom::writeToUart(char *s, int n)
     return res;
 }
 
-bool CVCom::sendingLoop(){
-    if(!sendingTimeout.isExpired()) return 0;
+bool CVCom::sendingLoop()
+{
+    if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    sendAutoAimMsg(int(modm::toRadian(drivers->mpu6500.getPitch()) * 100), int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
+    sendAutoAimMsg(
+        int(modm::toRadian(drivers->mpu6500.getPitch()) * 100),
+        int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
     sendColorMsg();
     sendEnableMsg(cv_on);
     return 1;
@@ -66,18 +69,7 @@ int CVCom::readFromUart()
         return 0;
     }
     receivingTimeout.restart(RECEIVING_TIME);
-    sendColorMsg();
-    drivers->leds.set(drivers->leds.D, flag);
-    flag = !flag;
-    //for debugging imu
-    //reads single byte
-    res = drivers->uart.read(
-                tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-                (uint8_t *)(&buffer[byteIndex]),
-                1);
-    if (res != 1) return 0; //maybe this is not sufficient
-    // write back
-    writeToUart(buffer, byteIndex + 1);
+
     //  get first header, unpack "B" 0xE7
     readingState = WAITING_FOR_HEADER;
 
@@ -87,7 +79,6 @@ int CVCom::readFromUart()
         {
             byteIndex = 0;
             // read the next byte
-            // drivers->leds.set(drivers->leds.C, false);
             res = drivers->uart.read(
                 tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
                 (uint8_t *)(&buffer[byteIndex]),
@@ -95,16 +86,15 @@ int CVCom::readFromUart()
             // if (res != 1) return 0;
             //  looking for header
             short count = 0;
-            while (buffer[byteIndex] != 0xE7 && count < 10)
+            while (buffer[byteIndex] != 0xE7 && count < 50)
             {
-                // drivers->leds.set(drivers->leds.C, true);
                 res = drivers->uart.read(
                     tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
                     (uint8_t *)(buffer),
                     1);
                 count++;
             }
-            //failed to find header return
+            // failed to find header return
             if (buffer[byteIndex] != 0xE7)
             {
                 receivingTimeout.restart(RECEIVING_TIME);
@@ -128,11 +118,10 @@ int CVCom::readFromUart()
                 receivingTimeout.restart(RECEIVING_TIME);
                 return bytes_read;
             }
-            
+
             headerStruct = *reinterpret_cast<header *>(buffer);
             msg_len = headerStruct.length;
             msg_type = headerStruct.msg_type;
-            // write back
 
             // bytes_read += 4;
             readingState = READING_DATA;
@@ -148,13 +137,15 @@ int CVCom::readFromUart()
                     (uint8_t *)(buffer + 5),
                     msg_len);
                 count++;
-            } while (res <= 0 && count < 10);
+            } while (res <= 0 && count < 50);
 
             if (res <= 0)
             {
                 receivingTimeout.restart(READING_DATA);
                 return bytes_read;
             }
+            drivers->leds.set(drivers->leds.D, flag);
+            flag = !flag;
 
             switch (headerStruct.msg_type)
             {
@@ -166,6 +157,18 @@ int CVCom::readFromUart()
                     // convert *100 pitch int values to float without truncating
                     pitch = (a.pitch) / 100.0;
                     yaw = (a.yaw) / 100.0;
+
+                    // cap each value to 1 or -1
+                    int cap = 1;
+                    if (pitch > cap)
+                        pitch = cap;
+                    else if (pitch < -cap)
+                        pitch = -cap;
+                    if (yaw > cap)
+                        yaw = cap;
+                    else if (yaw < -cap)
+                        yaw = -cap;
+
                     hasTarget = a.hasTarget;
                     validAngle = true;
 
@@ -177,7 +180,7 @@ int CVCom::readFromUart()
                 }
                 case 2:
                 {
-                    //chassisMovement
+                    // chassisMovement
                     chassisMoveStruct c = *reinterpret_cast<chassisMoveStruct *>(buffer);
                     chassisX = c.chassisX / 1000.0;
                     chassisY = c.chassisY / 1000.0;
@@ -189,7 +192,7 @@ int CVCom::readFromUart()
                 }
                 case 3:
                 {
-                    //Align finish
+                    // Align finish
                     alignFinishStruct a = *reinterpret_cast<alignFinishStruct *>(buffer);
                     gimbalReadFlag = true;
                     validAngle = true;
@@ -240,7 +243,8 @@ void CVCom::sendAutoAimMsg(int p, int y)
     writeToUart(str, sizeof(autoAimStruct) - 1);
 }
 
-void CVCom::sendColorMsg(){
+void CVCom::sendColorMsg()
+{
     ColorStructObj sending = ColorStructObj();
     sending.header = 0xE7;
     sending.color = color;
@@ -251,13 +255,15 @@ void CVCom::sendColorMsg(){
     sending.footer = 0;
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
-    drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-                    (uint8_t *)(str),
-                    sizeof(sending));
-    //writeToUart(str, sizeof(sending) - 1);
+    drivers->uart.write(
+        tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+        (uint8_t *)(str),
+        sizeof(sending));
+    // writeToUart(str, sizeof(sending) - 1);
 }
 
-void CVCom::sendEnableMsg(bool start){
+void CVCom::sendEnableMsg(bool start)
+{
     ColorStructObj sending = ColorStructObj();
     sending.header = 0xE7;
     sending.color = start;
@@ -268,10 +274,11 @@ void CVCom::sendEnableMsg(bool start){
     sending.footer = 0;
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
-    drivers->uart.write(tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
-                    (uint8_t *)(str),
-                    sizeof(sending));
-    //writeToUart(str, sizeof(sending) - 1);
+    drivers->uart.write(
+        tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+        (uint8_t *)(str),
+        sizeof(sending));
+    // writeToUart(str, sizeof(sending) - 1);
 }
 
 void CVCom::update()
