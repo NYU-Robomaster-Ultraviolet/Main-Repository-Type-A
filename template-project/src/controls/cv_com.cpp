@@ -172,7 +172,6 @@ int CVCom::readFromUart()
                     hasTarget = a.hasTarget;
                     validAngle = true;
 
-                    writeToUart(buffer, 1);
                     readingState = WAITING_FOR_HEADER;
                     byteIndex = 0;
 
