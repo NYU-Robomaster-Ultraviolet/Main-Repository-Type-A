@@ -49,19 +49,26 @@ public:
     }
 
     float getImuPitch(){ 
-        float pitch = modm::toRadian(drivers->mpu6500.getPitch());
-        float roll = modm::toRadian(drivers->mpu6500.getRoll());
-        tap::algorithms::rotateVector(&pitch, &roll, getImuYaw() - M_PI);
-        return -pitch;
+        // float pitch = modm::toRadian(drivers->mpu6500.getPitch());
+        // float roll = modm::toRadian(drivers->mpu6500.getRoll());
+        // tap::algorithms::rotateVector(&pitch, &roll, getImuYaw() - M_PI);
+        //return pitch;
+        
+        float tilt = modm::toRadian(drivers->mpu6500.getTiltAngle());
+        if(encoderPitch < LEVEL_ANGLE) tilt = -tilt;
+        return tilt + LEVEL_ANGLE;
     }
 
     float getImuYaw() const {
-        return  -modm::toRadian(drivers->mpu6500.getYaw() - 180);
+        float yaw = -modm::toRadian(drivers->mpu6500.getYaw() - 180);
+        if(yaw < 0) yaw += M_TWOPI;
+        else if(yaw > M_TWOPI) yaw -= M_TWOPI;
+        return yaw;
     }
 
 
-    void setYawImu(){ currPitchImu = getImuYaw();}
-    void setPitchImu(){ currPitchImu = getImuPitch();}
+    void setYawImu(){ imuPitch = getImuYaw();}
+    void setPitchImu(){ imuYaw = getImuPitch();}
 
     void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE ,
         constants.PITCH_MAX_ANGLE);}
@@ -103,6 +110,8 @@ public:
     void calibrateImu() {calibrated = true;}
     bool isCalibrated() const {return calibrated;}
 
+    bool imuStatesCalibrated() const {return drivers->mpu6500.getImuState() == tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED;}
+
 private:
     tap::motor::DjiMotor yawMotor;
     tap::motor::DjiMotor pitchMotor;
@@ -134,10 +143,6 @@ private:
     float currentYaw;
     float currentPitch;
 
-    //current angles in IMU data
-    float currYawImu;
-    float currPitchImu;
-
     //desired error angles
     float yawError;
     float pitchError;
@@ -160,7 +165,9 @@ private:
     //checks if gimbal imu is calibrated or not
     bool calibrated = false;
 
-    bool imuMovementReady = false;
+    //used to show that this is the first time setting imu
+    bool firstSetYaw = true;
+    bool firstSetPitch = true;
 }; //class GimbalSubsystem
 }//namespace gimbal
 

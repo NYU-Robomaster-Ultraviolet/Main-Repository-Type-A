@@ -4,7 +4,6 @@
 
 namespace gimbal
 {
-
 // constructor
 GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
     : tap::control::Subsystem(drivers),
@@ -52,13 +51,13 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
-    if(isCalibrated()){
+    if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();
-        // drivers->leds.set(drivers->leds.A, imuPitch > modm::toRadian(90));
+        drivers->leds.set(drivers->leds.A, false);
         // drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
         // drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
-        // drivers->leds.set(drivers->leds.G, imuYaw < modm::toRadian(180));
+         drivers->leds.set(drivers->leds.G, true);
     }
     // if no inputs, lock gimbal
     if (inputsFound)
@@ -67,7 +66,14 @@ void GimbalSubsystem::refresh()
         {
             currentYawMotorSpeed = getYawMotorRPM();  // gets the rotational speed from motor
             encoderYaw = wrappedEncoderValueToRadians(yawMotor.getEncoderWrapped());
-            //currentYaw = isCalibrated() ? imuYaw : encoderYaw;
+            // if(isCalibrated() && imuStatesCalibrated()){
+            //     currentYaw = imuYaw;
+            //     if(firstSetYaw) {
+            //         targetYaw = currentYaw;
+            //         firstSetYaw = false;
+            //     }
+            // }
+            // else currentYaw = encoderYaw;
             currentYaw = encoderYaw;
             updateYawPid();
         }
@@ -75,7 +81,14 @@ void GimbalSubsystem::refresh()
         {
             currentPitchMotorSpeed = getPitchMotorRPM();
             encoderPitch = wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped());
-            //currentPitch = isCalibrated() ? imuPitch : encoderPitch;
+            // if(isCalibrated() && imuStatesCalibrated()){
+            //     currentPitch = imuPitch;
+            //     if(firstSetPitch) {
+            //         targetPitch = currentPitch;
+            //         firstSetPitch = false;
+            //     }
+            // }
+            // else currentPitch = encoderPitch;
             currentPitch = encoderPitch;
             updatePitchPid();
         }
@@ -108,6 +121,10 @@ void GimbalSubsystem::updateYawPid()
     {
         yawMotor.setDesiredOutput(0.0f);
     }
+    // else if(isCalibrated() && imuStatesCalibrated() && -(constants.YAW_MINIMUM_IMU_RADS) < yawError &&
+    //  yawError < constants.YAW_MINIMUM_IMU_RADS){
+    //     yawMotor.setDesiredOutput(0.0f);
+    // }
     else
     {
         yawMotorPid.runController(

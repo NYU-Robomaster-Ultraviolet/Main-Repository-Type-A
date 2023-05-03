@@ -5,6 +5,8 @@
 
 #include "controls/control_interface.hpp"
 
+#include "tap/communication/sensors/imu/imu_interface.hpp"
+
 
 namespace gimbal
 {
@@ -19,7 +21,7 @@ GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src:
 }
 void  GimbalMovementCommand::initialize() {
         gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
-        if(!gimbal->isCalibrated()) timeout.restart(4000);
+        if(!gimbal->isCalibrated()) timeout.restart(3000);
         else timeout.restart(20);
     }
 
@@ -31,13 +33,17 @@ void  GimbalMovementCommand::execute()
             gimbal->calibrateImu();
             timeout.restart(50);
         }
+        else if(drivers->mpu6500.getImuState() != tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED){
+            timeout.restart(50);
+        }
         else{
             //drivers->leds.set(drivers->leds.A, drivers->mpu6500.getPitch() > 0);
             int yaw = int(gimbal->getImuYaw() * 100);
             int pitch = int(gimbal->getImuPitch() * 100);
             drivers->cv_com.setAngles(pitch, yaw);
-            gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
-                drivers->control_interface.getGimbalPitchInput());
+            gimbal->controllerInput(
+            drivers->control_interface.getGimbalYawInput(),
+            drivers->control_interface.getGimbalPitchInput());
         }
     }
 }

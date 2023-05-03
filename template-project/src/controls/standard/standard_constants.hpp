@@ -32,6 +32,8 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
 
+static constexpr float BEYBLADE_INPUT = .4f;
+
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
@@ -114,6 +116,7 @@ static constexpr float MAX_PITCH_SPEED = 12000.0f; //20000
 //Gimbal minimum angles of movement
 static constexpr float YAW_MINIMUM_RADS = 0.0174533f; // 1 degree
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
+static constexpr float YAW_MINIMUM_IMU_RADS = 0.0349066; //2 degrees
 //minimum value for pitch RPM to be considered stable
 static constexpr float MIN_PITCH_RPM = .0005f;
 //starting pitch angle from when the robot is turned on 

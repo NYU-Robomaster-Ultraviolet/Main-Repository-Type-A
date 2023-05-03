@@ -64,7 +64,7 @@ CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},

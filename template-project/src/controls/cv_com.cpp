@@ -43,7 +43,7 @@ int CVCom::writeToUart(char *s, int n)
 bool CVCom::sendingLoop(){
     if(!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    sendAutoAimMsg(int(modm::toRadian(drivers->mpu6500.getPitch()) * 100), int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
+    sendAutoAimMsg(imuPitch, imuYaw);
     sendColorMsg();
     sendEnableMsg(cv_on);
     return 1;

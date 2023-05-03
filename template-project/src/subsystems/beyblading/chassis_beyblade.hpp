@@ -74,7 +74,7 @@ private:
 
     bool flag;
 
-    float rotation = 0.2;
+    float rotation = BEYBLADE_INPUT;
 }; //class ChassisBeybladeCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
