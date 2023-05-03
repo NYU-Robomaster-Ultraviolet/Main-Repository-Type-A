@@ -162,13 +162,13 @@ int CVCom::readFromUart()
                     // cap each value to 1 or -1
                     int cap = 1;
                     if (pitch > cap)
-                        pitch = 0;
+                        pitch = cap;
                     else if (pitch < -cap)
-                        pitch = 0;
+                        pitch = -cap;
                     if (yaw > cap)
-                        yaw = 0;
+                        yaw = cap;
                     else if (yaw < -cap)
-                        yaw = 0;
+                        yaw = -cap;
 
                     hasTarget = a.hasTarget;
                     validAngle = true;
