@@ -34,6 +34,8 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
 
+static constexpr float BEYBLADE_INPUT = .4f;
+
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
