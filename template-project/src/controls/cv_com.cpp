@@ -50,6 +50,7 @@ bool CVCom::sendingLoop()
         int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
     sendColorMsg();
     sendEnableMsg(cv_on);
+    sendRefereeMsg();
     return 1;
 }
 
@@ -214,6 +215,16 @@ int CVCom::readFromUart()
 }
 
 void CVCom::UnPackMsgs(char *buffer) {}
+
+void CVCom::sendRefereeMsg(){
+    RefInterface::RefStructObj refData = drivers->ref_interace.getData();
+    uint8_t str[sizeof(refData)];
+    memcpy(str, &refData, sizeof(refData));
+    drivers->uart.write(
+        tap::communication::serial::Uart::UartPort::Uart7,  // Uart7
+        (str),
+        sizeof(refData));
+}
 
 void CVCom::sendAutoAimMsg(int p, int y)
 {

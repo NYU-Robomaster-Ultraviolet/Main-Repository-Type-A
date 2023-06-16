@@ -1,8 +1,9 @@
 #ifndef CV_COM_HPP_
 #define CV_COM_HPP_
 #include "tap/architecture/timeout.hpp"
-
+#include "ref_interface.hpp"
 #include "modm/math/geometry/angle.hpp"
+#include "ref_interface.hpp"
 
 namespace src
 {
@@ -56,6 +57,8 @@ public:
     void updateHP(unsigned int h) { hp = h; }
 
     void sendColorMsg();
+
+    void sendRefereeMsg();
 
     void changeCV(bool on) { cv_on = on; }
 
@@ -189,6 +192,7 @@ public:
         unsigned char empty2;
         unsigned short msg_type;
     } *Header;
+
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
     const unsigned int SENDING_TIME = 100;
