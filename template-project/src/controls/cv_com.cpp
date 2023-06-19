@@ -44,12 +44,11 @@ bool CVCom::sendingLoop()
 {
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    //sendAutoAimMsg(imuPitch, imuYaw);
-    sendAutoAimMsg(
-        encoderPitch, encoderYaw);
-    //sendColorMsg();
-    //sendEnableMsg(cv_on);
-    //sendRefereeMsg();
+    // sendAutoAimMsg(imuPitch, imuYaw);
+    sendAutoAimMsg(encoderPitch, encoderYaw);
+    // sendColorMsg();
+    // sendEnableMsg(cv_on);
+    // sendRefereeMsg();
     return 1;
 }
 
@@ -156,8 +155,8 @@ int CVCom::readFromUart()
                     // Autoaim
                     autoAimStruct a = *reinterpret_cast<autoAimStruct *>(buffer);
                     // convert *100 pitch int values to float without truncating
-                    pitch = (a.pitch) / 100.0;
-                    yaw = (a.yaw) / 100.0;
+                    pitch = (a.pitch) / 10000.0;
+                    yaw = (a.yaw) / 10000.0;
 
                     hasTarget = a.hasTarget;
                     validAngle = true;
@@ -215,7 +214,8 @@ int CVCom::readFromUart()
 
 void CVCom::UnPackMsgs(char *buffer) {}
 
-void CVCom::sendRefereeMsg(){
+void CVCom::sendRefereeMsg()
+{
     RefInterface::RefStructObj refData = drivers->ref_interace.getData();
     uint8_t str[sizeof(refData)];
     memcpy(str, &refData, sizeof(refData));

@@ -1,8 +1,9 @@
 #ifndef CV_COM_HPP_
 #define CV_COM_HPP_
 #include "tap/architecture/timeout.hpp"
-#include "ref_interface.hpp"
+
 #include "modm/math/geometry/angle.hpp"
+
 #include "ref_interface.hpp"
 
 namespace src
@@ -73,7 +74,8 @@ public:
 
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
     void resetGimbalReadFlag() { gimbalReadFlag = 0; }
-    void setEncoder(float yaw, float pitch) {
+    void setEncoder(float yaw, float pitch)
+    {
         encoderYaw = yaw * 100;
         encoderPitch = pitch * 100;
     }
@@ -200,7 +202,7 @@ public:
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
     const unsigned int SENDING_TIME = 100;
-    const unsigned int RECEIVING_TIME = 150;
+    const unsigned int RECEIVING_TIME = 5;
 
 private:
     src::Drivers *drivers;
