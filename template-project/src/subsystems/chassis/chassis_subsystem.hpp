@@ -5,6 +5,7 @@
 #include "modm/math/filter/pid.hpp"
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
+#include "subsystems/gimbal/gimbal_motor_interface.hpp"
 
 #ifdef TARGET_STANDARD
 #include "controls/standard/standard_constants.hpp"
@@ -33,13 +34,10 @@ public:
      * Constructs a new ChassisSubsystem with default parameters specified in
      * the private section of this class.
      */
-    ChassisSubsystem(src::Drivers *drivers);
+    ChassisSubsystem(src::Drivers *drivers, gimbal::GimbalInterface gimbal);
 
-    //updates the string with the encoder values of the motors
+    //updates the data on the robot based on the wheels
     void updateWheelvalues();
-
-    //sends a copy of the string detailing motor encoder information
-    std::string getUartOutput(){return outputString;}
 
     //copy controls
     ChassisSubsystem(const ChassisSubsystem &other) = delete;
@@ -114,8 +112,38 @@ private:
     float frontRightDesiredRpm;
     float backLeftDesiredRpm;
     float backRightDesiredRpm;
-    //
-    std::string outputString;
+
+
+    //for caculating speeds from mecanum wheels
+    gimbal::GimbalInterface gimbalInterface;
+    // FR = front right, FL = front left, BR = Back Right, BL = Back Left
+    //Rotations per minute (degrees/min)
+    float FRRPM = 0;
+    float FLRPM = 0;
+    float BRRPM = 0;
+    float BLRPM = 0;
+    //Encoder Position
+    float FRPos = 0;
+    float FLPos = 0;
+    float BRPos = 0;
+    float BLPos = 0;
+    //Angular Velocity (w) rad/sec
+    float FRVelocity = 0;
+    float FLVelocity = 0;
+    float BRVelocity = 0;
+    float BLVelocity = 0;
+    //robot reference values
+    float longitudinalVelocity = 0; //m/s
+    float transversalVelocity = 0; //m/s
+    float angularVelocity = 0; //rad/s
+
+    float directionOfMovement = 0; //rad
+    float resultantVelocity = 0; //m/s
+
+    //velocity in with the frame of view of the gimbal (wherever it points is forwards)
+    float gimbalFrameVelocity = 0; //m/s
+    float gimbalFrameVelocityX = 0; 
+    float gimbalFrameVelocityY = 0;
 };  // class ChassisSubsystem
 
 }  // namespace chassis

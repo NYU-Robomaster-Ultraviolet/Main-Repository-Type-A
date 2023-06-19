@@ -40,13 +40,13 @@ using namespace shooter;
 
 namespace src::control{
 // Define subsystems here ------------------------------------------------
-ChassisSubsystem chassis(drivers());
 GimbalSubsystem gimbal(drivers());
+GimbalInterface gimbalInterface(&gimbal);
+ChassisSubsystem chassis(drivers(), gimbalInterface);
 FeederSubsystem feeder(drivers());
 HeroShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
-GimbalInterface gimbalInterface(&gimbal);
 
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);

@@ -43,7 +43,7 @@ public:
 
 public:
     src::control::ControlInterface control_interface;
-    CVCom cv_com;
+    cv::CVCom cv_com;
     RefInterface ref_interace;
 
 };  // class Drivers

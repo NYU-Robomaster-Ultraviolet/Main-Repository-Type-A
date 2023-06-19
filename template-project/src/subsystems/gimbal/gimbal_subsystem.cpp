@@ -57,10 +57,6 @@ void GimbalSubsystem::refresh()
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();
-        // drivers->leds.set(drivers->leds.A, false);
-        // drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
-        // drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
-        //  drivers->leds.set(drivers->leds.G, true);
     }
     if (yawMotor.isMotorOnline())
         {
@@ -99,7 +95,7 @@ void GimbalSubsystem::refresh()
             //     }
             // }
             // else currentPitch = encoderPitch;
-            //updatePitchPid();
+            updatePitchPid();
         }
     }
     else
@@ -107,12 +103,6 @@ void GimbalSubsystem::refresh()
         targetPitch = currentPitch;
         targetYaw = currentYaw;
     }
-    drivers->leds.set(drivers->leds.A, (getPitchEncoder() - PITCH_ENCODER_OFFSET > constants.PITCH_MIN_ANGLE )
-    && (getPitchEncoder() - PITCH_ENCODER_OFFSET < constants.PITCH_MAX_ANGLE));
-    drivers->leds.set(drivers->leds.B, !((getPitchEncoder() - PITCH_ENCODER_OFFSET > constants.PITCH_MIN_ANGLE) 
-    && (getPitchEncoder() - PITCH_ENCODER_OFFSET < constants.PITCH_MAX_ANGLE)));
-    drivers->leds.set(drivers->leds.E, false);
-    drivers->leds.set(drivers->leds.F, true);
 }
 
 // Takes in a encoded wrapped motor value and turns it into radians
@@ -188,7 +178,7 @@ void GimbalSubsystem::updatePitchPid()
 float GimbalSubsystem::gravityCompensation()
 {
     float limitAngle = M_PI / 2;
-    limitAngle = limitVal<float>(currentPitch - (constants.LEVEL_ANGLE), -M_PI, M_PI);
+    limitAngle = limitVal<float>(currentPitch - PITCH_ENCODER_OFFSET - (constants.LEVEL_ANGLE), -M_PI, M_PI);
     return constants.GRAVITY_COMPENSATION_SCALAR * cosf(limitAngle);
 }
 
@@ -227,5 +217,14 @@ void GimbalSubsystem::setIMU(float yaw, float pitch)
 {
     imuYaw = yaw;
     imuPitch = pitch;
+}
+
+void GimbalSubsystem::findVelocityImu(uint32_t time){
+    imuAx = drivers->mpu6500.getAx();
+    imuAy = drivers->mpu6500.getAy();
+    imuAz = drivers->mpu6500.getAz();
+    imuVx += imuAx ? (imuAx * time) : - imuVx;
+    imuVy += imuAy ? (imuAy * time) : - imuVy;
+    imuVz += imuAz ? (imuAz * time) : - imuVz;
 }
 }  // namespace gimbal

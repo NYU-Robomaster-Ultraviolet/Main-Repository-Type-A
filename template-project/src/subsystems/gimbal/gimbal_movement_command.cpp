@@ -21,7 +21,7 @@ GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src:
 }
 void  GimbalMovementCommand::initialize() {
         gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
-        if(!gimbal->isCalibrated()) timeout.restart(3000);
+        if(!gimbal->isCalibrated()) timeout.restart(3000); //3000 to actually work
         else timeout.restart(20);
     }
 

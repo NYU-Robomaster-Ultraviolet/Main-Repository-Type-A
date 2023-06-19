@@ -55,6 +55,18 @@ struct CHASSIS_CONSTANTS{
     CHASSIS_MOTOR_MAX_IOUT = 2000.0f, //max integral 
     CHASSIS_MOTOR_MAX_OUT = 8000.0f; //max output 16000
     
+    //values for calculating speeds from mecanum wheels
+
+    //distance of wheels from center
+    static constexpr float WHEEL_FROM_CENTER = 0.32f; //meters
+    //distance fron left to right wheels 
+    static constexpr float LEFT_TO_RIGHT_WHEEL = 0.54f; //meters
+    //distance from front to back wheels
+    static constexpr float FRONT_TO_BACK_WHEEL = 0.34f; //meters
+    //number of wheels
+    static constexpr unsigned char NUM_WHEELS = 4;
+    //wheel roller radius
+    static constexpr float ROLLER_RADIUS = .01f; // meters
 }; //struct CHASSIS_CONSTANTS
 
 

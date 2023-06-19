@@ -5,12 +5,13 @@
 #include "modm/math/geometry/angle.hpp"
 
 #include "ref_interface.hpp"
+#include "cv_com_structs.hpp"
 
 namespace src
 {
 class Drivers;
 }
-
+namespace cv{
 class CVCom
 {
 public:
@@ -52,7 +53,11 @@ public:
         imuPitch = p;
         imuYaw = y;
     }
-
+    void setImu(int x, int y, int z){
+        imuVelocityX = x;
+        imuVelocityY = y;
+        imuVelocityZ = z;
+    }
     void setColor(bool c) { color = c; }
 
     void updateHP(unsigned int h) { hp = h; }
@@ -80,124 +85,6 @@ public:
         encoderPitch = pitch * 100;
     }
 
-    typedef struct autoAimStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        int pitch;
-        int yaw;
-        unsigned char hasTarget;
-        unsigned short footer;
-    } AutoAimStructObj, *AutoAimStruct;
-
-    typedef struct sendingAngleStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        int pitch;
-        int yaw;
-        char footer;
-    } SendingAngleStructObj, *SendingAngleStruct;
-
-    typedef struct colorStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        unsigned char color;
-        char footer;
-    } ColorStructObj, *ColorStruct;
-
-    // message_type: 1
-    typedef struct alignRequestStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        unsigned short x;
-        unsigned short y;
-        unsigned short r;
-        unsigned short footer;
-    } AlignRequestStructObj, *AlignRequestStruct;
-
-    // message_type: 3
-    typedef struct alignFinishStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        unsigned char x;
-        unsigned short footer;
-    } AlignFinishStructObj, *AlignFinishStruct;
-
-    // message_type: 2
-    typedef struct chassisMoveStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;  // 2
-        // value should be between -1000 and 1000;
-        int chassisX;  // chassis x axis movement
-        int chassisY;  // chassis y axis movement
-        int chassisR;  // rotational movement
-        // 0 : default movement
-        unsigned char mode;  // used to switch command behavior
-        unsigned short footer;
-    } ChassisMoveStructObj, *ChassisMoveStruct;
-
-    // message_type: 4
-    typedef struct gimbalMoveStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;  // 4
-        // value should be between -1000 and 1000;
-        int gimbalX;  // gimbal yaw movement
-        int gimbalY;  // gimbal pitch movement
-        // 0 : default movement, 1 : beyblade, 2 : beyblade backwards
-        unsigned char mode;  // used to switch command behavior
-        unsigned short footer;
-    } GimbalMoveStructObj, *GimbalMoveStruct;
-
-    // Receive
-    typedef struct enableStruct
-    {
-        unsigned char header;
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-        bool start;
-        unsigned short footer;
-    } EnableStructObj, *EnableStruct;
-
-    // Send/recieve
-    typedef struct header
-    {
-        // unsigned char
-        unsigned char header;
-        // unsigned short
-        unsigned short length;
-        unsigned char empty1;
-        unsigned char empty2;
-        unsigned short msg_type;
-    } *Header;
 
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
@@ -225,8 +112,11 @@ private:
     float pitch;
     int imuYaw = 0;
     int imuPitch = 0;
-    int encoderYaw = 1;
-    int encoderPitch = 2;
+    int encoderYaw = 0;
+    int encoderPitch = 0;
+    int imuVelocityX = 0;
+    int imuVelocityY = 0;
+    int imuVelocityZ = 0; 
     int validAngle = false;
     bool hasTarget = false;
     size_t byteIndex = 0;
@@ -245,4 +135,5 @@ private:
     };
     ReadingState readingState = WAITING_FOR_HEADER;
 };  // class CVCom
+}; //namespace cv
 #endif

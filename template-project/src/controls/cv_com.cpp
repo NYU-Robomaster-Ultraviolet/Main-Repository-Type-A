@@ -5,6 +5,8 @@
 
 #include "drivers.hpp"
 
+namespace cv{
+
 CVCom::CVCom(src::Drivers *drivers) : drivers(drivers), byteIndex(0), buffer(new char[buffer_size])
 {
 }
@@ -45,7 +47,7 @@ bool CVCom::sendingLoop()
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
     // sendAutoAimMsg(imuPitch, imuYaw);
-    sendAutoAimMsg(encoderPitch, encoderYaw);
+    sendAutoAimMsg(imuVelocityX, imuVelocityZ);
     // sendColorMsg();
     // sendEnableMsg(cv_on);
     // sendRefereeMsg();
@@ -230,12 +232,6 @@ void CVCom::sendAutoAimMsg(int p, int y)
     SendingAngleStructObj autoAimStruct = SendingAngleStructObj();
     autoAimStruct.pitch = p;
     autoAimStruct.yaw = y;
-    autoAimStruct.empty1 = 0;
-    autoAimStruct.empty2 = 0;
-    autoAimStruct.footer = 0;
-    autoAimStruct.header = 0xE7;
-    autoAimStruct.msg_type = 5;
-    autoAimStruct.length = 8;
 
     char str[sizeof(autoAimStruct)];
     memcpy(str, &autoAimStruct, sizeof(autoAimStruct));
@@ -245,13 +241,8 @@ void CVCom::sendAutoAimMsg(int p, int y)
 void CVCom::sendColorMsg()
 {
     ColorStructObj sending = ColorStructObj();
-    sending.header = 0xE7;
     sending.color = color;
-    sending.msg_type = 2;
-    sending.length = 1;
-    sending.empty1 = 0;
-    sending.empty2 = 0;
-    sending.footer = 0;
+
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
     drivers->uart.write(
@@ -264,13 +255,8 @@ void CVCom::sendColorMsg()
 void CVCom::sendEnableMsg(bool start)
 {
     ColorStructObj sending = ColorStructObj();
-    sending.header = 0xE7;
     sending.color = start;
-    sending.msg_type = 1;
-    sending.length = 1;
-    sending.empty1 = 0;
-    sending.empty2 = 0;
-    sending.footer = 0;
+
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
     drivers->uart.write(
@@ -292,3 +278,4 @@ void CVCom::update()
     // else
     //     drivers->leds.set(drivers->leds.C, true);
 }
+}; //namespace cv

@@ -59,7 +59,7 @@ public:
     }
 
     void setEncoderPitchAngle(float angle) {
-        encoderPitch = wrapAngle(angle);
+        encoderPitch = angle;
     }
 
     float getImuPitch(){ 
@@ -81,6 +81,7 @@ public:
 
     void setYawImu(){ imuPitch = getImuYaw();}
     void setPitchImu(){ imuYaw = getImuPitch();}
+    void findVelocityImu(uint32_t time);
 
 
     float getYawMotorRPM() const {return yawMotor.isMotorOnline() ? yawMotor.getShaftRPM() : 0.0f; }
@@ -93,6 +94,11 @@ public:
     //getters for current motor positions
     float getYawEncoder() const {return encoderYaw;}
     float getPitchEncoder() const {return encoderPitch;}
+
+    //getters for velocity
+    float getImuVx() const {return imuVx;}
+    float getImuVy() const {return imuVy;}
+    float getImuVz() const {return imuVz;}
 
     //these methods will update both PID calculators and set motor speeds
     void updateYawPid();
@@ -136,8 +142,16 @@ private:
     float targetYaw;
     float targetPitch;
     //current angles in radians from IMU
-    float imuYaw;
-    float imuPitch;
+    float imuYaw = 0;
+    float imuPitch = 0;
+    //imu acceleration
+    float imuAx = 0;
+    float imuAy = 0;
+    float imuAz = 0;
+    //imu velocities
+    float imuVx = 0;
+    float imuVy = 0;
+    float imuVz = 0;
     //current angles in radians from encoder
     float encoderYaw;
     float encoderPitch;

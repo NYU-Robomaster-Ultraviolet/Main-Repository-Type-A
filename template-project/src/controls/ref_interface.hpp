@@ -17,7 +17,7 @@ public:
 
     typedef struct RefereeCVData{
         unsigned char header = 0xE7;
-        unsigned short length = 72;
+        unsigned short length = 70;
         unsigned char empty = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 7;
@@ -58,7 +58,7 @@ public:
         uint16_t blueOutpost;
         uint16_t blueBase;
 
-        uint16_t remainingCoins;
+        //uint16_t remainingCoins;
         //RFID info (all bools)
         uint8_t rfid;           //0: Robot in the base zone
                                 //1: Robot in the elevated ground zone

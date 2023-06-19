@@ -8,7 +8,7 @@ using namespace tap;
 namespace chassis
 {
 
-ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers)
+ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers, gimbal::GimbalInterface gimbal)
         : tap::control::Subsystem(drivers),
           frontLeftMotor(drivers, constants.FRONT_LEFT_MOTOR_ID, constants.CAN_BUS_MOTORS, false, "front left motor"),
           frontRightMotor(drivers, constants.FRONT_RIGHT_MOTOR_ID, constants.CAN_BUS_MOTORS, true, "front right motor"),
@@ -25,23 +25,35 @@ ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers)
           frontLeftDesiredRpm(0),
           frontRightDesiredRpm(0),
           backLeftDesiredRpm(0),
-          backRightDesiredRpm(0)
+          backRightDesiredRpm(0),
+          gimbalInterface(gimbal)
     {}
 
 void ChassisSubsystem::updateWheelvalues(){
-    float FRRPM = frontRightMotor.getShaftRPM();
-    float FLRPM = frontLeftMotor.getShaftRPM();
-    float BRRPM = backRightMotor.getShaftRPM();
-    float BLRPM = backLeftMotor.getShaftRPM();
-    float FRPos = wrappedEncoderValueToRadians(frontRightMotor.getEncoderUnwrapped());
-    float FLPos = wrappedEncoderValueToRadians(frontLeftMotor.getEncoderUnwrapped());
-    float BRPos = wrappedEncoderValueToRadians(backRightMotor.getEncoderUnwrapped());
-    float BLPos = wrappedEncoderValueToRadians(backLeftMotor.getEncoderUnwrapped());
-    //format: name,RPM,EncoderPosition(rad);
-    outputString = "FR," + std::to_string(FRRPM) + ',' +  std::to_string(FRPos) + ';' +
-    "FL," + std::to_string(FLRPM) + ',' +  std::to_string(FLPos) + ';' +
-    "BR," + std::to_string(BRRPM) + ',' +  std::to_string(BRPos) + ';' +
-    "BL," + std::to_string(BLRPM) + ',' +  std::to_string(BLPos) + ';' ;
+    //position of each wheel (based off of encoder)
+    FRPos = wrappedEncoderValueToRadians(frontRightMotor.getEncoderUnwrapped());
+    FLPos = wrappedEncoderValueToRadians(frontLeftMotor.getEncoderUnwrapped());
+    BRPos = wrappedEncoderValueToRadians(backRightMotor.getEncoderUnwrapped());
+    BLPos = wrappedEncoderValueToRadians(backLeftMotor.getEncoderUnwrapped());
+    //get rpm of each wheel
+    FRRPM = frontRightMotor.getShaftRPM();
+    FLRPM = frontLeftMotor.getShaftRPM();
+    BRRPM = backRightMotor.getShaftRPM();
+    BLRPM = backLeftMotor.getShaftRPM();
+    //get angular velocity of each wheel
+    FRVelocity = FRRPM * M_TWOPI / 60;
+    FLVelocity = FLRPM * M_TWOPI / 60;
+    BRVelocity = BRRPM * M_TWOPI / 60;
+    BLVelocity = BLRPM * M_TWOPI / 60;
+    //calculates velocities
+    longitudinalVelocity = (FLVelocity + FRVelocity + BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
+    transversalVelocity = (-FLVelocity + FRVelocity - BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
+    angularVelocity = (-FLVelocity + FRVelocity - BLVelocity + BRVelocity) *
+         constants.ROLLER_RADIUS / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL));
+    
+    directionOfMovement = sqrtf(pow(longitudinalVelocity, 2) + pow(transversalVelocity, 2));
+    resultantVelocity = atanf(transversalVelocity/longitudinalVelocity);
+    //gimbalFrameVelocity = 
 }
 
 void ChassisSubsystem::initialize()
@@ -50,6 +62,7 @@ void ChassisSubsystem::initialize()
     frontRightMotor.initialize();
     backLeftMotor.initialize();
     backRightMotor.initialize();
+    updateWheelvalues();
 }
 void ChassisSubsystem::refresh() {
     updateRpmPid(&frontLeftPid, &frontLeftMotor, frontLeftDesiredRpm);

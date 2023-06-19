@@ -34,7 +34,7 @@ void RefInterface::updateData(){
    returnData.blueOutpost = data.allRobotHp.blue.outpost;
    returnData.blueBase = data.allRobotHp.blue.base;
 
-   returnData.remainingCoins = data.remainingCoins;
+   //returnData.remainingCoins = data.remainingCoins;
 
    //RFID info (all bools)
    returnData.rfid = static_cast<u_int8_t>(data.rfidStatus.value);
