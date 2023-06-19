@@ -17,6 +17,9 @@
 #include "subsystems/shooter_sentry/shoot_sentry_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
+#include "subsystems/communication/cv_command.hpp"
+#include "subsystems/communication/cv_chassis.hpp"
+//#include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/music/music_player.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 // #include "subsystems/feeder/feeder_movement_command.hpp"
@@ -48,6 +51,7 @@ GimbalInterface gimbalInterface(&gimbal);
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
+CvCommand cvMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
 FeederSentryMovementCommand feederMovement(&feeder, drivers());
 ShootSentryUserCommand shootUser(&shooter, drivers());
@@ -56,7 +60,7 @@ ShootSentryUserCommand shootUser(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&gimbalMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
@@ -90,7 +94,7 @@ void startupCommands(src::Drivers* drivers) {
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&rightSwitchMid);
-    //drivers->commandMapper.addMap(&rightSwitchUp);
+    drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
 }

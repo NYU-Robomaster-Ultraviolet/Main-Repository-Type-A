@@ -33,6 +33,7 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 0; 
 
 static constexpr float BEYBLADE_INPUT = .4f;
 
@@ -65,7 +66,7 @@ struct GIMBAL_CONSTANTS{
     static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR5;
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR6;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS2;
-
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_2 = tap::can::CanBus::CAN_BUS1;
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
         .kp = 600.0f,

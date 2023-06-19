@@ -10,12 +10,15 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
       yawMotor(
           drivers,
           constants.YAW_MOTOR_ID,
-          constants.CAN_BUS_MOTORS,
+          constants.CAN_BUS_MOTORS_2,
           false,
           "Yaw Motor",
           tap::motor::DjiMotor::ENC_RESOLUTION / 2,
           constants.STARTING_YAW_ROT),
-      pitchMotor(drivers, constants.PITCH_MOTOR_ID, constants.CAN_BUS_MOTORS, false, "Pitch Motor"),
+      pitchMotor(drivers, 
+        constants.PITCH_MOTOR_ID, 
+        constants.CAN_BUS_MOTORS, false, 
+        "Pitch Motor"),
       targetYaw(0.0f),
       targetPitch(0.0f),
       currentYawMotorSpeed(0.0f),
@@ -36,8 +39,8 @@ void GimbalSubsystem::initialize()
     pitchMotor.setDesiredOutput(0);
     uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
     uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
-    encoderPitch = wrappedEncoderValueToRadians(currentPitchEncoder);
-    encoderYaw = wrappedEncoderValueToRadians(currentYawEncoder);
+    setEncoderPitchAngle(wrappedEncoderValueToRadians(currentPitchEncoder));
+    setEncoderYawAngle(wrappedEncoderValueToRadians(currentYawEncoder));
     startingPitch = encoderPitch;
     startingYaw = encoderYaw;
     currentYaw = startingYaw;
@@ -54,18 +57,28 @@ void GimbalSubsystem::refresh()
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();
-        drivers->leds.set(drivers->leds.A, false);
+        // drivers->leds.set(drivers->leds.A, false);
         // drivers->leds.set(drivers->leds.C, imuPitch < modm::toRadian(90));
         // drivers->leds.set(drivers->leds.E, imuYaw > modm::toRadian(180));
-         drivers->leds.set(drivers->leds.G, true);
+        //  drivers->leds.set(drivers->leds.G, true);
+    }
+    if (yawMotor.isMotorOnline())
+        {
+        currentYawMotorSpeed = getYawMotorRPM();  // gets the rotational speed from motor
+        setEncoderYawAngle(wrappedEncoderValueToRadians(yawMotor.getEncoderWrapped()));
+        currentYaw = encoderYaw;
+    }
+    if (pitchMotor.isMotorOnline())
+        {
+        currentPitchMotorSpeed = getPitchMotorRPM();  // gets the rotational speed from motor
+        setEncoderPitchAngle(wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped()));
+        currentPitch = encoderPitch;
     }
     // if no inputs, lock gimbal
     if (inputsFound)
     {
         if (yawMotor.isMotorOnline())
         {
-            currentYawMotorSpeed = getYawMotorRPM();  // gets the rotational speed from motor
-            encoderYaw = wrappedEncoderValueToRadians(yawMotor.getEncoderWrapped());
             // if(isCalibrated() && imuStatesCalibrated()){
             //     currentYaw = imuYaw;
             //     if(firstSetYaw) {
@@ -74,13 +87,10 @@ void GimbalSubsystem::refresh()
             //     }
             // }
             // else currentYaw = encoderYaw;
-            currentYaw = encoderYaw;
             updateYawPid();
         }
         if (pitchMotor.isMotorOnline())
         {
-            currentPitchMotorSpeed = getPitchMotorRPM();
-            encoderPitch = wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped());
             // if(isCalibrated() && imuStatesCalibrated()){
             //     currentPitch = imuPitch;
             //     if(firstSetPitch) {
@@ -89,8 +99,7 @@ void GimbalSubsystem::refresh()
             //     }
             // }
             // else currentPitch = encoderPitch;
-            currentPitch = encoderPitch;
-            updatePitchPid();
+            //updatePitchPid();
         }
     }
     else
@@ -98,6 +107,12 @@ void GimbalSubsystem::refresh()
         targetPitch = currentPitch;
         targetYaw = currentYaw;
     }
+    drivers->leds.set(drivers->leds.A, (getPitchEncoder() - PITCH_ENCODER_OFFSET > constants.PITCH_MIN_ANGLE )
+    && (getPitchEncoder() - PITCH_ENCODER_OFFSET < constants.PITCH_MAX_ANGLE));
+    drivers->leds.set(drivers->leds.B, !((getPitchEncoder() - PITCH_ENCODER_OFFSET > constants.PITCH_MIN_ANGLE) 
+    && (getPitchEncoder() - PITCH_ENCODER_OFFSET < constants.PITCH_MAX_ANGLE)));
+    drivers->leds.set(drivers->leds.E, false);
+    drivers->leds.set(drivers->leds.F, true);
 }
 
 // Takes in a encoded wrapped motor value and turns it into radians

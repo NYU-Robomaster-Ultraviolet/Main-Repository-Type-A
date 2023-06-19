@@ -21,7 +21,7 @@ static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
 //static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.15f;
 
 static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
-static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.15f;
+static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.4f; //.15
 
 static constexpr float CHASSIS_MOTOR_DISTANCE = 0.2f;
 static constexpr float CHASSIS_ROTATION_SET_SCALE = 0.1f;
@@ -30,7 +30,8 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 
 static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
-static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
+static constexpr float YAW_ENCODER_OFFSET = 2.8902652; //165.6 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 3.62920274; //207.938 degrees
 
 static constexpr float BEYBLADE_INPUT = .4f;
 
@@ -41,10 +42,10 @@ struct CHASSIS_CONSTANTS{
     static constexpr float RPM_SCALE_FACTOR = 4000.0f;
 
     ///< Hardware constants, not specific to any particular chassis.
-    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR2;
-    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR1;
-    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
-    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR1;
+    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR2;
+    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR4;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
 
     //M3505 motor speed PID
@@ -60,15 +61,16 @@ struct CHASSIS_CONSTANTS{
 
 struct GIMBAL_CONSTANTS{
     //constants for YAW and PITCH Motor IDs
-    static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR5;
-    static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR6;
+    static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR6;
+    static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR5;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_2 = tap::can::CanBus::CAN_BUS1;
 
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 600.0f,
+        .kp = 700.0f,
         .ki = 0.0f,
-        .kd = 500.0f,
+        .kd = 600.0f, //500
         .maxICumulative = 10.0f,
         .maxOutput = 16000.0f,
         .tQDerivativeKalman = 1.0f,
@@ -80,9 +82,9 @@ struct GIMBAL_CONSTANTS{
     };
 
     static constexpr tap::algorithms::SmoothPidConfig PITCH_PID = {
-        .kp = 900.0f, //1850.0f
+        .kp = 4000.0f, //900 //1850.0f
         .ki = 0.0f,
-        .kd = 150.0f,
+        .kd = 300.0f, //150
         .maxICumulative = 10.0f,
         .maxOutput = 16000.0f,
         .tQDerivativeKalman = 1.0f,
@@ -104,15 +106,15 @@ static constexpr float YAW_SCALE = 0.0125f; //.25
 static constexpr float PITCH_SCALE = 0.01f; // 0.0075f
 //Gimbal Starting angles
 static constexpr float YAW_STARTING_ANGLE = 0.0f;
-static constexpr float PITCH_STARTING_ANGLE = 1.57079632679489661923f; //pi / 2
+static constexpr float PITCH_STARTING_ANGLE = 1.96558746397728f; //~112 degrees
 //Pitch Angle Limits
-static constexpr float PITCH_MIN_ANGLE = 0.698132f; //40 degrees
-static constexpr float PITCH_MAX_ANGLE = 2.61799; //150 degrees
+static constexpr float PITCH_MIN_ANGLE = 1.0472f; //60 degrees
+static constexpr float PITCH_MAX_ANGLE = 1.96558746397728f; //equal to starting
 //gimbal yaw and pitch speed limits
 static constexpr float MIN_YAW_SPEED = 300.0f;
 static constexpr float MAX_YAW_SPEED = 8000.0f;
 static constexpr float MIN_PITCH_SPEED = 300.0f;
-static constexpr float MAX_PITCH_SPEED = 12000.0f; //20000
+static constexpr float MAX_PITCH_SPEED = 16000.0f; //20000
 //Gimbal minimum angles of movement
 static constexpr float YAW_MINIMUM_RADS = 0.0349066f; // 2 degrees
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
@@ -130,7 +132,7 @@ static constexpr float LEVEL_ANGLE = 1.5708; //90 degrees
 static constexpr float BARREL_LENGTH = 165.0f; //turret barrel length in mm
 static constexpr float BARREL_MIN_HEIGHT = 135.6f;
 static constexpr float BARREL_LEVEL_HEIGHT = 172.8f;
-static constexpr float GRAVITY_COMPENSATION_SCALAR = 5800;
+static constexpr float GRAVITY_COMPENSATION_SCALAR = -5800;
 };//struct GIMBAL_CONSTANTS
 
 struct FEEDER_PID

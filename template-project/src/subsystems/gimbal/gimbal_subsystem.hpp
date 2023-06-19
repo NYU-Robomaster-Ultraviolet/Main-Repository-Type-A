@@ -41,11 +41,25 @@ public:
 
     static inline float wrappedEncoderValueToRadians(int64_t encoderValue);
 
-
-    void setYawAngle(float angle) {
+    float wrapAngle(float angle) const{
         if(angle > M_TWOPI) angle -= M_TWOPI;
         else if(angle < 0) angle += M_TWOPI;
-        targetYaw = angle;
+        return angle;
+    }
+
+    void setYawAngle(float angle) {
+        targetYaw = wrapAngle(angle);
+    }
+
+    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE + PITCH_ENCODER_OFFSET ,
+        constants.PITCH_MAX_ANGLE + PITCH_ENCODER_OFFSET);}
+
+    void setEncoderYawAngle(float angle) {
+        encoderYaw = wrapAngle(angle);
+    }
+
+    void setEncoderPitchAngle(float angle) {
+        encoderPitch = wrapAngle(angle);
     }
 
     float getImuPitch(){ 
@@ -61,17 +75,13 @@ public:
 
     float getImuYaw() const {
         float yaw = -modm::toRadian(drivers->mpu6500.getYaw() - 180);
-        if(yaw < 0) yaw += M_TWOPI;
-        else if(yaw > M_TWOPI) yaw -= M_TWOPI;
-        return yaw;
+        return wrapAngle(yaw);
     }
 
 
     void setYawImu(){ imuPitch = getImuYaw();}
     void setPitchImu(){ imuYaw = getImuPitch();}
 
-    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE ,
-        constants.PITCH_MAX_ANGLE);}
 
     float getYawMotorRPM() const {return yawMotor.isMotorOnline() ? yawMotor.getShaftRPM() : 0.0f; }
     float getPitchMotorRPM() const {return pitchMotor.isMotorOnline() ? pitchMotor.getShaftRPM() : 0.0f; }

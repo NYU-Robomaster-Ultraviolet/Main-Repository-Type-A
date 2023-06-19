@@ -27,7 +27,7 @@ public:
     feederMotor2(drivers,
             tap::motor::MOTOR8, // either 6 or 8
             tap::can::CanBus::CAN_BUS2,
-            false,
+            true,
             "Feeder Motor 2"),
       motor1TargetRPM(0.0f),
       motor2TargetRPM(0.0f),

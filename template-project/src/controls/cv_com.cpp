@@ -44,13 +44,12 @@ bool CVCom::sendingLoop()
 {
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    sendAutoAimMsg(imuPitch, imuYaw);
+    //sendAutoAimMsg(imuPitch, imuYaw);
     sendAutoAimMsg(
-        int(modm::toRadian(drivers->mpu6500.getPitch()) * 100),
-        int(modm::toRadian(drivers->mpu6500.getYaw()) * 100));
-    sendColorMsg();
-    sendEnableMsg(cv_on);
-    sendRefereeMsg();
+        encoderPitch, encoderYaw);
+    //sendColorMsg();
+    //sendEnableMsg(cv_on);
+    //sendRefereeMsg();
     return 1;
 }
 
@@ -146,7 +145,7 @@ int CVCom::readFromUart()
                 receivingTimeout.restart(READING_DATA);
                 return bytes_read;
             }
-            drivers->leds.set(drivers->leds.D, flag);
+            // drivers->leds.set(drivers->leds.D, flag);
             flag = !flag;
 
             switch (headerStruct.msg_type)

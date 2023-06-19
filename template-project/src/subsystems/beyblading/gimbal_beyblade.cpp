@@ -18,7 +18,7 @@ GimbalBeybladeCommand::GimbalBeybladeCommand(GimbalSubsystem *const gimbal, src:
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
 void  GimbalBeybladeCommand::initialize() {
-        gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+        gimbal->cvInput(findRotation(0), LEVEL_ANGLE - gimbal->getPitchEncoder());
         noTurn = 0;
     }
 

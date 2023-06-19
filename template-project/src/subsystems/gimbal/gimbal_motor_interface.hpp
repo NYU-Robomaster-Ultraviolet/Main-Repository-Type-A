@@ -8,7 +8,7 @@ public:
     GimbalInterface(GimbalSubsystem* gimbal) : gimbal(gimbal){}
     
     float getYawEncoder() const {return gimbal->getYawEncoder() - YAW_ENCODER_OFFSET;}
-    float getPitchEncoder() const {return gimbal->getPitchEncoder();}
+    float getPitchEncoder() const {return gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET;}
 private:
     GimbalSubsystem* gimbal;
 };//class gimbalInterface

@@ -73,6 +73,10 @@ public:
 
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
     void resetGimbalReadFlag() { gimbalReadFlag = 0; }
+    void setEncoder(float yaw, float pitch) {
+        encoderYaw = yaw * 100;
+        encoderPitch = pitch * 100;
+    }
 
     typedef struct autoAimStruct
     {
@@ -219,7 +223,9 @@ private:
     float pitch;
     int imuYaw = 0;
     int imuPitch = 0;
-    bool validAngle = false;
+    int encoderYaw = 1;
+    int encoderPitch = 2;
+    int validAngle = false;
     bool hasTarget = false;
     size_t byteIndex = 0;
     size_t buffer_size = 100;
