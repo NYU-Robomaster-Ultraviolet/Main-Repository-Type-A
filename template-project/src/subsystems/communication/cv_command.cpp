@@ -25,10 +25,14 @@ void  CvCommand::execute() {
     drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
     drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
-     if(drivers->cv_com.validReading()){
-         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
-         drivers->cv_com.invalidateAngle();
-     }
+
+    
+    gimbal->setPowerOutput(drivers->cv_com.getYawPower(), drivers->cv_com.getPitchPower());
+
+    if(drivers->cv_com.validReading()){
+        gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
+        drivers->cv_com.invalidateAngle();
+    }
     if(drivers->cv_com.getGimbalReadFlag()){
         float xInput = drivers->cv_com.getGimbalX();
         float yInput = drivers->cv_com.getGimbalY();

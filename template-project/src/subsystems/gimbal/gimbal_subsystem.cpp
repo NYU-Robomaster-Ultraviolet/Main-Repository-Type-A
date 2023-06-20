@@ -150,7 +150,7 @@ void GimbalSubsystem::updateYawPid()
             constants.MAX_YAW_SPEED);
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
-        else yawMotor.setDesiredOutput(yawMotorOutput);
+        else yawMotor.setDesiredOutput(yawMotorOutput * yawPowerOutput);
     }
 }
 
@@ -178,7 +178,7 @@ void GimbalSubsystem::updatePitchPid()
         pitchMotorOutput < constants.MIN_PITCH_SPEED)
         pitchMotorOutput = 0;
     else
-        pitchMotor.setDesiredOutput(pitchMotorOutput);
+        pitchMotor.setDesiredOutput(pitchMotorOutput * pitchPowerOutput);
 }
 
 // this method will check if the motor is turning, and will return a new output to try to reach

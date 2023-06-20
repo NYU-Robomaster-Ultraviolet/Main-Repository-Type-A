@@ -34,10 +34,25 @@ public:
      * Constructs a new ChassisSubsystem with default parameters specified in
      * the private section of this class.
      */
-    ChassisSubsystem(src::Drivers *drivers, gimbal::GimbalInterface gimbal);
+    ChassisSubsystem(src::Drivers *drivers, gimbal::GimbalInterface * gimbal);
 
-    //updates the data on the robot based on the wheels
+    /**
+     * @brief Updates all information obtained from wheels
+     * 
+     * This information includes, encoder position, rpm, angular velocity, velocity in chassis frame, and velocity
+     * in gimbal frame.
+     */
     void updateWheelvalues();
+
+    /**
+     * @brief returns a pair containing the x and y components of velocity from a 2d rotation
+     * NOTE: we are swapping x and y, because that's what the formula online uses
+     * @param fowardVelo original X velocity (foward and backward)
+     * @param rightVelo original Y velocity (left and right)
+     * @param Offset the rotation used
+     * @return ** std::pair<float, float> y , x
+     */
+    std::pair<float, float> transformVelocity(float fowardVelo, float rightVelo, float fowardOffset) const;
 
     //copy controls
     ChassisSubsystem(const ChassisSubsystem &other) = delete;
@@ -68,12 +83,30 @@ public:
     void setDesiredOutput(float x, float y, float r);
 
     /**
+     * @brief Set the Velocity Output of motors
+     * 
+     * All values are already stored in the class
+     * @return ** void 
+     */
+    void setVelocityOutput();
+
+    /**
+     * @brief Set the Target Velocity for the robot in the frame of view of the gimbal
+     * 
+     * @param x foward
+     * @param y right
+     * @param r rotation
+     */
+    void setTargetVelocity(float x, float y);
+     void setRotationVelocity(float r);
+    /**
      * @param pid : the pid calculator for the given motor
      * @param motor : the motor that needs to be updated
      * @param desiredRpm : the desired rpm set for tht motor
      * using pid calculator to calculate a rpm to set to given motor to after feeding the calculator
      * the desiredRpm
      */
+
     void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 
     //checks if every motor is online
@@ -84,6 +117,8 @@ public:
     inline float wrappedEncoderValueToRadians(int64_t encoderValue) {
         return (M_TWOPI * static_cast<float>(encoderValue)) / tap::motor::DjiMotor::ENC_RESOLUTION;
     }
+
+    void setInputFlag(){inputFlag = 2;}
 
     //getters for each motor
     const tap::motor::DjiMotor &getFrontLeftMotor() const { return frontLeftMotor; }
@@ -107,6 +142,9 @@ private:
     modm::Pid<float> backLeftPid;
     modm::Pid<float> backRightPid;
 
+    //flag for remote control style inputs
+    char inputFlag;
+
     ///< Any user input is translated into desired RPM for each motor.
     float frontLeftDesiredRpm;
     float frontRightDesiredRpm;
@@ -115,7 +153,7 @@ private:
 
 
     //for caculating speeds from mecanum wheels
-    gimbal::GimbalInterface gimbalInterface;
+    gimbal::GimbalInterface * gimbalInterface;
     // FR = front right, FL = front left, BR = Back Right, BL = Back Left
     //Rotations per minute (degrees/min)
     float FRRPM = 0;
@@ -133,8 +171,9 @@ private:
     float BRVelocity = 0;
     float BLVelocity = 0;
     //robot reference values
-    float longitudinalVelocity = 0; //m/s
-    float transversalVelocity = 0; //m/s
+    float longitudinalVelocity = 0; //foward and backward motion m/s
+    float transversalVelocity = 0; //left and right motion m/s
+    //rotational movement
     float angularVelocity = 0; //rad/s
 
     float directionOfMovement = 0; //rad
@@ -144,6 +183,11 @@ private:
     float gimbalFrameVelocity = 0; //m/s
     float gimbalFrameVelocityX = 0; 
     float gimbalFrameVelocityY = 0;
+
+    float targetFowardVelocity = 0;
+    float targetRightVelocity = 0;
+    float targetRotationVelocity = 0;
+
 };  // class ChassisSubsystem
 
 }  // namespace chassis

@@ -34,16 +34,25 @@ void  CVChassisCommand::execute()
         //gets the cv inputs if valid
         float xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
         float yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
+        float rInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
         //invalidate flag
         drivers->cv_com.resetChassisReadFlag();
         //applies rotation matrix to inputs to change inputs based on gimbal position
         float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
         float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
         //sends values to the chassis subsystem
-        chassis->setDesiredOutput(
-            xOutput,
-            yOutput,
-            limitVal<float>(drivers->cv_com.getChassisY(), -1, 1));
+        chassis->setDesiredOutput( xOutput, yOutput,rInput);
+        chassis->setInputFlag();
+    }
+    else{
+        if(drivers->cv_com.getChassisVeloFlag()){
+            chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), drivers->cv_com.getChassisRightVelo());
+            drivers->cv_com.resetChassisVeloFlag();
+        }
+        if(drivers->cv_com.getChassisSpinFlag()){
+            chassis->setRotationVelocity(drivers->cv_com.getChassisRotationVelo());
+            drivers->cv_com.resetChassisSpinFlag();
+        }
     }
 }
 

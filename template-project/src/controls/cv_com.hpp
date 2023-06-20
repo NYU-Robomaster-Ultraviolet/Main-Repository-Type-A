@@ -69,22 +69,40 @@ public:
 
     void changeCV(bool on) { cv_on = on; }
 
+    void setEncoder(float yaw, float pitch)
+    {
+        encoderYaw = yaw * 100;
+        encoderPitch = pitch * 100;
+    }
+
+    //for chassis movement (mimic remote input)
     bool getChassisReadFlag() const { return chassisReadFlag; }
     void resetChassisReadFlag() { chassisReadFlag = 0; }
     float getChassisX() const { return chassisX; }
     float getChassisY() const { return chassisY; }
     float getChassisR() const { return chassisR; }
 
+    //for chassis movment in velocity
+    bool getChassisVeloFlag() const {return setChassisFlag;}
+    void resetChassisVeloFlag() {setChassisFlag = 0;}
+    bool getChassisSpinFlag() const {return chassisSpinFlag;}
+    void resetChassisSpinFlag() {chassisSpinFlag = 0;}
+
+    float getChassisFowardVelo() const {return xVelocity;}
+    float getChassisRightVelo() const {return yVelocity;}
+    float getChassisRotationVelo() const {return spinVelocity;}
+
+    //for gimbal movement
     float getGimbalX() const { return gimbalX; }
     float getGimbalY() const { return gimbalY; }
 
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
     void resetGimbalReadFlag() { gimbalReadFlag = 0; }
-    void setEncoder(float yaw, float pitch)
-    {
-        encoderYaw = yaw * 100;
-        encoderPitch = pitch * 100;
-    }
+
+    //for gimbal power limits
+    float getYawPower() const {return xAnglePower;}
+    float getPitchPower() const {return yAnglePower;}
+
 
     // Send/recieve
     typedef struct header
@@ -130,23 +148,22 @@ private:
     float spinVelocity; //degree/s, divide by 1000 to get
     bool chassisSpinFlag = 0;
 
-    //set power wrapped around -100 - 100
-    float xLinearPower;
-    float yLinearPower;
-    float xAnglePower;
-    float yAnglePower;
-    bool setPowerFlag = 0;
+    //set power wrapped around 0 - 100
+    float xLinearPower = 1;
+    float yLinearPower = 1;
+    float xAnglePower = 1;
+    float yAnglePower = 1;
 
     //set velocity
-    float xVelocity;
-    float yVelocity;
-    float yawVelocity;
-    float pitchVelocity; 
-    bool setVelocityFlag = 0;
+    float xVelocity = 0;
+    float yVelocity = 0;
+    float yawVelocity = 0;
+    float pitchVelocity = 0;  
+    bool setChassisFlag = 0;
+    bool setGimbalFlag = 0;
 
     //stop chassis
     bool stop;
-    bool stopChassisFlag;
 
 //VALUES SENT TO JETSON
 

@@ -62,6 +62,11 @@ public:
         encoderPitch = angle;
     }
 
+    void setPowerOutput(float yaw, float pitch){
+        yawPowerOutput = yaw;
+        pitchPowerOutput = pitch;
+    }
+
     float getImuPitch(){ 
         // float pitch = modm::toRadian(drivers->mpu6500.getPitch());
         // float roll = modm::toRadian(drivers->mpu6500.getRoll());
@@ -129,13 +134,11 @@ public:
     bool imuStatesCalibrated() const {return drivers->mpu6500.getImuState() == tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED;}
 
 private:
+    //motor interfaces
     tap::motor::DjiMotor yawMotor;
     tap::motor::DjiMotor pitchMotor;
 
-    //starting angle
-    float startingPitchEncoder;
-    float startingYawEncoder;
-
+    //starting angles
     float startingPitch;
     float startingYaw;
     //current angles in radians used for error calculations
@@ -159,6 +162,10 @@ private:
     float currentYawMotorSpeed;
     float currentPitchMotorSpeed;
 
+    //power output in percentages
+    float yawPowerOutput;
+    float pitchPowerOutput;
+
     //pid calculators that take in angular displacement and  angular velocity
     tap::algorithms::SmoothPid yawMotorPid;
     tap::algorithms::SmoothPid pitchMotorPid;
@@ -181,8 +188,6 @@ private:
     float pitchMotorOutput;
     //all other gimbal constants
     GIMBAL_CONSTANTS constants;
-    //Gimbal PID output to motor speed error factor
-    float motorSpeedFactor;
     //checks if there are inputs or not
     bool inputsFound = false;
 
@@ -192,6 +197,7 @@ private:
     //used to show that this is the first time setting imu
     bool firstSetYaw = true;
     bool firstSetPitch = true;
+
 }; //class GimbalSubsystem
 }//namespace gimbal
 

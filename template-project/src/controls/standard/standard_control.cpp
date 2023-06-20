@@ -45,7 +45,7 @@ GimbalSubsystem gimbal(drivers());
 GimbalInterface gimbalInterface(&gimbal);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
-ChassisSubsystem chassis(drivers(), gimbalInterface);
+ChassisSubsystem chassis(drivers(), &gimbalInterface);
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 

@@ -228,7 +228,6 @@ int CVCom::readFromUart()
                     yLinearPower = g->yLinearPower / 100;
                     xAnglePower = g->xAnglePower / 100;
                     yAnglePower = g->yAnglePower / 100;
-                    setPowerFlag = true;
                     break;
                 }
                 case 8:
@@ -238,14 +237,14 @@ int CVCom::readFromUart()
                     yVelocity = g->yVelocity / 100;
                     yawVelocity = g->yawVelocity / 100;
                     pitchVelocity = g->pitchVelocity / 100;
-                    setVelocityFlag = true;
+                    setChassisFlag = true;
+                    setGimbalFlag = true;
                     break;
                 }
                  case 9:
                 {
                     StopChassisStruct g = *reinterpret_cast<StopChassisStruct *>(buffer);
                     stop = g->stop;
-                    stopChassisFlag = true;
                     break;
                 }
                 break;

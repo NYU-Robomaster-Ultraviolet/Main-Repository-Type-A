@@ -41,7 +41,7 @@ namespace src::control{
 // Define subsystems here ------------------------------------------------
 GimbalSubsystem gimbal(drivers());
 GimbalInterface gimbalInterface(&gimbal);
-ChassisSubsystem chassis(drivers());
+ChassisSubsystem chassis(drivers(), &gimbalInterface);
 FeederSentrySubsystem feeder(drivers());
 ShooterSentrySubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
