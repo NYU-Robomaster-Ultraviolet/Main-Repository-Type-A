@@ -17,7 +17,7 @@ public:
 
     typedef struct RefereeCVData{
         unsigned char header = 0xE7;
-        unsigned short length = 70;
+        unsigned short length = 80;
         unsigned char empty = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 7;

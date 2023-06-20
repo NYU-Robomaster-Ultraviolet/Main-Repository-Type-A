@@ -5,7 +5,8 @@
 #include "modm/math/geometry/angle.hpp"
 
 #include "ref_interface.hpp"
-#include "cv_com_structs.hpp"
+#include "cv_com_receive_structs.hpp"
+#include "cv_com_sending_structs.hpp"
 
 namespace src
 {
@@ -85,6 +86,17 @@ public:
         encoderPitch = pitch * 100;
     }
 
+    // Send/recieve
+    typedef struct header
+    {
+        // unsigned char
+        unsigned char header = 0xE7;
+        // unsigned short
+        unsigned short length;
+        unsigned char empty1 = 0;
+        unsigned char empty2 = 0;
+        unsigned short msg_type;
+    } *Header;
 
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
@@ -94,6 +106,7 @@ public:
 private:
     src::Drivers *drivers;
 
+//DATA RECEIVED FROM JETSON
     // chassisMoveValues
     float chassisX;
     float chassisY;
@@ -104,8 +117,38 @@ private:
     float gimbalX;
     float gimbalY;
     bool gimbalReadFlag = 0;
-
+    //beyblade or no beyblade
     unsigned char mode = 0;
+
+    //chassis move straight
+    int forwardDistance; //in mm
+    float forwardVelocity; //m/s, divide by 1000 to get
+    bool chassisForwardFlag = 0;
+
+    //spin chassis 
+    int spinAngle; //in mm
+    float spinVelocity; //degree/s, divide by 1000 to get
+    bool chassisSpinFlag = 0;
+
+    //set power
+    int xLinearPower;
+    int yLinearPower;
+    int xAnglePower;
+    int yAnglePower;
+    bool setPowerFlag = 0;
+
+    //set velocity
+    float xVelocity;
+    float yVelocity;
+    float yawVelocity;
+    float pitchVelocity; 
+    bool setVelocityFlag = 0;
+
+    //stop chassis
+    bool stop;
+    bool stopChassisFlag;
+
+//VALUES SENT TO JETSON
 
     // yaw then pitch
     float yaw;

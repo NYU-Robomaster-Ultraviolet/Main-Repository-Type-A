@@ -205,6 +205,49 @@ int CVCom::readFromUart()
                     mode = g.mode;
                     break;
                 }
+                case 5:
+                {
+                    MoveStraightStruct g = *reinterpret_cast<MoveStraightStruct *>(buffer);
+                    forwardDistance = g->distance;
+                    forwardVelocity = g->velocity;
+                    chassisForwardFlag = true;
+                    break;
+                }
+                case 6:
+                {
+                    SpinChassisStruct g = *reinterpret_cast<SpinChassisStruct *>(buffer);
+                    spinVelocity = g->velocity;
+                    spinAngle = g->angle;
+                    chassisSpinFlag = true;
+                    break;
+                }
+                case 7:
+                {
+                    SetPowerStruct g = *reinterpret_cast<SetPowerStruct *>(buffer);
+                    xLinearPower = g->xLinearPower;
+                    yLinearPower = g->yLinearPower;
+                    xAnglePower = g->xAnglePower;
+                    yAnglePower = g->yAnglePower;
+                    setPowerFlag = true;
+                    break;
+                }
+                case 8:
+                {
+                    SetVelocityStruct g = *reinterpret_cast<SetVelocityStruct *>(buffer);
+                    xVelocity = g->xVelocity;
+                    yVelocity = g->yVelocity;
+                    yawVelocity = g->yawVelocity;
+                    pitchVelocity = g->pitchVelocity;
+                    setVelocityFlag = true;
+                    break;
+                }
+                 case 9:
+                {
+                    StopChassisStruct g = *reinterpret_cast<StopChassisStruct *>(buffer);
+                    stop = g->stop;
+                    stopChassisFlag = true;
+                    break;
+                }
                 break;
             }
         }

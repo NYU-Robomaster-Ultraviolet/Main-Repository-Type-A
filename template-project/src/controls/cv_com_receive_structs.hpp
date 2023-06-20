@@ -1,58 +1,36 @@
-#ifndef CV_COM_STRUCTS_HPP_
-#define CV_COM_STRUCTS_HPP_
+#ifndef CV_COM_RECEIVE_STRUCTS_HPP_
+#define CV_COM_RECEIVE_STRUCTS_HPP_
 namespace cv{
-//receive message about movement and targeting
+//message type: 1 receive message about movement and targeting
 typedef struct autoAimStruct
     {
         unsigned char header = 0xE7;
         unsigned short length = 8;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type = 5;
+        unsigned short msg_type = 1;
         int pitch;
         int yaw;
         unsigned char hasTarget;
         unsigned short footer = 0;
     } AutoAimStructObj, *AutoAimStruct;
 
-//sends current yaw and pitch
-typedef struct sendingAngleStruct
-    {
-        unsigned char header = 0xE7;
-        unsigned short length = 8;
-        unsigned char empty1 = 0;
-        unsigned char empty2 = 0;
-        unsigned short msg_type = 5;
-        int pitch;
-        int yaw;
-        char footer = 0;
-    } SendingAngleStructObj, *SendingAngleStruct;
-
-//states which color team
-typedef struct colorStruct
-    {
-        unsigned char header = 0xE7;
-        unsigned short length = 1;
-        unsigned char empty1 = 0;
-        unsigned char empty2 = 0;
-        unsigned short msg_type = 2;
-        unsigned char color;
-        char footer = 0;
-    } ColorStructObj, *ColorStruct;
-
-// message_type: 1
-typedef struct alignRequestStruct
+// message_type: 2 chassis movement structs
+typedef struct chassisMoveStruct
     {
         unsigned char header = 0xE7;
         unsigned short length;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type = 1;
-        unsigned short x;
-        unsigned short y;
-        unsigned short r;
+        unsigned short msg_type = 2;  // 2
+        // value should be between -1000 and 1000;
+        int chassisX;  // chassis x axis movement
+        int chassisY;  // chassis y axis movement
+        int chassisR;  // rotational movement
+        // 0 : default movement
+        unsigned char mode;  // used to switch command behavior
         unsigned short footer = 0;
-    } AlignRequestStructObj, *AlignRequestStruct;
+    } ChassisMoveStructObj, *ChassisMoveStruct;
 
 // message_type: 3
 typedef struct alignFinishStruct
@@ -82,48 +60,6 @@ typedef struct gimbalMoveStruct
         unsigned short footer = 0;
     } GimbalMoveStructObj, *GimbalMoveStruct;
 
-    // Receive
-typedef struct enableStruct
-    {
-        unsigned char header = 0xE7;
-        unsigned short length;
-        unsigned char empty1 = 0;
-        unsigned char empty2 = 0;
-        unsigned short msg_type;
-        bool start;
-        unsigned short footer = 0;
-    } EnableStructObj, *EnableStruct;
-
-// Send/recieve
-typedef struct header
-    {
-        // unsigned char
-        unsigned char header = 0xE7;
-        // unsigned short
-        unsigned short length;
-        unsigned char empty1 = 0;
-        unsigned char empty2 = 0;
-        unsigned short msg_type;
-    } *Header;
-
-//chassis movement structs
-// message_type: 2
-typedef struct chassisMoveStruct
-    {
-        unsigned char header = 0xE7;
-        unsigned short length;
-        unsigned char empty1 = 0;
-        unsigned char empty2 = 0;
-        unsigned short msg_type = 2;  // 2
-        // value should be between -1000 and 1000;
-        int chassisX;  // chassis x axis movement
-        int chassisY;  // chassis y axis movement
-        int chassisR;  // rotational movement
-        // 0 : default movement
-        unsigned char mode;  // used to switch command behavior
-        unsigned short footer = 0;
-    } ChassisMoveStructObj, *ChassisMoveStruct;
-
 //straight foward movement
 typedef struct MoveStraight
     {
@@ -131,7 +67,7 @@ typedef struct MoveStraight
         unsigned short length = 8;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type;
+        unsigned short msg_type = 5;
         int distance; //in mm
         int velocity; //m/s, divide by 1000 to get
         unsigned short footer = 0;
@@ -144,40 +80,40 @@ typedef struct SpinChassis
         unsigned short length = 8;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type;
+        unsigned short msg_type = 6;
         int angle; //in mm
         int velocity; //degree/s, divide by 1000 to get
         unsigned short footer = 0;
     } SpinChassisObj, *SpinChassisStruct;
 
 //seting power given
-typedef struct SetChassisPower
+typedef struct SetPower
     {
         unsigned char header = 0xE7;
         unsigned short length = 16;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type;
+        unsigned short msg_type = 7;
         int xLinearPower;
         int yLinearPower;
         int xAnglePower;
         int yAnglePower;
         unsigned short footer = 0;
-    } SetChassisPowerObj, *SetChassisPowerStruct;
+    } SetPowerObj, *SetPowerStruct;
 
-typedef struct SetChassisVelocity
+typedef struct SetVelocity
     {
         unsigned char header = 0xE7;
         unsigned short length = 16;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type;
+        unsigned short msg_type = 8;
         int xVelocity;
         int yVelocity;
         int yawVelocity;
         int pitchVelocity;
         unsigned short footer = 0;
-    } SetChassisVelocityObj, *SetChassisVelocityStruct;
+    } SetVelocityObj, *SetVelocityStruct;
 
 typedef struct StopChassis
     {
@@ -185,10 +121,10 @@ typedef struct StopChassis
         unsigned short length = 1;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type;
+        unsigned short msg_type = 9;
         bool stop;
         unsigned short footer = 0;
     } StopChassisObj, *StopChassisStruct;
 
-};// namespace CV
+}; //namespace cv
 #endif
