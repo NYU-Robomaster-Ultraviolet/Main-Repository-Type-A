@@ -24,6 +24,7 @@ void  CvCommand::initialize() {
 void  CvCommand::execute() {
     drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
+    drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
      if(drivers->cv_com.validReading()){
          gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
          drivers->cv_com.invalidateAngle();

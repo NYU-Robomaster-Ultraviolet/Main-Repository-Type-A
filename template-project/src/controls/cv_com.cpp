@@ -47,7 +47,7 @@ bool CVCom::sendingLoop()
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
     // sendAutoAimMsg(imuPitch, imuYaw);
-    sendAutoAimMsg(imuVelocityX, imuVelocityZ);
+    sendAutoAimMsg(imuYaw, 5);
     // sendColorMsg();
     // sendEnableMsg(cv_on);
     // sendRefereeMsg();
@@ -199,8 +199,8 @@ int CVCom::readFromUart()
                 case 4:
                 {
                     gimbalMoveStruct g = *reinterpret_cast<gimbalMoveStruct *>(buffer);
-                    gimbalX = g.gimbalX / 100.0;
-                    gimbalY = g.gimbalY / 100.0;
+                    gimbalX = g.gimbalX / 1000.0;
+                    gimbalY = g.gimbalY / 1000.0;
                     gimbalReadFlag = true;
                     mode = g.mode;
                     break;
@@ -209,14 +209,14 @@ int CVCom::readFromUart()
                 {
                     MoveStraightStruct g = *reinterpret_cast<MoveStraightStruct *>(buffer);
                     forwardDistance = g->distance;
-                    forwardVelocity = g->velocity;
+                    forwardVelocity = g->velocity / 1000;
                     chassisForwardFlag = true;
                     break;
                 }
                 case 6:
                 {
                     SpinChassisStruct g = *reinterpret_cast<SpinChassisStruct *>(buffer);
-                    spinVelocity = g->velocity;
+                    spinVelocity = g->velocity / 1000;
                     spinAngle = g->angle;
                     chassisSpinFlag = true;
                     break;
@@ -224,20 +224,20 @@ int CVCom::readFromUart()
                 case 7:
                 {
                     SetPowerStruct g = *reinterpret_cast<SetPowerStruct *>(buffer);
-                    xLinearPower = g->xLinearPower;
-                    yLinearPower = g->yLinearPower;
-                    xAnglePower = g->xAnglePower;
-                    yAnglePower = g->yAnglePower;
+                    xLinearPower = g->xLinearPower / 100;
+                    yLinearPower = g->yLinearPower / 100;
+                    xAnglePower = g->xAnglePower / 100;
+                    yAnglePower = g->yAnglePower / 100;
                     setPowerFlag = true;
                     break;
                 }
                 case 8:
                 {
                     SetVelocityStruct g = *reinterpret_cast<SetVelocityStruct *>(buffer);
-                    xVelocity = g->xVelocity;
-                    yVelocity = g->yVelocity;
-                    yawVelocity = g->yawVelocity;
-                    pitchVelocity = g->pitchVelocity;
+                    xVelocity = g->xVelocity / 100;
+                    yVelocity = g->yVelocity / 100;
+                    yawVelocity = g->yawVelocity / 100;
+                    pitchVelocity = g->pitchVelocity / 100;
                     setVelocityFlag = true;
                     break;
                 }

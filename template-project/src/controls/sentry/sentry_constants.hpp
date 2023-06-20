@@ -35,6 +35,12 @@ static constexpr float PITCH_ENCODER_OFFSET = 3.780138814; //216.586 degrees
 
 static constexpr float BEYBLADE_INPUT = .4f;
 
+struct Feeder_CONSTANTS{
+    static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR7;
+    static constexpr tap::motor::MotorId FEEDER_MOTOR_ID2 = tap::motor::MOTOR8;
+    static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
+}; 
+
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
@@ -76,8 +82,8 @@ struct GIMBAL_CONSTANTS{
     //constants for YAW and PITCH Motor IDs
     static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR6;
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR5;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS2;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS_2 = tap::can::CanBus::CAN_BUS1;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
 
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {

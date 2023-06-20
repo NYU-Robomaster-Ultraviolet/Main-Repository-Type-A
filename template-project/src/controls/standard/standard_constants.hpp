@@ -30,9 +30,14 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 
 static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
-static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
+static constexpr float YAW_ENCODER_OFFSET = 2.81f; //31.4 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 0; 
 static constexpr float BEYBLADE_INPUT = .4f;
+
+struct Feeder_CONSTANTS{
+    static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
+    static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
+}; 
 
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
@@ -69,13 +74,13 @@ struct CHASSIS_CONSTANTS{
     static constexpr float ROLLER_RADIUS = .01f; // meters
 }; //struct CHASSIS_CONSTANTS
 
-
+//
 struct GIMBAL_CONSTANTS{
     //constants for YAW and PITCH Motor IDs
-    static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR5;
-    static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR6;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS2;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS_2 = tap::can::CanBus::CAN_BUS1;
+    static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR8;
+    static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR5;    
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS2;
 
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
@@ -119,7 +124,7 @@ static constexpr float PITCH_SCALE = 0.01f; // 0.0075f
 static constexpr float YAW_STARTING_ANGLE = 0.0f;
 static constexpr float PITCH_STARTING_ANGLE = 1.57079632679489661923f; //pi / 2
 //Pitch Angle Limits
-static constexpr float PITCH_MIN_ANGLE = 0.698132f; //40 degrees
+static constexpr float PITCH_MIN_ANGLE = 1.0472; //60 degrees //0.698132f; //40 degrees
 static constexpr float PITCH_MAX_ANGLE = 2.61799; //150 degrees
 //gimbal yaw and pitch speed limits
 static constexpr float MIN_YAW_SPEED = 300.0f;

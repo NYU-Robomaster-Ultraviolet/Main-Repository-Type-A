@@ -10,14 +10,14 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
       yawMotor(
           drivers,
           constants.YAW_MOTOR_ID,
-          constants.CAN_BUS_MOTORS_2,
+          constants.CAN_BUS_MOTORS_YAW,
           false,
           "Yaw Motor",
           tap::motor::DjiMotor::ENC_RESOLUTION / 2,
           constants.STARTING_YAW_ROT),
       pitchMotor(drivers, 
         constants.PITCH_MOTOR_ID, 
-        constants.CAN_BUS_MOTORS, false, 
+        constants.CAN_BUS_MOTORS_PITCH, false, 
         "Pitch Motor"),
       targetYaw(0.0f),
       targetPitch(0.0f),
@@ -54,6 +54,14 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
+    drivers->leds.set(drivers->leds.A, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.B, !yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.C, pitchMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.D, !pitchMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.E, true);
+    drivers->leds.set(drivers->leds.F, false);
+    drivers->leds.set(drivers->leds.G, true);
+    drivers->leds.set(drivers->leds.H, false);
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();

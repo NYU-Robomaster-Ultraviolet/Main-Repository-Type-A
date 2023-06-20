@@ -5,7 +5,7 @@ namespace cv{
 typedef struct autoAimStruct
     {
         unsigned char header = 0xE7;
-        unsigned short length = 8;
+        unsigned short length = 9;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 1;
@@ -24,9 +24,9 @@ typedef struct chassisMoveStruct
         unsigned char empty2 = 0;
         unsigned short msg_type = 2;  // 2
         // value should be between -1000 and 1000;
-        int chassisX;  // chassis x axis movement
-        int chassisY;  // chassis y axis movement
-        int chassisR;  // rotational movement
+        unsigned short chassisX;  // chassis x axis movement
+        unsigned short chassisY;  // chassis y axis movement
+        unsigned short chassisR;  // rotational movement
         // 0 : default movement
         unsigned char mode;  // used to switch command behavior
         unsigned short footer = 0;
@@ -36,7 +36,7 @@ typedef struct chassisMoveStruct
 typedef struct alignFinishStruct
     {
         unsigned char header = 0xE7;
-        unsigned short length;
+        unsigned short length = 1;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 3;
@@ -53,8 +53,8 @@ typedef struct gimbalMoveStruct
         unsigned char empty2 = 0;
         unsigned short msg_type = 4;  // 4
         // value should be between -1000 and 1000;
-        int gimbalX;  // gimbal yaw movement
-        int gimbalY;  // gimbal pitch movement
+        short gimbalX;  // gimbal yaw movement
+        short gimbalY;  // gimbal pitch movement
         // 0 : default movement, 1 : beyblade, 2 : beyblade backwards
         unsigned char mode;  // used to switch command behavior
         unsigned short footer = 0;
@@ -68,8 +68,8 @@ typedef struct MoveStraight
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 5;
-        unsigned int distance; //in mm
-        int velocity; //m/s, divide by 1000 to get
+        unsigned short distance; //in mm
+        short velocity; //m/s, divide by 1000 to get
         unsigned short footer = 0;
     } MoveStraightObj, *MoveStraightStruct;
 
@@ -81,8 +81,8 @@ typedef struct SpinChassis
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 6;
-        int angle; //in mm
-        int velocity; //degree/s, divide by 1000 to get
+        short angle; //in degrees
+        short velocity; //degree/s, divide by 1000 to get
         unsigned short footer = 0;
     } SpinChassisObj, *SpinChassisStruct;
 
@@ -94,10 +94,10 @@ typedef struct SetPower
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 7;
-        int xLinearPower;
-        int yLinearPower;
-        int xAnglePower;
-        int yAnglePower;
+        unsigned short xLinearPower;
+        unsigned short yLinearPower;
+        unsigned short xAnglePower;
+        unsigned short yAnglePower;
         unsigned short footer = 0;
     } SetPowerObj, *SetPowerStruct;
 
@@ -108,10 +108,10 @@ typedef struct SetVelocity
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 8;
-        int xVelocity;
-        int yVelocity;
-        int yawVelocity;
-        int pitchVelocity;
+        short xVelocity;
+        short yVelocity;
+        short yawVelocity;
+        short pitchVelocity;
         unsigned short footer = 0;
     } SetVelocityObj, *SetVelocityStruct;
 
@@ -122,7 +122,7 @@ typedef struct StopChassis
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 9;
-        bool stop;
+        _Bool stop;
         unsigned short footer = 0;
     } StopChassisObj, *StopChassisStruct;
 

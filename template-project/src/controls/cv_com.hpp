@@ -130,11 +130,11 @@ private:
     float spinVelocity; //degree/s, divide by 1000 to get
     bool chassisSpinFlag = 0;
 
-    //set power
-    int xLinearPower;
-    int yLinearPower;
-    int xAnglePower;
-    int yAnglePower;
+    //set power wrapped around -100 - 100
+    float xLinearPower;
+    float yLinearPower;
+    float xAnglePower;
+    float yAnglePower;
     bool setPowerFlag = 0;
 
     //set velocity

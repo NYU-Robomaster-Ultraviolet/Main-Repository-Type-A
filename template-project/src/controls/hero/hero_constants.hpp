@@ -72,13 +72,17 @@ struct CHASSIS_CONSTANTS{
     static constexpr float ROLLER_RADIUS = .01f; // meters
 }; //struct CHASSIS_CONSTANTS
 
+struct Feeder_CONSTANTS{
+    static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
+    static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS1;
+}; 
 
 struct GIMBAL_CONSTANTS{
     //constants for YAW and PITCH Motor IDs
     static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR5;
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR6;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS2;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS_2 = tap::can::CanBus::CAN_BUS1;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
         .kp = 600.0f,

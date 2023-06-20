@@ -29,8 +29,8 @@ public:
     FeederSubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
     feederMotor(drivers,
-               tap::motor::MOTOR7,
-               tap::can::CanBus::CAN_BUS2,
+               constants.FEEDER_MOTOR_ID,
+               constants.CAN_BUS,
                false,
                "Feeder Motor"),
       targetRPM(0.0f),
@@ -66,6 +66,9 @@ private:
 
     //PID constants
     FEEDER_PID feederPid;
+
+    //feeder constants
+    Feeder_CONSTANTS constants;
 
     bool inputsFound = false;
 
