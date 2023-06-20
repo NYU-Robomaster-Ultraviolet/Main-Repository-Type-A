@@ -68,7 +68,7 @@ typedef struct MoveStraight
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 5;
-        int distance; //in mm
+        unsigned int distance; //in mm
         int velocity; //m/s, divide by 1000 to get
         unsigned short footer = 0;
     } MoveStraightObj, *MoveStraightStruct;
