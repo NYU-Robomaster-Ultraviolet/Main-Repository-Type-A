@@ -98,7 +98,9 @@ public:
      * @param r rotation
      */
     void setTargetVelocity(float x, float y);
-     void setRotationVelocity(float r);
+    void setRotationVelocity(float r);
+    void setRotationRadians(float r);
+    void setFowardMovement(float x);
     /**
      * @param pid : the pid calculator for the given motor
      * @param motor : the motor that needs to be updated
@@ -118,7 +120,10 @@ public:
         return (M_TWOPI * static_cast<float>(encoderValue)) / tap::motor::DjiMotor::ENC_RESOLUTION;
     }
 
-    void setInputFlag(){inputFlag = 2;}
+    void limitPower(float ratio);
+
+    //
+    void changeVelocityMoveFlag(bool flag){velocityMoveFlag = flag;}
 
     //getters for each motor
     const tap::motor::DjiMotor &getFrontLeftMotor() const { return frontLeftMotor; }
@@ -130,6 +135,18 @@ private:
     //all constants used in this subsystem
     CHASSIS_CONSTANTS constants;
 
+
+    //maximum power a robot wheel can use
+    #ifdef TARGET_STANDARD
+    const float STARTING_POWER_LIMIT = 6000.0f;
+    #endif
+    #ifdef TARGET_SENTRY
+    const float STARTING_POWER_LIMIT = 8000.0f;
+    #endif
+    #ifdef TARGET_HERO
+    const float STARTING_POWER_LIMIT = 8000.0f;
+    #endif
+    float maximumPower = STARTING_POWER_LIMIT;
     ///< Motors.  Use these to interact with any dji style motors.
     tap::motor::DjiMotor frontLeftMotor;
     tap::motor::DjiMotor frontRightMotor;
@@ -143,7 +160,7 @@ private:
     modm::Pid<float> backRightPid;
 
     //flag for remote control style inputs
-    char inputFlag;
+    bool velocityMoveFlag = false;
 
     ///< Any user input is translated into desired RPM for each motor.
     float frontLeftDesiredRpm;
@@ -187,6 +204,17 @@ private:
     float targetFowardVelocity = 0;
     float targetRightVelocity = 0;
     float targetRotationVelocity = 0;
+
+    float targetRadians = 0;
+
+    float radiansTraveled = 0;
+
+    float targetDistance = 0; //in mm;
+
+    float distanceTraveled = 0;
+
+    uint32_t prevTime = 0; //in ms;
+    uint32_t timeError = 0;
 
 };  // class ChassisSubsystem
 

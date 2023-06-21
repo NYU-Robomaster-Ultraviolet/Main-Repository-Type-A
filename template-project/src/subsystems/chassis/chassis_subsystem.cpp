@@ -93,11 +93,12 @@ void ChassisSubsystem::updateWheelvalues(){
     BRVelocity = BRRPM * M_TWOPI / 60;
     BLVelocity = BLRPM * M_TWOPI / 60;
     //calculates velocities
-    //X velocity
+    //X velocity foward
     longitudinalVelocity = (FLVelocity + FRVelocity + BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
-    //y velocity
+    //y velocity right
     transversalVelocity = (-FLVelocity + FRVelocity - BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
-    angularVelocity = (-FLVelocity + FRVelocity - BLVelocity + BRVelocity) *
+    //right is positive rotation
+    angularVelocity = (FLVelocity - FRVelocity + BLVelocity - BRVelocity) *
          constants.ROLLER_RADIUS / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL));
     
     directionOfMovement = sqrtf(pow(longitudinalVelocity, 2) + pow(transversalVelocity, 2));
@@ -109,6 +110,14 @@ void ChassisSubsystem::updateWheelvalues(){
         transformVelocity(longitudinalVelocity, transversalVelocity, gimbalInterface->getYawEncoder());
     gimbalFrameVelocityX = transformedVelocities.first;
     gimbalFrameVelocityY = transformedVelocities.second;
+
+    //tracking time passed
+    uint32_t time = tap::arch::clock::getTimeMilliseconds();
+    timeError = time - prevTime;
+    prevTime = time;
+
+    radiansTraveled = angularVelocity * timeError / 1000;
+    distanceTraveled = gimbalFrameOffsetX * timeError / 1000;
 }
 void ChassisSubsystem::initialize()
 {
@@ -119,8 +128,25 @@ void ChassisSubsystem::initialize()
     updateWheelvalues();
 }
 void ChassisSubsystem::refresh() {
-    if(inputFlag < 1) setVelocityOutput();
-    else inputFlag--;
+    updateWheelvalues();
+    if(velocityMoveFlag) {
+        setVelocityOutput();
+    }
+    if(targetRadians || targetDistance) {
+        setDesiredOutput(
+            limitVal<float>(targetDistance / 100, -1, 1),
+            0,
+            limitVal<float>(targetRadians / M_PI_2, -1, 1)
+        );
+        if(targetRadians < constants.MIN_RADIANS && targetRadians > -constants.MIN_RADIANS){
+            targetRadians = 0;
+        }
+        else targetRadians -= radiansTraveled;
+        if(targetDistance < constants.MIN_DISTANCE && targetDistance > -constants.MIN_DISTANCE){
+            targetDistance = 0;
+        }
+        else targetDistance -= distanceTraveled;
+    }
     updateRpmPid(&frontLeftPid, &frontLeftMotor, frontLeftDesiredRpm);
     updateRpmPid(&frontRightPid, &frontRightMotor, frontRightDesiredRpm);
     updateRpmPid(&backLeftPid, &backLeftMotor, backLeftDesiredRpm);
@@ -137,13 +163,13 @@ void ChassisSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
 {
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR * (x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+        (constants.RPM_SCALE_FACTOR * (x+y+r)), -maximumPower, maximumPower);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR* (-x+y-r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+        (constants.RPM_SCALE_FACTOR* (-x+y-r)), -maximumPower, maximumPower);
     backLeftDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR* (-x+y+r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+        (constants.RPM_SCALE_FACTOR* (-x+y+r)), -maximumPower, maximumPower);
     backRightDesiredRpm = tap::algorithms::limitVal<float>(
-        (constants.RPM_SCALE_FACTOR* (x+y-r)), -constants.MAX_CURRENT_OUTPUT, constants.MAX_CURRENT_OUTPUT);
+        (constants.RPM_SCALE_FACTOR* (x+y-r)), -maximumPower, maximumPower);
 }
 
 void ChassisSubsystem::setTargetVelocity(float x, float y){
@@ -151,16 +177,30 @@ void ChassisSubsystem::setTargetVelocity(float x, float y){
     targetRightVelocity = y;
 }
 void ChassisSubsystem::setRotationVelocity(float r){
-    targetRightVelocity = r;
+    targetRotationVelocity = r;
 }
 void ChassisSubsystem::setVelocityOutput()
-{
+{   
+    float transformAngle = M_TWOPI - gimbalInterface->getYawEncoder();
+    float gimbalFrameFowardError = targetFowardVelocity - gimbalFrameVelocityX;
+    float gimbalFrameRightError = targetRightVelocity - gimbalFrameVelocityY;
     std::pair<float, float> transformedVelos = 
-        transformVelocity(targetFowardVelocity, targetRightVelocity, gimbalInterface->getYawEncoder());
-    float fowardError = transformedVelos.first - gimbalFrameVelocityX;
-    float rightError = transformedVelos.second - gimbalFrameVelocityY;
-    float rotationError = targetRightVelocity - angularVelocity;
-    setDesiredOutput(fowardError, rightError, rotationError);
+        transformVelocity(gimbalFrameFowardError, gimbalFrameRightError, gimbalInterface->getYawEncoder());
+    float rotationError = targetRotationVelocity - angularVelocity;
+    setDesiredOutput(transformedVelos.first, transformedVelos.second , rotationError);
 }
+
+void ChassisSubsystem::setRotationRadians(float r){
+    targetRadians = r;
+}
+
+void ChassisSubsystem::setFowardMovement(float x){
+    targetDistance = x;
+}
+
+void ChassisSubsystem::limitPower(float ratio){
+    maximumPower *= ratio;
+}
+
 
 } //namespace chassis

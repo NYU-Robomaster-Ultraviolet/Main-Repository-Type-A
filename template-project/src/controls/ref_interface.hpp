@@ -101,6 +101,8 @@ public:
     } RefStructObj, *RefStruct;//refereeCVData
 
     RefereeCVData getData() const {return returnData;}
+
+    //power usage, power limit
     std::pair<uint16_t, uint16_t> getPowerUsage() const{
         return std::pair<uint16_t, uint16_t>(returnData.powerUsage, returnData.powerLimit);
     }

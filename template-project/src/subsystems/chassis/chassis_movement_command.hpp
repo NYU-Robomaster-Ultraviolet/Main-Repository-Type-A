@@ -52,6 +52,8 @@ public:
      * which should never be the case for this command
      */
     bool isFinished() const override;
+    
+    void checkPowerLimit();
 private:
     ChassisSubsystem *const chassis;
 

@@ -75,6 +75,7 @@ public:
         encoderPitch = pitch * 100;
     }
 
+
     //for chassis movement (mimic remote input)
     bool getChassisReadFlag() const { return chassisReadFlag; }
     void resetChassisReadFlag() { chassisReadFlag = 0; }
@@ -91,6 +92,19 @@ public:
     float getChassisFowardVelo() const {return xVelocity;}
     float getChassisRightVelo() const {return yVelocity;}
     float getChassisRotationVelo() const {return spinVelocity;}
+
+    //for chassis movement in distance or radians
+    float getChassisSpinRad() const {return modm::toRadian(spinAngle / 1000);}
+    bool getChassisSpinRadFlag() const {return chassisSpinFlagRadians;}
+    void resetChassisSpinRadFlag() {chassisSpinFlagRadians = 0;}
+
+    float getChassisFowardMovement() const {return forwardDistance;}
+    float getChassisFowardFlag() const {return chassisForwardFlag;}
+    float resetChassisFowardFlag() {chassisForwardFlag = 0;}
+
+    //for chassis stop
+    bool getChassisStop() const {return stop;}
+
 
     //for gimbal movement
     float getGimbalX() const { return gimbalX; }
@@ -144,9 +158,10 @@ private:
     bool chassisForwardFlag = 0;
 
     //spin chassis 
-    int spinAngle; //in mm
-    float spinVelocity; //degree/s, divide by 1000 to get
+    int spinAngle = 0; //in mm
+    float spinVelocity = 0; //degree/s, divide by 1000 to get
     bool chassisSpinFlag = 0;
+    bool chassisSpinFlagRadians = 0;
 
     //set power wrapped around 0 - 100
     float xLinearPower = 1;

@@ -125,10 +125,7 @@ void GimbalSubsystem::updateYawPid()
 {
     // find rotation
     yawError = targetYaw - currentYaw;
-    if (yawError > constants.MAX_YAW_ERROR)
-        yawError -= M_TWOPI;
-    else if (yawError < -constants.MAX_YAW_ERROR)
-        yawError += M_TWOPI;
+    yawError = wrapAngle(yawError);
     // Keeps within range of radians
     if (-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS)
     {
@@ -140,13 +137,9 @@ void GimbalSubsystem::updateYawPid()
     // }
     else
     {
-        yawMotorPid.runController(
-            yawError * constants.MOTOR_SPEED_FACTOR,
-            getYawMotorRPM(),
-            timeError);
-        yawMotorOutput = limitVal<float>(
-            yawMotorPid.getOutput(),
-            -constants.MAX_YAW_SPEED,
+        yawMotorPid.runController( yawError, // * constants.MOTOR_SPEED_FACTOR,
+            getYawMotorRPM(), timeError);
+        yawMotorOutput = limitVal<float>( yawMotorPid.getOutput(), -constants.MAX_YAW_SPEED,
             constants.MAX_YAW_SPEED);
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
@@ -168,14 +161,11 @@ void GimbalSubsystem::updatePitchPid()
     }
     else
     {
-        pitchMotorOutput = limitVal<float>(
-            pitchMotorPid.getOutput(),
-            -constants.MAX_PITCH_SPEED,
+        pitchMotorOutput = limitVal<float>( pitchMotorPid.getOutput(), -constants.MAX_PITCH_SPEED,
             constants.MAX_PITCH_SPEED);
     }
     pitchMotorOutput += gravityCompensation();
-    if (-constants.MIN_PITCH_SPEED < pitchMotorOutput &&
-        pitchMotorOutput < constants.MIN_PITCH_SPEED)
+    if (-constants.MIN_PITCH_SPEED < pitchMotorOutput && pitchMotorOutput < constants.MIN_PITCH_SPEED)
         pitchMotorOutput = 0;
     else
         pitchMotor.setDesiredOutput(pitchMotorOutput * pitchPowerOutput);
@@ -228,11 +218,13 @@ void GimbalSubsystem::setIMU(float yaw, float pitch)
 }
 
 void GimbalSubsystem::findVelocityImu(uint32_t time){
+    //gets acelerations
     imuAx = drivers->mpu6500.getAx();
     imuAy = drivers->mpu6500.getAy();
     imuAz = drivers->mpu6500.getAz();
-    imuVx += imuAx ? (imuAx * time) : - imuVx;
-    imuVy += imuAy ? (imuAy * time) : - imuVy;
-    imuVz += imuAz ? (imuAz * time) : - imuVz;
+    //if aceleration = 0, make velocity
+    imuVx += imuAx * time;
+    imuVy += imuAy * time;
+    imuVz += imuAz * time;
 }
 }  // namespace gimbal

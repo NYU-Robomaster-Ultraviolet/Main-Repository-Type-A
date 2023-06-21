@@ -40,16 +40,14 @@ struct Feeder_CONSTANTS{
 }; 
 
 struct CHASSIS_CONSTANTS{
-    //max output for chassis motors
-    static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
     // Scale factor for converting joystick movement into RPM setpoint
     static constexpr float RPM_SCALE_FACTOR = 4000.0f;
 
     ///< Hardware constants, not specific to any particular chassis.
-    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR2;
-    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR1;
-    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
-    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR1;
+    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR2;
+    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR4;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
 
     //M3505 motor speed PID 
@@ -72,6 +70,10 @@ struct CHASSIS_CONSTANTS{
     static constexpr unsigned char NUM_WHEELS = 4;
     //wheel roller radius
     static constexpr float ROLLER_RADIUS = .01f; // meters
+
+    //constants for CV movement
+    static constexpr float MIN_RADIANS = .01f; //min radians to travel to
+    static constexpr float MIN_DISTANCE = 5; //min distance to travel in mm
 }; //struct CHASSIS_CONSTANTS
 
 //
@@ -82,13 +84,13 @@ struct GIMBAL_CONSTANTS{
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS2;
 
-//Pid configs for gimbal Pid
+//Pid configs for gimbal Pid Ku = 1,000,000 Tu = 140.625 ms
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 600.0f,
-        .ki = 0.0f,
-        .kd = 500.0f,
+        .kp = 60000.0f, //600
+        .ki = 0,
+        .kd = 500, //500
         .maxICumulative = 10.0f,
-        .maxOutput = 16000.0f,
+        .maxOutput = 32000.0f,
         .tQDerivativeKalman = 1.0f,
         .tRDerivativeKalman = 1.0f,
         .tQProportionalKalman = 1.0f,
@@ -102,7 +104,7 @@ struct GIMBAL_CONSTANTS{
         .ki = 0.0f,
         .kd = 150.0f,
         .maxICumulative = 10.0f,
-        .maxOutput = 16000.0f,
+        .maxOutput = 30000.0f,
         .tQDerivativeKalman = 1.0f,
         .tRDerivativeKalman = 1.0f,
         .tQProportionalKalman = 1.0f,
@@ -128,7 +130,7 @@ static constexpr float PITCH_MIN_ANGLE = 1.0472; //60 degrees //0.698132f; //40 
 static constexpr float PITCH_MAX_ANGLE = 2.61799; //150 degrees
 //gimbal yaw and pitch speed limits
 static constexpr float MIN_YAW_SPEED = 300.0f;
-static constexpr float MAX_YAW_SPEED = 8000.0f; 
+static constexpr float MAX_YAW_SPEED = 30000.0f; //30,000
 static constexpr float MIN_PITCH_SPEED = 300.0f;
 static constexpr float MAX_PITCH_SPEED = 12000.0f; //20000
 //Gimbal minimum angles of movement

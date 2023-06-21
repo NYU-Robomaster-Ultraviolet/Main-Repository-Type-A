@@ -49,5 +49,13 @@ void  ChassisMovementCommand::end(bool) {
     chassis->setDesiredOutput(0, 0, 0);
     }
 
+void ChassisMovementCommand::checkPowerLimit(){
+    std::pair<uint16_t, uint16_t> limits = drivers->ref_interface.getPowerUsage();
+    if(limits.first / limits.second > .9){
+        chassis->limitPower(.9);
+    }
+    //else if(limits.first / limits.second < .2 )
+}
+
 bool  ChassisMovementCommand::isFinished() const { return false; }
 }  // namespace chassis

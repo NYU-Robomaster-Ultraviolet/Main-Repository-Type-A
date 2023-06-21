@@ -41,19 +41,23 @@ public:
 
     static inline float wrappedEncoderValueToRadians(int64_t encoderValue);
 
+    //wraps an angle around 0 and 2PI (0 - 360 degrees)
     float wrapAngle(float angle) const{
         if(angle > M_TWOPI) angle -= M_TWOPI;
         else if(angle < 0) angle += M_TWOPI;
         return angle;
     }
 
+    //sets target yaw to wrapped angle
     void setYawAngle(float angle) {
         targetYaw = wrapAngle(angle);
     }
 
+    //sets pitch angle, limits it between mechanical limits and adjusts to encoder offset
     void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE + PITCH_ENCODER_OFFSET ,
         constants.PITCH_MAX_ANGLE + PITCH_ENCODER_OFFSET);}
 
+    
     void setEncoderYawAngle(float angle) {
         encoderYaw = wrapAngle(angle);
     }
@@ -131,6 +135,7 @@ public:
     void calibrateImu() {calibrated = true;}
     bool isCalibrated() const {return calibrated;}
 
+    //checks if IMU is calibrated
     bool imuStatesCalibrated() const {return drivers->mpu6500.getImuState() == tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED;}
 
 private:
@@ -163,8 +168,8 @@ private:
     float currentPitchMotorSpeed;
 
     //power output in percentages
-    float yawPowerOutput;
-    float pitchPowerOutput;
+    float yawPowerOutput = 1;
+    float pitchPowerOutput = 1;
 
     //pid calculators that take in angular displacement and  angular velocity
     tap::algorithms::SmoothPid yawMotorPid;

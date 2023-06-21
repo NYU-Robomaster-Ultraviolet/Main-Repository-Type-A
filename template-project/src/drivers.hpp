@@ -38,13 +38,13 @@ public:
         tap::Drivers(),
         control_interface(this),
         cv_com(this),
-        ref_interace(this)
+        ref_interface(this)
          {}
 
 public:
     src::control::ControlInterface control_interface;
     cv::CVCom cv_com;
-    RefInterface ref_interace;
+    RefInterface ref_interface;
 
 };  // class Drivers
 
