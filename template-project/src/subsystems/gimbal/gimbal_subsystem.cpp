@@ -125,7 +125,10 @@ void GimbalSubsystem::updateYawPid()
 {
     // find rotation
     yawError = targetYaw - currentYaw;
-    yawError = wrapAngle(yawError);
+    if (yawError > constants.MAX_YAW_ERROR)
+        yawError -= M_TWOPI;
+    else if (yawError < -constants.MAX_YAW_ERROR)
+        yawError += M_TWOPI;
     // Keeps within range of radians
     if (-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS)
     {
