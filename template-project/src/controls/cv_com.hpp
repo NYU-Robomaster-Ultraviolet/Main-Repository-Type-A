@@ -100,7 +100,7 @@ public:
 
     float getChassisFowardMovement() const {return forwardDistance;}
     float getChassisFowardFlag() const {return chassisForwardFlag;}
-    float resetChassisFowardFlag() {chassisForwardFlag = 0;}
+    void resetChassisFowardFlag() {chassisForwardFlag = 0;}
 
     //for chassis stop
     bool getChassisStop() const {return stop;}
@@ -139,6 +139,13 @@ private:
     src::Drivers *drivers;
 
 //DATA RECEIVED FROM JETSON
+
+// yaw then pitch
+    int validAngle = false;
+    bool hasTarget = false;
+    float yaw;
+    float pitch;
+
     // chassisMoveValues
     float chassisX;
     float chassisY;
@@ -182,9 +189,6 @@ private:
 
 //VALUES SENT TO JETSON
 
-    // yaw then pitch
-    float yaw;
-    float pitch;
     int imuYaw = 0;
     int imuPitch = 0;
     int encoderYaw = 0;
@@ -192,8 +196,6 @@ private:
     int imuVelocityX = 0;
     int imuVelocityY = 0;
     int imuVelocityZ = 0; 
-    int validAngle = false;
-    bool hasTarget = false;
     size_t byteIndex = 0;
     size_t buffer_size = 100;
     char *buffer;

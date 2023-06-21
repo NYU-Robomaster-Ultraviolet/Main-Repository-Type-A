@@ -43,6 +43,7 @@ void  CvCommand::execute() {
 
 void  CvCommand::end(bool) {
     drivers->cv_com.changeCV(0);
+    gimbal->cvInput(0, 0);
 }
 
 bool  CvCommand::isFinished() const { return false; }

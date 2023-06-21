@@ -24,12 +24,15 @@ void  CVFeeder::initialize() {feeder->setTargetRPM(0);}
 
 void  CVFeeder::execute()
 {
+
+#ifdef TARGET_SENTRY
     if(drivers->cv_com.foundTarget()){
         feeder->setTargetRPM(1500);
     }
     else{
         feeder->setTargetRPM(0);
     }
+#endif
 }
 
 void  CVFeeder::end(bool) { feeder->setTargetRPM(0); }

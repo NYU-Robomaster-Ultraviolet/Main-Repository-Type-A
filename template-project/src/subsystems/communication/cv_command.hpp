@@ -37,6 +37,7 @@ public:
 
     bool isFinished() const override;
 
+    //calculates the shortest distance from one point of a circle's circumfrance to another
     float findRotation(const float& destination) const;
 
 private:

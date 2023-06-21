@@ -122,8 +122,10 @@ public:
 
     void limitPower(float ratio);
 
-    //
+    
     void changeVelocityMoveFlag(bool flag){velocityMoveFlag = flag;}
+
+    void moveAllignWithGimbal();
 
     //getters for each motor
     const tap::motor::DjiMotor &getFrontLeftMotor() const { return frontLeftMotor; }
@@ -158,6 +160,11 @@ private:
     modm::Pid<float> frontRightPid;
     modm::Pid<float> backLeftPid;
     modm::Pid<float> backRightPid;
+
+    //stored inputs
+    float lastX = 0;
+    float lastY = 0;
+    float lastR = 0;
 
     //flag for remote control style inputs
     bool velocityMoveFlag = false;

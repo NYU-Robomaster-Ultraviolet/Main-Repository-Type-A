@@ -27,19 +27,32 @@ void  CVChassisCommand::initialize() {
 
 void  CVChassisCommand::execute()
 {
+    //get remote inputs
+    float xInput = limitVal<float>(drivers->control_interface.getChassisXInput(), -1, 1);
+    float yInput = limitVal<float>(drivers->control_interface.getChassisYInput(), -1, 1);
+    float rInput = limitVal<float>(drivers->control_interface.getChassisRotationInput(), -1, 1);
+
+    //gets current cos and sin of yaw angle from starting point of gimbal
+    float cosYaw = cosf(gimbalInterface->getYawEncoder());
+    float sinYaw = sinf(gimbalInterface->getYawEncoder());
+    
+    //check if there are inputs
+    if(xInput || yInput || rInput){
+        float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
+        float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+        chassis->setDesiredOutput( xOutput, yOutput,rInput);
+        chassis->changeVelocityMoveFlag(false);
+    }
     //check if stop command
-    if(drivers->cv_com.getChassisStop()){
+    else if(drivers->cv_com.getChassisStop()){
         chassis->changeVelocityMoveFlag(false);
         chassis->setDesiredOutput(0, 0, 0);
     }
     else if(drivers->cv_com.getChassisReadFlag()){
-        //gets current cos and sin of yaw angle from starting point of gimbal
-        float cosYaw = cosf(gimbalInterface->getYawEncoder());
-        float sinYaw = sinf(gimbalInterface->getYawEncoder());
         //gets the cv inputs if valid
-        float xInput = limitVal<float>(drivers->cv_com.getChassisX() + drivers->control_interface.getChassisXInput(), -1, 1);
-        float yInput = limitVal<float>(drivers->cv_com.getChassisY() + drivers->control_interface.getChassisYInput(), -1, 1);
-        float rInput = limitVal<float>(drivers->cv_com.getChassisR() + drivers->control_interface.getChassisRotationInput(), -1, 1);
+        xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
+        yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
+        rInput = limitVal<float>(drivers->cv_com.getChassisR(), -1, 1);
         //invalidate flag
         drivers->cv_com.resetChassisReadFlag();
         //applies rotation matrix to inputs to change inputs based on gimbal position
@@ -47,7 +60,7 @@ void  CVChassisCommand::execute()
         float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
         //sends values to the chassis subsystem
         chassis->setDesiredOutput( xOutput, yOutput,rInput);
-        chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);chassis->changeVelocityMoveFlag(false);
+        chassis->changeVelocityMoveFlag(false);
     }
     else{
         if(drivers->cv_com.getChassisVeloFlag()){

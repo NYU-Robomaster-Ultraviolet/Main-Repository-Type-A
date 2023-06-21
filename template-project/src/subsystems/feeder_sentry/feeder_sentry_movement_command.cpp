@@ -25,7 +25,8 @@ void  FeederSentryMovementCommand::initialize() {feeder->setTargetRPM(0);}
 
 void  FeederSentryMovementCommand::execute()
 {
-    if(drivers->cv_com.foundTarget()) feeder->setTargetRPM(1500);
+    if(drivers->cv_com.foundTarget()) 
+        feeder->setTargetRPM(1500);
     else feeder->setTargetRPM(1500);
 }
 

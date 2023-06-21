@@ -32,7 +32,7 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 2.81f; //31.4 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 0; 
-static constexpr float BEYBLADE_INPUT = .4f;
+static constexpr float BEYBLADE_INPUT = .6f; // .4
 
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;

@@ -135,8 +135,8 @@ void ChassisSubsystem::refresh() {
     if(targetRadians || targetDistance) {
         setDesiredOutput(
             limitVal<float>(targetDistance / 100, -1, 1),
-            0,
-            limitVal<float>(targetRadians / M_PI_2, -1, 1)
+            lastY,
+            limitVal<float>(targetRadians / M_PI_2, -1, 1) 
         );
         if(targetRadians < constants.MIN_RADIANS && targetRadians > -constants.MIN_RADIANS){
             targetRadians = 0;
@@ -161,7 +161,10 @@ void ChassisSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
     Give desired setpoints for chassis movement. +x is forward, +y is right, +r is clockwise (turning right).
 */
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
-{
+{   
+    lastX = x;
+    lastY = y;
+    lastR = r;
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
         (constants.RPM_SCALE_FACTOR * (x+y+r)), -maximumPower, maximumPower);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(
@@ -202,5 +205,15 @@ void ChassisSubsystem::limitPower(float ratio){
     maximumPower *= ratio;
 }
 
+void ChassisSubsystem::moveAllignWithGimbal(){
+    float rotation = gimbalInterface->getYawEncoder();
+    if(rotation > .005 && (rotation < M_TWOPI - .005 )){
+        float rotation = gimbalInterface->getYawEncoder();
+        if(rotation > M_TWOPI) rotation = -(rotation - M_TWOPI);
+        else if(rotation < -M_TWOPI) rotation = -(rotation + M_TWOPI);
+        targetRadians = rotation;
+    }
+    else targetRadians = 0;
+    }
 
 } //namespace chassis

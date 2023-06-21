@@ -125,6 +125,7 @@ void GimbalSubsystem::updateYawPid()
 {
     // find rotation
     yawError = targetYaw - currentYaw;
+    //Limits the error to keep rotations consistant
     if (yawError > constants.MAX_YAW_ERROR)
         yawError -= M_TWOPI;
     else if (yawError < -constants.MAX_YAW_ERROR)

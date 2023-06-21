@@ -46,10 +46,10 @@ bool CVCom::sendingLoop()
 {
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    // sendAutoAimMsg(imuPitch, imuYaw);
-    sendAutoAimMsg(imuYaw, 5);
-    // sendColorMsg();
-    // sendEnableMsg(cv_on);
+    sendAutoAimMsg(pitch * 10000.0, yaw * 10000);
+    //sendAutoAimMsg(imuYaw, 5);
+    sendColorMsg();
+    sendEnableMsg(cv_on);
     // sendRefereeMsg();
     return 1;
 }
@@ -156,7 +156,7 @@ int CVCom::readFromUart()
                 {
                     // Autoaim
                     autoAimStruct a = *reinterpret_cast<autoAimStruct *>(buffer);
-                    // convert *100 pitch int values to float without truncating
+                    // convert *10000 pitch int values to float without truncating
                     pitch = (a.pitch) / 10000.0;
                     yaw = (a.yaw) / 10000.0;
 
@@ -313,11 +313,5 @@ void CVCom::update()
     // set the gimbal subsystem to use the cvcom
     int bytes_read = readFromUart();
     sendingLoop();
-    // if (bytes_read > 0)
-    // {
-
-    // }
-    // else
-    //     drivers->leds.set(drivers->leds.C, true);
 }
 }; //namespace cv
