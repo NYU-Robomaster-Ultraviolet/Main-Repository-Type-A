@@ -101,6 +101,8 @@ public:
     void setRotationVelocity(float r);
     void setRotationRadians(float r);
     void setFowardMovement(float x);
+
+    void setBeybladeMode(int a) {beybladeMode = a;}
     /**
      * @param pid : the pid calculator for the given motor
      * @param motor : the motor that needs to be updated
@@ -133,6 +135,27 @@ public:
     const tap::motor::DjiMotor &getBackLeftMotor() const { return backLeftMotor; }
     const tap::motor::DjiMotor &getBackRightMotor() const { return backRightMotor; }
 
+    //getters for motor encoder speeds
+    float getLongitude() const {return longitudinalVelocity;}
+    float getGimbalFrameX() const {return gimbalFrameVelocityX;}
+
+    float getTransversal() const {return transversalVelocity;}
+    float getGimbalFrameY() const {return gimbalFrameVelocityY;}
+
+    float getRotationVelocity() const {return angularVelocity;}
+
+    float getTargetDistance() const {return targetDistance;}
+
+    float getTargetVelocity() const {return targetFowardVelocity;}
+
+    float getAcceleration() const {return longitudinalAcceleration;}
+
+    float getDistanceX() const {return chassisFrameDistanceTraveledX;}
+
+    float getFowardSampleFactor() const {return currFowardSampleInput;}
+
+    //set beyblade mode and direction
+    void setBeybladeMode(uint8_t mode) {beybladeMode = mode;}
 private:
     //all constants used in this subsystem
     CHASSIS_CONSTANTS constants;
@@ -197,8 +220,14 @@ private:
     //robot reference values
     float longitudinalVelocity = 0; //foward and backward motion m/s
     float transversalVelocity = 0; //left and right motion m/s
+    float prevLongitudinalVelocity = 0; //last read versions
+    float prevTransversalVelocity = 0; //
+    float longitudinalAcceleration = 0; //estimated accelerations
+    float transversalAcceleration = 0;
     //rotational movement
     float angularVelocity = 0; //rad/s
+    float prevAngularVelocity = 0;
+    float angularAcceleration = 0;
 
     float directionOfMovement = 0; //rad
     float resultantVelocity = 0; //m/s
@@ -211,6 +240,9 @@ private:
     float targetFowardVelocity = 0;
     float targetRightVelocity = 0;
     float targetRotationVelocity = 0;
+    float currFowardSampleInput = 0;
+    float currRightSampleInput = 0;
+    float currRotationSampleInput = 0;
 
     float targetRadians = 0;
 
@@ -218,10 +250,16 @@ private:
 
     float targetDistance = 0; //in mm;
 
-    float distanceTraveled = 0;
+    bool stopFlag = false;
+    float gimbalFrameDistanceTraveled = 0;
+    float chassisFrameDistanceTraveledX = 0;
+    float chassisFrameDistanceTraveledY = 0;
 
     uint32_t prevTime = 0; //in ms;
     uint32_t timeError = 0;
+
+    //mode of beyblade, 0: off, 1-3 corolate with speeds given by level
+    uint8_t beybladeMode = 0;
 
 };  // class ChassisSubsystem
 

@@ -98,7 +98,7 @@ public:
     bool getChassisSpinRadFlag() const {return chassisSpinFlagRadians;}
     void resetChassisSpinRadFlag() {chassisSpinFlagRadians = 0;}
 
-    float getChassisFowardMovement() const {return forwardDistance;}
+    float getChassisFowardMovement() const {return forwardDistance * 2.45 / 1000;} // 2.45 to correct for error in movement calc
     float getChassisFowardFlag() const {return chassisForwardFlag;}
     void resetChassisFowardFlag() {chassisForwardFlag = 0;}
 
@@ -160,9 +160,9 @@ private:
     unsigned char mode = 0;
 
     //chassis move straight
-    int forwardDistance; //in mm
-    float forwardVelocity; //m/s, divide by 1000 to get
-    bool chassisForwardFlag = 0;
+    int forwardDistance = 3000; //in mm
+    float forwardVelocity = 1; //m/s, divide by 1000 to get
+    bool chassisForwardFlag = 1;
 
     //spin chassis 
     int spinAngle = 0; //in mm
@@ -177,7 +177,7 @@ private:
     float yAnglePower = 1;
 
     //set velocity
-    float xVelocity = 0;
+    float xVelocity = 2;
     float yVelocity = 0;
     float yawVelocity = 0;
     float pitchVelocity = 0;  

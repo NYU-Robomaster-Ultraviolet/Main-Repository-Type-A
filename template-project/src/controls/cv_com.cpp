@@ -46,7 +46,7 @@ bool CVCom::sendingLoop()
 {
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    sendAutoAimMsg(pitch * 10000.0, yaw * 10000);
+    sendAutoAimMsg(encoderYaw * 100, encoderPitch * 100);
     //sendAutoAimMsg(imuYaw, 5);
     sendColorMsg();
     sendEnableMsg(cv_on);

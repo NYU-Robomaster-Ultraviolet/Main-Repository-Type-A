@@ -97,7 +97,7 @@ public:
     float getPitchMotorRPM() const {return pitchMotor.isMotorOnline() ? pitchMotor.getShaftRPM() : 0.0f; }
 
     //getters for motor speeds in rad/s, rpm * (pi / 120)
-    float getYawVelocity() const {return (M_PI / 120) * yawMotor.getShaftRPM();}
+    float getYawVelocity() const {return -(M_PI / 120) * yawMotor.getShaftRPM();}
     float getPitchVelocity() const {return (M_PI / 120) * pitchMotor.getShaftRPM();}
 
     //getters for current motor positions

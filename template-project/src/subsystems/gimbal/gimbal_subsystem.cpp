@@ -227,8 +227,8 @@ void GimbalSubsystem::findVelocityImu(uint32_t time){
     imuAy = drivers->mpu6500.getAy();
     imuAz = drivers->mpu6500.getAz();
     //if aceleration = 0, make velocity
-    imuVx += imuAx * time;
-    imuVy += imuAy * time;
-    imuVz += imuAz * time;
+    imuVx += imuAx * time * 0.001;
+    imuVy += imuAy * time * 0.001;
+    imuVz += imuAz * time * 0.001;
 }
 }  // namespace gimbal

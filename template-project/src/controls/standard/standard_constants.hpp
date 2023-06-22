@@ -32,7 +32,10 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 2.81f; //31.4 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 0; 
+
+
 static constexpr float BEYBLADE_INPUT = .6f; // .4
+static constexpr float BEYBLADE_SPEED_ONE = .57f; //rad/seconds
 
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
@@ -73,7 +76,7 @@ struct CHASSIS_CONSTANTS{
 
     //constants for CV movement
     static constexpr float MIN_RADIANS = .01f; //min radians to travel to
-    static constexpr float MIN_DISTANCE = 5; //min distance to travel in mm
+    static constexpr float MIN_DISTANCE = .01; //min distance to travel in meters
 }; //struct CHASSIS_CONSTANTS
 
 //

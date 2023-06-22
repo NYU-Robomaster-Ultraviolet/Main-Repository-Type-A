@@ -23,10 +23,14 @@ ChassisBeybladeCommand::ChassisBeybladeCommand(
 //stop any movement
 void  ChassisBeybladeCommand::initialize() {
     chassis->setDesiredOutput(0, 0, 0);
+    //chassis->setBeybladeMode(1);
 }
 
 void  ChassisBeybladeCommand::execute()
 {
+
+    //print second then first
+    drivers->cv_com.setEncoder(chassis->getRotationVelocity(), gimbalInterface->getYawVelocity());
 
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
@@ -47,6 +51,7 @@ void  ChassisBeybladeCommand::execute()
 //stops movement again
 void  ChassisBeybladeCommand::end(bool) {
     chassis->setDesiredOutput(0, 0, 0);
+    chassis->setBeybladeMode(0);
     }
 
 bool  ChassisBeybladeCommand::isFinished() const { return false; }

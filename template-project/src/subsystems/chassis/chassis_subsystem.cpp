@@ -96,10 +96,10 @@ void ChassisSubsystem::updateWheelvalues(){
     //X velocity foward
     longitudinalVelocity = (FLVelocity + FRVelocity + BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
     //y velocity right
-    transversalVelocity = (-FLVelocity + FRVelocity - BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
+    transversalVelocity = -(-FLVelocity + FRVelocity + BLVelocity - BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
     //right is positive rotation
-    angularVelocity = (FLVelocity - FRVelocity + BLVelocity - BRVelocity) *
-         constants.ROLLER_RADIUS / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL));
+    angularVelocity = -((-FLVelocity + FRVelocity - BLVelocity + BRVelocity) *
+         constants.ROLLER_RADIUS) / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL));
     
     directionOfMovement = sqrtf(pow(longitudinalVelocity, 2) + pow(transversalVelocity, 2));
     resultantVelocity = atanf(transversalVelocity/longitudinalVelocity);
@@ -115,9 +115,30 @@ void ChassisSubsystem::updateWheelvalues(){
     uint32_t time = tap::arch::clock::getTimeMilliseconds();
     timeError = time - prevTime;
     prevTime = time;
+    float timeErrorSeconds = timeError / 1000;
 
-    radiansTraveled = angularVelocity * timeError / 1000;
-    distanceTraveled = gimbalFrameOffsetX * timeError / 1000;
+    //calculate angular accelration
+    angularAcceleration = (angularVelocity - prevAngularVelocity) / (timeErrorSeconds);
+
+    // //calculate linear acceleration of x and y axis
+    longitudinalAcceleration = (longitudinalVelocity - prevLongitudinalVelocity) / (timeErrorSeconds);
+    transversalAcceleration = (transversalVelocity - prevTransversalVelocity) / (timeErrorSeconds);
+
+    //calculate distances moved based off of acceleration, initial velocity, and time
+    radiansTraveled = (prevAngularVelocity * timeErrorSeconds) ;
+     //   + (.5 * (angularVelocity - prevAngularVelocity) * timeErrorSeconds);
+
+    chassisFrameDistanceTraveledX = (longitudinalVelocity * timeError / 1000);
+    //    + (.5 * (longitudinalVelocity - prevLongitudinalVelocity) * timeErrorSeconds);
+
+    chassisFrameDistanceTraveledY = (prevTransversalVelocity * timeErrorSeconds);
+        // + (.5 * (transversalVelocity - prevTransversalVelocity) * timeErrorSeconds);
+
+    gimbalFrameDistanceTraveled = gimbalFrameOffsetX * timeErrorSeconds;
+
+    prevAngularVelocity = angularVelocity;
+    prevLongitudinalVelocity = longitudinalVelocity;
+    prevTransversalVelocity = transversalVelocity;
 }
 void ChassisSubsystem::initialize()
 {
@@ -133,20 +154,33 @@ void ChassisSubsystem::refresh() {
         setVelocityOutput();
     }
     if(targetRadians || targetDistance) {
-        setDesiredOutput(
-            limitVal<float>(targetDistance / 100, -1, 1),
-            lastY,
-            limitVal<float>(targetRadians / M_PI_2, -1, 1) 
-        );
         if(targetRadians < constants.MIN_RADIANS && targetRadians > -constants.MIN_RADIANS){
             targetRadians = 0;
         }
-        else targetRadians -= radiansTraveled;
-        if(targetDistance < constants.MIN_DISTANCE && targetDistance > -constants.MIN_DISTANCE){
+        else {
+            targetRadians -= radiansTraveled;
+            if(angularVelocity != 0 && fabsf(angularVelocity - targetRotationVelocity) > .017){
+                currRotationSampleInput += (angularVelocity < targetRotationVelocity) ? .002 : -.002;
+            }
+        }
+        if(fabsf(targetDistance) < constants.MIN_DISTANCE){
             targetDistance = 0;
         }
-        else targetDistance -= distanceTraveled;
+        else {
+            targetDistance -= chassisFrameDistanceTraveledX;
+            if(longitudinalVelocity != 0 && fabsf(longitudinalVelocity - targetFowardVelocity) > .02){
+                currFowardSampleInput += (longitudinalVelocity < targetFowardVelocity) ? .002 : -.002;
+            }
+        }
+
+        setDesiredOutput(
+            0,
+            targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
+            targetRadians ? limitVal<float>(targetRadians / M_PI_2, -1, 1) : 0
+        );
     }
+    if(stopFlag) setDesiredOutput(0, 0, 0);
+
     updateRpmPid(&frontLeftPid, &frontLeftMotor, frontLeftDesiredRpm);
     updateRpmPid(&frontRightPid, &frontRightMotor, frontRightDesiredRpm);
     updateRpmPid(&backLeftPid, &backLeftMotor, backLeftDesiredRpm);
@@ -165,6 +199,12 @@ void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
     lastX = x;
     lastY = y;
     lastR = r;
+    switch (beybladeMode){
+    case (1) : {
+        r = limitVal<float>(( (gimbalInterface->getYawVelocity() - angularVelocity) * .2) , -1, 1);
+        }
+    }
+
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
         (constants.RPM_SCALE_FACTOR * (x+y+r)), -maximumPower, maximumPower);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(
@@ -177,10 +217,13 @@ void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
 
 void ChassisSubsystem::setTargetVelocity(float x, float y){
     targetFowardVelocity = x;
+    currFowardSampleInput = .2;
     targetRightVelocity = y;
+    currFowardSampleInput = .2;
 }
 void ChassisSubsystem::setRotationVelocity(float r){
     targetRotationVelocity = r;
+    currRotationSampleInput = .2;
 }
 void ChassisSubsystem::setVelocityOutput()
 {   

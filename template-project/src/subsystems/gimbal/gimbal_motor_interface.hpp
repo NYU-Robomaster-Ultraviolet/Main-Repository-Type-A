@@ -9,6 +9,7 @@ public:
     
     float getYawEncoder() const {return gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET);}
     float getPitchEncoder() const {return gimbal->getPitchEncoder();}
+    float getYawVelocity() const {return gimbal->getYawVelocity();}
 private:
     GimbalSubsystem* gimbal;
 };//class gimbalInterface
