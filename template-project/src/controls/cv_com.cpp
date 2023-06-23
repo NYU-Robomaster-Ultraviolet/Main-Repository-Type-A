@@ -263,7 +263,7 @@ void CVCom::UnPackMsgs(char *buffer) {}
 
 void CVCom::sendRefereeMsg()
 {
-    RefInterface::RefStructObj refData = drivers->ref_interface.getData();
+    cv::RefStructObj refData = drivers->ref_interface.getData();
     uint8_t str[sizeof(refData)];
     memcpy(str, &refData, sizeof(refData));
     drivers->uart.write(
