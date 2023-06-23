@@ -19,7 +19,7 @@ public:
     
 
 
-    cv::RefereeCVData getData() const {return returnData;}
+    cv::RefStructObj getData() const {return returnData;}
 
     //power usage, power limit
     std::pair<uint16_t, uint16_t> getPowerUsage() const{

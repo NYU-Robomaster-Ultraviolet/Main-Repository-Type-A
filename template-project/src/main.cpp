@@ -100,6 +100,7 @@ int main()
         // drivers->cv_com.update();
         // #endif
         drivers->cv_com.update();
+        drivers->ref_interface.updateData();
         modm::delay_us(10);
     }
     return 0;

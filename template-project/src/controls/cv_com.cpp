@@ -264,6 +264,7 @@ void CVCom::UnPackMsgs(char *buffer) {}
 void CVCom::sendRefereeMsg()
 {
     cv::RefStructObj refData = drivers->ref_interface.getData();
+    //refData.robotID = 12;
     uint8_t str[sizeof(refData)];
     memcpy(str, &refData, sizeof(refData));
     drivers->uart.write(
