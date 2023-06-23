@@ -144,6 +144,8 @@ public:
 
     float getRotationVelocity() const {return angularVelocity;}
 
+    float getTargetRotation() const {return targetRadians;}
+
     float getTargetDistance() const {return targetDistance;}
 
     float getTargetVelocity() const {return targetFowardVelocity;}
@@ -153,6 +155,10 @@ public:
     float getDistanceX() const {return chassisFrameDistanceTraveledX;}
 
     float getFowardSampleFactor() const {return currFowardSampleInput;}
+
+    float getRotationSampleFactor() const {return currRotationSampleInput;}
+
+    float getTargetRotationalVelocity() const {return targetRotationVelocity;}
 
     //set beyblade mode and direction
     void setBeybladeMode(uint8_t mode) {beybladeMode = mode;}

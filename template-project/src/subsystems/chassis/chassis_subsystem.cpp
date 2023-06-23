@@ -32,48 +32,77 @@ ChassisSubsystem::ChassisSubsystem(src::Drivers *drivers, gimbal::GimbalInterfac
 
 std::pair<float, float> ChassisSubsystem::transformVelocity(float fowardVelo, float rightVelo, float fowardOffset) const {
     //since y component is offset 90 degrees to the negatie, correct for this
-    float rightOffset = fowardOffset - M_PI_2;
+    float rightOffset = fowardOffset + M_PI_2;
     //for the case of negative angles
-    if(rightOffset < 0) rightOffset += M_TWOPI;
+    if(rightOffset > M_TWOPI) rightOffset -= M_TWOPI;
     //track if x or y components need to be negated
-    char negXOffsetX = 1;
-    char negXOffsetY = 1;
-    char negYOffsetX = 1;
-    char negYOffsetY = 1;
+    uint8_t quadrentX = 1;
+    uint8_t quadrentY;
 
     //convert into workable angles and negatives if needed for both (Unit circle)
+    float chassisXVectorOffsetX;
+    float chassisXVectorOffsetY;
+    float chassisYVectorOffsetX;
+    float chassisYVectoxrOffsetY;
+
+    float newFrameForwardVelo = 0;
+    float newFrameRightVelo = 0;
+    
+    //check positions of vectors in a unit circle
     if(fowardOffset > M_PI * 1.5 ){
         fowardOffset -= (M_PI * 1.5);
-        negXOffsetX = -1;
+        quadrentX = 4;
     }
     else if(fowardOffset > M_PI){
         fowardOffset -= M_PI;
-        negXOffsetX = -1;
-        negXOffsetY = -1;
+        quadrentX = 3;
     }
     else if(fowardOffset > M_PI / 2){
         fowardOffset -= (M_PI / 2);
-        negXOffsetY = true;
+       quadrentX = 2;
     }
 
-    if(rightOffset > M_PI * 1.5 ){
-        rightOffset -= (M_PI * 1.5);
-        negYOffsetX = -1;
-    }
-    else if(rightOffset > M_PI){
-        rightOffset -= M_PI;
-        negYOffsetX = -1;
-        negYOffsetY = -1;
-    }
-    else if(rightOffset > M_PI / 2){
-        rightOffset -= (M_PI / 2);
-        negYOffsetY = true;
-    }
+    quadrentY = quadrentX + 1;
+    if(quadrentY > 4) quadrentY = 1;
+
     //calcualte net x and y velocities from gimbal frame
-    float newFrameForwardVelo = (sinf(fowardOffset) * fowardVelo * negXOffsetX) + 
-        (sinf(rightOffset) * rightVelo * negYOffsetX);
-    float newFrameRightVelo = (cosf(fowardOffset) * fowardVelo* negXOffsetY) + 
-        (cosf(rightOffset) * rightVelo * negYOffsetY);
+    switch(quadrentX){
+        case(1):{
+            newFrameForwardVelo = cosf(fowardOffset) * fowardVelo;
+            newFrameRightVelo = sinf(fowardOffset) * fowardVelo;
+        }
+        case(2):{
+            newFrameForwardVelo = -sinf(fowardOffset) * fowardVelo;
+            newFrameRightVelo = cosf(fowardOffset) * fowardVelo;
+        }
+        case(3):{
+            newFrameForwardVelo = -cosf(fowardOffset) * fowardVelo;
+            newFrameRightVelo = -sinf(fowardOffset) * fowardVelo;
+        }
+        case(4):{
+            newFrameForwardVelo = sinf(fowardOffset) * fowardVelo;
+            newFrameRightVelo = -cosf(fowardOffset) * fowardVelo;
+        }
+    }
+    switch(quadrentY){
+        case(1):{
+            newFrameForwardVelo = cosf(rightOffset) * rightVelo;
+            newFrameRightVelo = sinf(rightOffset) * rightVelo;
+        }
+        case(2):{
+            newFrameForwardVelo = -sinf(rightOffset) * rightVelo;
+            newFrameRightVelo = cosf(rightOffset) * rightVelo;
+        }
+        case(3):{
+            newFrameForwardVelo = -cosf(rightOffset) * rightVelo;
+            newFrameRightVelo = -sinf(rightOffset) * rightVelo;
+        }
+        case(4):{
+            newFrameForwardVelo = sinf(rightOffset) * rightVelo;
+            newFrameRightVelo = -cosf(rightOffset) * rightVelo;
+        }
+    }
+
     return std::pair<float, float>(newFrameForwardVelo, newFrameRightVelo);
 }
 void ChassisSubsystem::updateWheelvalues(){
@@ -94,12 +123,12 @@ void ChassisSubsystem::updateWheelvalues(){
     BLVelocity = BLRPM * M_TWOPI / 60;
     //calculates velocities
     //X velocity foward
-    longitudinalVelocity = (FLVelocity + FRVelocity + BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
+    longitudinalVelocity =  2.45 * (FLVelocity + FRVelocity + BLVelocity + BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
     //y velocity right
-    transversalVelocity = -(-FLVelocity + FRVelocity + BLVelocity - BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
-    //right is positive rotation
-    angularVelocity = -((-FLVelocity + FRVelocity - BLVelocity + BRVelocity) *
-         constants.ROLLER_RADIUS) / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL));
+    transversalVelocity = 2.45 * -(-FLVelocity + FRVelocity + BLVelocity - BRVelocity) * constants.ROLLER_RADIUS / constants.NUM_WHEELS;
+    //right is positive rotation, .8 is the estimated error from mecanum wheels
+    angularVelocity = .8 * (-((-FLVelocity + FRVelocity - BLVelocity + BRVelocity) *
+         constants.ROLLER_RADIUS) / (constants.NUM_WHEELS * (constants.FRONT_TO_BACK_WHEEL + constants.LEFT_TO_RIGHT_WHEEL)));
     
     directionOfMovement = sqrtf(pow(longitudinalVelocity, 2) + pow(transversalVelocity, 2));
     resultantVelocity = atanf(transversalVelocity/longitudinalVelocity);
@@ -125,7 +154,7 @@ void ChassisSubsystem::updateWheelvalues(){
     transversalAcceleration = (transversalVelocity - prevTransversalVelocity) / (timeErrorSeconds);
 
     //calculate distances moved based off of acceleration, initial velocity, and time
-    radiansTraveled = (prevAngularVelocity * timeErrorSeconds) ;
+    radiansTraveled = (prevAngularVelocity * timeError / 1000) ;
      //   + (.5 * (angularVelocity - prevAngularVelocity) * timeErrorSeconds);
 
     chassisFrameDistanceTraveledX = (longitudinalVelocity * timeError / 1000);
@@ -154,7 +183,7 @@ void ChassisSubsystem::refresh() {
         setVelocityOutput();
     }
     if(targetRadians || targetDistance) {
-        if(targetRadians < constants.MIN_RADIANS && targetRadians > -constants.MIN_RADIANS){
+        if(fabsf(targetRadians) < constants.MIN_RADIANS){
             targetRadians = 0;
         }
         else {
@@ -176,7 +205,7 @@ void ChassisSubsystem::refresh() {
         setDesiredOutput(
             0,
             targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
-            targetRadians ? limitVal<float>(targetRadians / M_PI_2, -1, 1) : 0
+            targetRadians ? limitVal<float>(currRotationSampleInput, -1, 1) : 0
         );
     }
     if(stopFlag) setDesiredOutput(0, 0, 0);

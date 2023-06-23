@@ -23,10 +23,9 @@ CVChassisCommand::CVChassisCommand(
 //stop any movement
 void  CVChassisCommand::initialize() {
     chassis->setDesiredOutput(0, 0, 0);
-    chassis->setFowardMovement(drivers->cv_com.getChassisFowardMovement());
-    chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), 0);
-    drivers->cv_com.resetChassisFowardFlag();
-    chassis->changeVelocityMoveFlag(false);
+    // chassis->setRotationRadians(drivers->cv_com.getChassisSpinRad());
+    // chassis->setRotationVelocity(drivers->cv_com.getChassisRotationVelo());
+    // chassis->changeVelocityMoveFlag(false);
 }
 
 void  CVChassisCommand::execute()
@@ -41,7 +40,7 @@ void  CVChassisCommand::execute()
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
 
     //print first then second
-    drivers->cv_com.setEncoder(chassis->getTargetVelocity() * 100, chassis->getLongitude() * 100);
+    drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
     
     //check if there are inputs
     if(xInput || yInput || rInput){
@@ -49,11 +48,19 @@ void  CVChassisCommand::execute()
         float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
         chassis->setDesiredOutput( xOutput, yOutput,rInput);
         chassis->changeVelocityMoveFlag(false);
+        chassis->setFowardMovement(0);
+        chassis->setRotationRadians(0);
+        chassis->setRotationVelocity(0);
+        chassis->setTargetVelocity(0, 0);
     }
     //check if stop command
     else if(drivers->cv_com.getChassisStop()){
         chassis->changeVelocityMoveFlag(false);
         chassis->setDesiredOutput(0, 0, 0);
+        chassis->setFowardMovement(0);
+        chassis->setRotationRadians(0);
+        chassis->setRotationVelocity(0);
+        chassis->setTargetVelocity(0, 0);
     }
     else if(drivers->cv_com.getChassisReadFlag()){
         //gets the cv inputs if valid
@@ -69,27 +76,40 @@ void  CVChassisCommand::execute()
         chassis->setDesiredOutput( xOutput, yOutput,rInput);
         chassis->changeVelocityMoveFlag(false);
     }
+    else if(drivers->cv_com.getChassisPowerFlag()){
+        //gets the cv inputs if valid
+        xInput = limitVal<float>(drivers->cv_com.getYPower(), -1, 1);
+        yInput = limitVal<float>(drivers->cv_com.getXPower(), -1, 1);
+        //invalidate flag
+        drivers->cv_com.resetChassisPowerFlag();
+        //applies rotation matrix to inputs to change inputs based on gimbal position
+        float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
+        float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+        //sends values to the chassis subsystem
+        chassis->setDesiredOutput( xOutput, yOutput, 0);
+        chassis->changeVelocityMoveFlag(false);
+    }
     else{
-        // if(drivers->cv_com.getChassisVeloFlag()){
-        //     chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), drivers->cv_com.getChassisRightVelo());
-        //     drivers->cv_com.resetChassisVeloFlag();
-        //     chassis->changeVelocityMoveFlag(true);
-        // }
+        if(drivers->cv_com.getChassisVeloFlag()){
+            chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), drivers->cv_com.getChassisRightVelo());
+            drivers->cv_com.resetChassisVeloFlag();
+            chassis->changeVelocityMoveFlag(true);
+        }
         if(drivers->cv_com.getChassisSpinFlag()){
             chassis->setRotationVelocity(drivers->cv_com.getChassisRotationVelo());
             drivers->cv_com.resetChassisSpinFlag();
             chassis->changeVelocityMoveFlag(true);
         }
         if(drivers->cv_com.getChassisFowardFlag()){
-            // chassis->setFowardMovement(drivers->cv_com.getChassisFowardMovement());
-            // chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), 0);
-            // drivers->cv_com.resetChassisFowardFlag();
-            // chassis->changeVelocityMoveFlag(false);
+            chassis->setFowardMovement(drivers->cv_com.getChassisFowardMovement());
+            chassis->setTargetVelocity(drivers->cv_com.getChassisFowardVelo(), 0);
+            drivers->cv_com.resetChassisFowardFlag();
+            chassis->changeVelocityMoveFlag(false);
         }
         if(drivers->cv_com.getChassisSpinRadFlag()){
-            chassis->setRotationRadians(drivers->cv_com.getChassisSpinRad());
-            drivers->cv_com.resetChassisSpinRadFlag();
-            chassis->changeVelocityMoveFlag(false);
+            // chassis->setRotationRadians(drivers->cv_com.getChassisSpinRad());
+            // drivers->cv_com.resetChassisSpinRadFlag();
+            // chassis->changeVelocityMoveFlag(false);
         }
     }
 }

@@ -50,6 +50,7 @@ bool CVCom::sendingLoop()
     //sendAutoAimMsg(imuYaw, 5);
     sendColorMsg();
     sendEnableMsg(cv_on);
+    sendRefereeMsg();
     // sendRefereeMsg();
     return 1;
 }
@@ -228,6 +229,8 @@ int CVCom::readFromUart()
                     yLinearPower = g->yLinearPower / 100;
                     xAnglePower = g->xAnglePower / 100;
                     yAnglePower = g->yAnglePower / 100;
+                    setPowerChassisFlag = true;
+                    setPowerGimbalFlag = true;
                     break;
                 }
                 case 8:

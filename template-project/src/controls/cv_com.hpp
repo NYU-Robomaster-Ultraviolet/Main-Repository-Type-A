@@ -91,10 +91,10 @@ public:
 
     float getChassisFowardVelo() const {return xVelocity;}
     float getChassisRightVelo() const {return yVelocity;}
-    float getChassisRotationVelo() const {return spinVelocity;}
+    float getChassisRotationVelo() const {return modm::toRadian( spinVelocity / 1000);}
 
     //for chassis movement in distance or radians
-    float getChassisSpinRad() const {return modm::toRadian(spinAngle / 1000);}
+    float getChassisSpinRad() const {return modm::toRadian(spinAngle / 1000);} //1.2 to adjust for mecanum error
     bool getChassisSpinRadFlag() const {return chassisSpinFlagRadians;}
     void resetChassisSpinRadFlag() {chassisSpinFlagRadians = 0;}
 
@@ -116,6 +116,14 @@ public:
     //for gimbal power limits
     float getYawPower() const {return xAnglePower;}
     float getPitchPower() const {return yAnglePower;}
+    float getXPower() const {return xLinearPower;}
+    float getYPower() const {return yLinearPower;}\
+    
+    bool getGimbalPowerFlag() const {return setPowerGimbalFlag;}
+    bool getChassisPowerFlag() const {return setPowerChassisFlag;}
+
+    void resetGimbalPowerFlag() {setPowerGimbalFlag = false;}
+    void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
 
     // Send/recieve
@@ -160,24 +168,26 @@ private:
     unsigned char mode = 0;
 
     //chassis move straight
-    int forwardDistance = 3000; //in mm
-    float forwardVelocity = 1; //m/s, divide by 1000 to get
-    bool chassisForwardFlag = 1;
+    int forwardDistance = 0; //in mm
+    float forwardVelocity = 0; //m/s, divide by 1000 to get
+    bool chassisForwardFlag = 0;
 
     //spin chassis 
-    int spinAngle = 0; //in mm
-    float spinVelocity = 0; //degree/s, divide by 1000 to get
+    int spinAngle = 180000; //in degrees
+    float spinVelocity = 100000; //degree/s, divide by 1000 to get
     bool chassisSpinFlag = 0;
     bool chassisSpinFlagRadians = 0;
 
     //set power wrapped around 0 - 100
-    float xLinearPower = 1;
-    float yLinearPower = 1;
-    float xAnglePower = 1;
-    float yAnglePower = 1;
+    float xLinearPower = 0;
+    float yLinearPower = 0;
+    float xAnglePower = 0;
+    float yAnglePower = 0;
+    bool setPowerGimbalFlag = false;
+    bool setPowerChassisFlag = false;
 
     //set velocity
-    float xVelocity = 2;
+    float xVelocity = 0;
     float yVelocity = 0;
     float yawVelocity = 0;
     float pitchVelocity = 0;  

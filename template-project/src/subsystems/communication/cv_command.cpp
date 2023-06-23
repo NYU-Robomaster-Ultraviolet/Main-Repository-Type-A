@@ -17,7 +17,7 @@ CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
 void  CvCommand::initialize() {
-    gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+    //gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
     drivers->cv_com.changeCV(1);
 }
 
@@ -25,9 +25,6 @@ void  CvCommand::execute() {
     //drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
     drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
-
-    
-    gimbal->setPowerOutput(drivers->cv_com.getYawPower(), drivers->cv_com.getPitchPower());
 
     if(drivers->cv_com.validReading()){
         gimbal->cvInput(drivers->cv_com.getYaw(), drivers->cv_com.getPitch());
@@ -39,6 +36,12 @@ void  CvCommand::execute() {
         gimbal->controllerInput(xInput, yInput);
         drivers->cv_com.resetGimbalReadFlag();
     }
+    // if(drivers->cv_com.getGimbalPowerFlag()){
+    //     float xInput = drivers->cv_com.getYawPower();
+    //     float yInput = drivers->cv_com.getPitchPower();
+    //     gimbal->controllerInput(xInput, yInput);
+    //     drivers->cv_com.resetGimbalPowerFlag();
+    // }
 }
 
 void  CvCommand::end(bool) {

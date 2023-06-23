@@ -94,10 +94,10 @@ typedef struct SetPower
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 7;
-        unsigned short xLinearPower;
-        unsigned short yLinearPower;
-        unsigned short xAnglePower;
-        unsigned short yAnglePower;
+        short xLinearPower;
+        short yLinearPower;
+        short xAnglePower;
+        short yAnglePower;
         unsigned short footer = 0;
     } SetPowerObj, *SetPowerStruct;
 
