@@ -132,12 +132,12 @@ static constexpr float PITCH_STARTING_ANGLE = 1.91986f; //110 degrees
 static constexpr float PITCH_MIN_ANGLE = 1.22173; //70 degrees 
 static constexpr float PITCH_MAX_ANGLE = 1.91986f; //110 degrees, equal to starting
 //gimbal yaw and pitch speed limits
-static constexpr float MIN_YAW_SPEED = 300.0f; //300
+static constexpr float MIN_YAW_SPEED = 20.0f; //300
 static constexpr float MAX_YAW_SPEED = 30000.0f;
-static constexpr float MIN_PITCH_SPEED = 300.0f;
+static constexpr float MIN_PITCH_SPEED = 20.0f;
 static constexpr float MAX_PITCH_SPEED = 16000.0f; //20000
 //Gimbal minimum angles of movement
-static constexpr float YAW_MINIMUM_RADS = 0.00872665; //.5 degrees //0.0174533f; // 1 degree //0.0349066f; // 2 degrees
+static constexpr float YAW_MINIMUM_RADS = 0.00436332; //.25 //.5 degrees
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
 static constexpr float YAW_MINIMUM_IMU_RADS = 0.0349066; //2 degrees
 //minimum value for pitch RPM to be considered stable
