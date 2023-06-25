@@ -89,7 +89,7 @@ struct GIMBAL_CONSTANTS{
 
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 60000.0f, //600
+        .kp = 40000.0f, //40000
         .ki = 0,
         .kd = 500, //500
         .maxICumulative = 10.0f,
@@ -103,11 +103,11 @@ struct GIMBAL_CONSTANTS{
     };
 
     static constexpr tap::algorithms::SmoothPidConfig PITCH_PID = {
-        .kp = 400.0f, //900.0
+        .kp = 25000.0f, //900.0
         .ki = 0.0f,
         .kd = 150.0f, //150
         .maxICumulative = 10.0f,
-        .maxOutput = 16000.0f,
+        .maxOutput = 32000.0f,
         .tQDerivativeKalman = 1.0f,
         .tRDerivativeKalman = 1.0f,
         .tQProportionalKalman = 1.0f,
@@ -135,7 +135,7 @@ static constexpr float PITCH_MAX_ANGLE = 1.91986f; //110 degrees, equal to start
 static constexpr float MIN_YAW_SPEED = 20.0f; //300
 static constexpr float MAX_YAW_SPEED = 30000.0f;
 static constexpr float MIN_PITCH_SPEED = 20.0f;
-static constexpr float MAX_PITCH_SPEED = 16000.0f; //20000
+static constexpr float MAX_PITCH_SPEED = 30000.0f; //20000
 //Gimbal minimum angles of movement
 static constexpr float YAW_MINIMUM_RADS = 0.00436332; //.25 //.5 degrees
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
