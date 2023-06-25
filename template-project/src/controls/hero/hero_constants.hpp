@@ -85,11 +85,11 @@ struct GIMBAL_CONSTANTS{
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 600.0f,
-        .ki = 0.0f,
-        .kd = 500.0f,
+        .kp = 60000.0f, //600
+        .ki = 0,
+        .kd = 500, //500
         .maxICumulative = 10.0f,
-        .maxOutput = 16000.0f,
+        .maxOutput = 32000.0f,
         .tQDerivativeKalman = 1.0f,
         .tRDerivativeKalman = 1.0f,
         .tQProportionalKalman = 1.0f,

@@ -30,8 +30,8 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 
 static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
-static constexpr float YAW_ENCODER_OFFSET = 2.8902652; //165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.780138814; //216.586 degrees
+static constexpr float YAW_ENCODER_OFFSET = 4.98f; //165.6 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 3.780138814; //285.333 degrees
 
 static constexpr float BEYBLADE_INPUT = .4f;
 
@@ -89,11 +89,11 @@ struct GIMBAL_CONSTANTS{
 
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 700.0f,
-        .ki = 0.0f,
-        .kd = 600.0f, //500
+        .kp = 60000.0f, //600
+        .ki = 0,
+        .kd = 500, //500
         .maxICumulative = 10.0f,
-        .maxOutput = 16000.0f,
+        .maxOutput = 32000.0f,
         .tQDerivativeKalman = 1.0f,
         .tRDerivativeKalman = 1.0f,
         .tQProportionalKalman = 1.0f,
@@ -129,16 +129,17 @@ static constexpr float PITCH_SCALE = 0.01f; // 0.0075f
 static constexpr float YAW_STARTING_ANGLE = 0.0f;
 static constexpr float PITCH_STARTING_ANGLE = 1.91986f; //110 degrees
 //Pitch Angle Limits
-static constexpr float PITCH_MIN_ANGLE = 1.22173f; //70 degrees
+static constexpr float PITCH_MIN_ANGLE = 1.22173; //70 degrees 
 static constexpr float PITCH_MAX_ANGLE = 1.91986f; //110 degrees, equal to starting
 //gimbal yaw and pitch speed limits
-static constexpr float MIN_YAW_SPEED = 300.0f;
-static constexpr float MAX_YAW_SPEED = 8000.0f;
+static constexpr float MIN_YAW_SPEED = 300.0f; //300
+static constexpr float MAX_YAW_SPEED = 30000.0f;
 static constexpr float MIN_PITCH_SPEED = 300.0f;
 static constexpr float MAX_PITCH_SPEED = 16000.0f; //20000
 //Gimbal minimum angles of movement
-static constexpr float YAW_MINIMUM_RADS = 0.0174533f; // 1 degree //0.0349066f; // 2 degrees
+static constexpr float YAW_MINIMUM_RADS = 0.00872665; //.5 degrees //0.0174533f; // 1 degree //0.0349066f; // 2 degrees
 static constexpr float PITCH_MINIMUM_RADS = .0001f;
+static constexpr float YAW_MINIMUM_IMU_RADS = 0.0349066; //2 degrees
 //minimum value for pitch RPM to be considered stable
 static constexpr float MIN_PITCH_RPM = .0005f;
 //starting pitch angle from when the robot is turned on
@@ -153,7 +154,7 @@ static constexpr float LEVEL_ANGLE = 1.5708; //90 degrees
 static constexpr float BARREL_LENGTH = 165.0f; //turret barrel length in mm
 static constexpr float BARREL_MIN_HEIGHT = 135.6f;
 static constexpr float BARREL_LEVEL_HEIGHT = 172.8f;
-static constexpr float GRAVITY_COMPENSATION_SCALAR = -5800;
+static constexpr float GRAVITY_COMPENSATION_SCALAR = 500;
 };//struct GIMBAL_CONSTANTS
 
 struct FEEDER_PID

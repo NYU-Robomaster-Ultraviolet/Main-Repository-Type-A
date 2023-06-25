@@ -27,6 +27,7 @@ void  GimbalMovementCommand::initialize() {
 
 void  GimbalMovementCommand::execute()
 {
+    drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     if(timeout.isExpired()){
         if(!gimbal->isCalibrated()) {
             drivers->mpu6500.requestCalibration();

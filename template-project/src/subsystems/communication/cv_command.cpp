@@ -17,12 +17,12 @@ CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
 void  CvCommand::initialize() {
-    //gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+    gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
     drivers->cv_com.changeCV(1);
 }
 
 void  CvCommand::execute() {
-    //drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
+    drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
     drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
 

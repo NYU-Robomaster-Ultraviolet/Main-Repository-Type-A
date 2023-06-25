@@ -49,6 +49,7 @@ MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
+CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 CvCommand cvMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
@@ -59,7 +60,7 @@ ShootSentryUserCommand shootUser(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},

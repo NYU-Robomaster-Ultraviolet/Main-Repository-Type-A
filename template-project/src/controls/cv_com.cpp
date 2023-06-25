@@ -158,8 +158,8 @@ int CVCom::readFromUart()
                     // Autoaim
                     autoAimStruct a = *reinterpret_cast<autoAimStruct *>(buffer);
                     // convert *10000 pitch int values to float without truncating
-                    pitch = (a.pitch) / 10000.0;
-                    yaw = (a.yaw) / 10000.0;
+                    pitch = (a.pitch) / 1000000.0;
+                    yaw = (a.yaw) / 1000000.0;
 
                     hasTarget = a.hasTarget;
                     validAngle = true;

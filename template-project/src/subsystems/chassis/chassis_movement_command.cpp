@@ -28,7 +28,7 @@ void  ChassisMovementCommand::initialize() {
 void  ChassisMovementCommand::execute()
 {
     //print second then first
-    drivers->cv_com.setEncoder(chassis->getRotationVelocity() * 100, chassis->getTransversal() * 100);
+    //drivers->cv_com.setEncoder(chassis->getRotationVelocity() * 100, chassis->getTransversal() * 100);
 
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());

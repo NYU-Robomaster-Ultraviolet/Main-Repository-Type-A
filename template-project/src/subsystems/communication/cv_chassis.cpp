@@ -40,7 +40,7 @@ void  CVChassisCommand::execute()
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
 
     //print first then second
-    drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
+    //drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
     
     //check if there are inputs
     if(xInput || yInput || rInput){

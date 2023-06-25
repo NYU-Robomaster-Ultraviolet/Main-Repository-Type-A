@@ -54,13 +54,13 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
-    drivers->leds.set(drivers->leds.A, yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.B, !yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.C, pitchMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.D, !pitchMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.E, true);
-    drivers->leds.set(drivers->leds.F, false);
-    drivers->leds.set(drivers->leds.G, true);
+    drivers->leds.set(drivers->leds.A, true);
+    drivers->leds.set(drivers->leds.B, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.C,yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.D, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.E, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.F, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.G, yawMotor.isMotorOnline());
     drivers->leds.set(drivers->leds.H, false);
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();

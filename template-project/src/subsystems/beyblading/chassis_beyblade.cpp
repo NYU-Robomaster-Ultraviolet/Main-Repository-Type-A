@@ -30,7 +30,7 @@ void  ChassisBeybladeCommand::execute()
 {
 
     //print second then first
-    drivers->cv_com.setEncoder(chassis->getRotationVelocity(), gimbalInterface->getYawVelocity());
+    //drivers->cv_com.setEncoder(chassis->getRotationVelocity(), gimbalInterface->getYawVelocity());
 
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());

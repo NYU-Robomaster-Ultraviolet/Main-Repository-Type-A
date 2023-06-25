@@ -41,7 +41,7 @@ typedef struct sendingAngleStruct
 
 typedef struct RefereeCVData{
         unsigned char header = 0xE7;
-        unsigned short length = 54;
+        unsigned short length = 54; //54
         unsigned char empty = 0;
         unsigned char empty2 = 0;
         unsigned short msg_type = 7;
