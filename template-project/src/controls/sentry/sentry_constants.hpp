@@ -75,9 +75,9 @@ struct CHASSIS_CONSTANTS
     // wheel roller radius
     static constexpr float ROLLER_RADIUS = .01f;  // meters
                                                   // constants for CV movement
-    static constexpr float MIN_RADIANS = .01f;  // min radians to travel to
-    static constexpr float MIN_DISTANCE = .01;  // min distance to travel in meters
-};                                              // struct CHASSIS_CONSTANTS
+    static constexpr float MIN_RADIANS = .01f;    // min radians to travel to
+    static constexpr float MIN_DISTANCE = .01;    // min distance to travel in meters
+};                                                // struct CHASSIS_CONSTANTS
 
 struct GIMBAL_CONSTANTS
 {
