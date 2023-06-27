@@ -21,13 +21,21 @@ FeederSentryMovementCommand::FeederSentryMovementCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(feeder));
 }
 
-void  FeederSentryMovementCommand::initialize() {feeder->setTargetRPM(0);}
+void  FeederSentryMovementCommand::initialize() {
+    feeder->setTargetRPM(0);
+    feeder->setTargetRPM(3000);
+    burstFireTimeout.restart(1000);
+    
+}
 
 void  FeederSentryMovementCommand::execute()
 {
-    if(drivers->cv_com.foundTarget()) 
-        feeder->setTargetRPM(3000); //1500
-    else feeder->setTargetRPM(3000);
+    if(burstFireTimeout.isExpired()){
+        feeder->setTargetRPM(0);
+    }
+    // if(drivers->cv_com.foundTarget()) 
+    //     feeder->setTargetRPM(3000); //1500
+    // else feeder->setTargetRPM(3000);
 }
 
 void  FeederSentryMovementCommand::end(bool) { feeder->setTargetRPM(0); }

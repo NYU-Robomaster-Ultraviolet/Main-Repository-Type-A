@@ -24,7 +24,8 @@
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 // #include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/feeder_sentry/feeder_sentry_movement_command.hpp"
-
+#include "subsystems/beyblading/chassis_beyblade.hpp"
+#include "subsystems/beyblading/gimbal_beyblade.hpp"
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
 
@@ -55,6 +56,9 @@ CvCommand cvMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
 FeederSentryMovementCommand feederMovement(&feeder, drivers());
 ShootSentryUserCommand shootUser(&shooter, drivers());
+ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
+GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
+
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
@@ -62,6 +66,9 @@ RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
 HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
+
+HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
+RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
@@ -97,6 +104,7 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
+    drivers->commandMapper.addMap(&rightSwitchDown);
 }
 }//namespace src::control
 

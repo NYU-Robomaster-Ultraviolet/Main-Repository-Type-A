@@ -125,6 +125,9 @@ public:
     void resetGimbalPowerFlag() {setPowerGimbalFlag = false;}
     void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
+    //
+    unsigned char getBeybladeMode() const {return 1;}
+
 
     // Send/recieve
     typedef struct header
@@ -165,7 +168,7 @@ private:
     float gimbalY;
     bool gimbalReadFlag = 0;
     //beyblade or no beyblade
-    unsigned char mode = 0;
+    unsigned char beybladeMode = 1;
 
     //chassis move straight
     int forwardDistance = 0; //in mm

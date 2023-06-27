@@ -138,10 +138,19 @@ public:
     //checks if IMU is calibrated
     bool imuStatesCalibrated() const {return drivers->mpu6500.getImuState() == tap::communication::sensors::imu::ImuInterface::ImuState::IMU_CALIBRATED;}
 
+    //alligns gimbal to chassis if not done already, else puts pitch to level position
+    void allignGimbal();
+
+    float findRotation(float destination, bool yaw) const;
+
+    void calibratePitch();
 private:
     //motor interfaces
     tap::motor::DjiMotor yawMotor;
     tap::motor::DjiMotor pitchMotor;
+    #ifdef TARGET_SENTRY
+    tap::motor::DjiMotor pitchMotorL;
+    #endif
 
     //starting angles
     float startingPitch;
@@ -202,6 +211,13 @@ private:
     //used to show that this is the first time setting imu
     bool firstSetYaw = true;
     bool firstSetPitch = true;
+
+    //check if alligned or not
+    bool alligned = false;
+
+    //things used for pitch angle calculations
+    float pitchEncoderOffset = PITCH_ENCODER_OFFSET;
+    bool calibratedPitch = false;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

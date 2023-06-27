@@ -6,6 +6,7 @@
 
 #include "feeder_sentry_subsystem.hpp"
 #include "drivers.hpp"
+#include "tap/architecture/timeout.hpp"
 namespace feeder{
 
 class FeederSentryMovementCommand : public tap::control::Command{
@@ -34,7 +35,7 @@ public:
     bool isFinished() const override;
 private:
     FeederSentrySubsystem *const feeder;
-
+    tap::arch::MilliTimeout burstFireTimeout;
     src::Drivers *drivers;
 }; //class FeederSentryMovementCommand : public tap::control::Command
 

@@ -46,7 +46,7 @@ bool CVCom::sendingLoop()
 {
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
-    sendAutoAimMsg(encoderYaw * 100, encoderPitch * 100);
+    sendAutoAimMsg(getBeybladeMode() * 100, 500);
     //sendAutoAimMsg(imuYaw, 5);
     sendColorMsg();
     sendEnableMsg(cv_on);
@@ -178,7 +178,7 @@ int CVCom::readFromUart()
                     chassisR = c.chassisR / 1000.0;
                     chassisReadFlag = true;
 
-                    mode = c.mode;
+                    beybladeMode = c.mode;
                     break;
                 }
                 case 3:
@@ -203,7 +203,7 @@ int CVCom::readFromUart()
                     gimbalX = g.gimbalX / 1000.0;
                     gimbalY = g.gimbalY / 1000.0;
                     gimbalReadFlag = true;
-                    mode = g.mode;
+                    beybladeMode = g.mode;
                     break;
                 }
                 case 5:
@@ -316,6 +316,6 @@ void CVCom::update()
 {
     // set the gimbal subsystem to use the cvcom
     int bytes_read = readFromUart();
-    sendingLoop();
+    //sendingLoop();
 }
 }; //namespace cv

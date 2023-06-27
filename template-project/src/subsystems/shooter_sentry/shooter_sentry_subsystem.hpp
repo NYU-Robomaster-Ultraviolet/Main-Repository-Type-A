@@ -63,12 +63,15 @@ public:
 
     float findRampOutput(float output);
 
+    void changeOnFlag(){on = !on;}
+
     //void updateRpmPid(tap::algorithms::Ramp* ramp, tap::gpio::Pwm::Pin const flywheel);
 
     const tap::gpio::Pwm::Pin &getFlywheel1() const { return flywheel1; }
     const tap::gpio::Pwm::Pin &getFlywheel2() const { return flywheel2; }
     const tap::gpio::Pwm::Pin &getFlywheel3() const { return flywheel3; }
     const tap::gpio::Pwm::Pin &getFlywheel4() const { return flywheel4; }
+
 
 private:
     ///< Motors.  Use these to interact with any dji style motors.
@@ -79,6 +82,8 @@ private:
 
     // PID controllers for RPM feedback from wheels
     modm::filter::Ramp<float> flywheelRamp;
+    bool on = false;
+    float output = 0;
 
     ///< Any user input is translated into desired RPM for each motor.
 

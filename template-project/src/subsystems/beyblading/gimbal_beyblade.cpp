@@ -18,7 +18,7 @@ GimbalBeybladeCommand::GimbalBeybladeCommand(GimbalSubsystem *const gimbal, src:
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
 void  GimbalBeybladeCommand::initialize() {
-        gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
+        gimbal->allignGimbal();
         noTurn = 0;
     }
 
@@ -35,12 +35,5 @@ void  GimbalBeybladeCommand::end(bool) {
     }
 
 bool  GimbalBeybladeCommand::isFinished() const { return false; }
-
-float GimbalBeybladeCommand::findRotation(const float& destination) const {
-    float rotation = destination - gimbal->getYawEncoder();
-    if(rotation > M_TWOPI) rotation = -(rotation - M_TWOPI);
-    else if(rotation < -M_TWOPI) rotation = -(rotation + M_TWOPI);
-    return rotation;
-}
 
 }//namespace gimbal

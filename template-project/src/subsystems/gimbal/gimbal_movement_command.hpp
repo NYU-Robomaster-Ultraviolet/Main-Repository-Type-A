@@ -25,7 +25,6 @@ public:
 
     bool isFinished() const override;
 
-    float findRotation(const float& destination) const;
 private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;

@@ -28,6 +28,7 @@ float ShooterSentrySubsystem::findRampOutput(float output)
 }
 
 void ShooterSentrySubsystem::setDesiredOutput(float output) {
+    if(!on) output = .2;
     float changeVal = findRampOutput(output);
     drivers->pwm.write(changeVal, flywheel4);
     drivers->pwm.write(changeVal, flywheel3);

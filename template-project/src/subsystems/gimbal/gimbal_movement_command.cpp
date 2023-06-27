@@ -20,8 +20,8 @@ GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src:
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
 void  GimbalMovementCommand::initialize() {
-        gimbal->cvInput(findRotation(YAW_ENCODER_OFFSET), LEVEL_ANGLE - gimbal->getPitchEncoder());
-        if(!gimbal->isCalibrated()) timeout.restart(2000); //3000 to actually work
+        gimbal->allignGimbal();
+        if(!gimbal->isCalibrated()) timeout.restart(50);
         else timeout.restart(20);
     }
 
@@ -57,11 +57,5 @@ void  GimbalMovementCommand::end(bool) {
 
 bool  GimbalMovementCommand::isFinished() const { return false; }
 
-float GimbalMovementCommand::findRotation(const float& destination) const {
-    float rotation = destination - gimbal->getYawEncoder();
-    if(rotation > M_TWOPI) rotation = -(rotation - M_TWOPI);
-    else if(rotation < -M_TWOPI) rotation = -(rotation + M_TWOPI);
-    return rotation;
-}
 
 }//namespace gimbal

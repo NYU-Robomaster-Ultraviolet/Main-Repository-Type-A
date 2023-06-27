@@ -20,14 +20,14 @@ ShootSentryUserCommand::ShootSentryUserCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(shooter));
 }
 
-void  ShootSentryUserCommand::initialize() {}
-
-void  ShootSentryUserCommand::execute()
-{
-    shooter->setDesiredOutput(0.3f);
+void  ShootSentryUserCommand::initialize() {
+    shooter->changeOnFlag();
 }
 
-void  ShootSentryUserCommand::end(bool) {} //shooter->setDesiredOutput(0.2f); }
+void  ShootSentryUserCommand::execute()
+{shooter->setDesiredOutput(0.3f);}
+
+void  ShootSentryUserCommand::end(bool) {}//shooter->setDesiredOutput(0.2f); }
 
 bool  ShootSentryUserCommand::isFinished() const { return false; }
 }  // namespace shooter

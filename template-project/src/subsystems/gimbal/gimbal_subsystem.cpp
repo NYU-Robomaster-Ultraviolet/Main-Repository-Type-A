@@ -1,9 +1,38 @@
 #include "gimbal_subsystem.hpp"
 
 #include "modm/math/geometry/angle.hpp"
+#include "tap/architecture/timeout.hpp"
 
 namespace gimbal
 {
+#ifdef TARGET_SENTRY
+// constructor
+GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
+    : tap::control::Subsystem(drivers),
+      yawMotor(
+          drivers,
+          constants.YAW_MOTOR_ID,
+          constants.CAN_BUS_MOTORS_YAW,
+          false,
+          "Yaw Motor",
+          tap::motor::DjiMotor::ENC_RESOLUTION / 2,
+          constants.STARTING_YAW_ROT),
+      pitchMotor(drivers, 
+        constants.PITCH_MOTOR_ID, 
+        constants.CAN_BUS_MOTORS_PITCH, false, 
+        "Pitch Motor"),
+      pitchMotorL(drivers, 
+      constants.PITCH_LEFT_MOTOR_ID,
+      constants.CAN_BUS_MOTORS_PITCH_LEFT, true,
+      ("Pitch Motor Left")),
+      targetYaw(0.0f),
+      targetPitch(0.0f),
+      currentYawMotorSpeed(0.0f),
+      currentPitchMotorSpeed(0.0f),
+      yawMotorPid(constants.YAW_PID),
+      pitchMotorPid(constants.PITCH_PID)
+{}
+#else
 // constructor
 GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
     : tap::control::Subsystem(drivers),
@@ -25,9 +54,8 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
       currentPitchMotorSpeed(0.0f),
       yawMotorPid(constants.YAW_PID),
       pitchMotorPid(constants.PITCH_PID)
-{
-}
-
+{}
+#endif
 // initilaizes the gimbal motors and make them not get any power
 void GimbalSubsystem::initialize()
 {
@@ -37,6 +65,10 @@ void GimbalSubsystem::initialize()
     yawMotor.setDesiredOutput(0);
     pitchMotor.initialize();
     pitchMotor.setDesiredOutput(0);
+    #ifdef TARGET_SENTRY
+    pitchMotorL.initialize();
+    pitchMotorL.setDesiredOutput(0);
+    #endif
     uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
     uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
     setEncoderPitchAngle(wrappedEncoderValueToRadians(currentPitchEncoder));
@@ -55,12 +87,12 @@ void GimbalSubsystem::refresh()
     timeError = currentTime - pastTime;
     pastTime = currentTime;
     drivers->leds.set(drivers->leds.A, true);
-    drivers->leds.set(drivers->leds.B, yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.C,yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.D, yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.E, yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.F, yawMotor.isMotorOnline());
-    drivers->leds.set(drivers->leds.G, yawMotor.isMotorOnline());
+    drivers->leds.set(drivers->leds.B, pitchMotorL.isMotorOnline());
+    drivers->leds.set(drivers->leds.C,pitchMotorL.isMotorOnline());
+    drivers->leds.set(drivers->leds.D, pitchMotorL.isMotorOnline());
+    drivers->leds.set(drivers->leds.E, pitchMotorL.isMotorOnline());
+    drivers->leds.set(drivers->leds.F, pitchMotorL.isMotorOnline());
+    drivers->leds.set(drivers->leds.G, pitchMotorL.isMotorOnline());
     drivers->leds.set(drivers->leds.H, false);
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
@@ -160,7 +192,7 @@ void GimbalSubsystem::updatePitchPid()
         getPitchMotorRPM(),
         timeError);
     if (-(constants.PITCH_MINIMUM_RADS) < pitchError && pitchError < constants.PITCH_MINIMUM_RADS)
-    {
+    {   
         pitchMotorOutput = 0;
     }
     else
@@ -172,7 +204,12 @@ void GimbalSubsystem::updatePitchPid()
     if (-constants.MIN_PITCH_SPEED < pitchMotorOutput && pitchMotorOutput < constants.MIN_PITCH_SPEED)
         pitchMotorOutput = 0;
     else
-        pitchMotor.setDesiredOutput(pitchMotorOutput);
+        #ifdef TARGET_SENTRY
+            pitchMotor.setDesiredOutput(pitchMotorOutput);
+            pitchMotorL.setDesiredOutput(pitchMotorOutput);
+        #else
+            pitchMotor.setDesiredOutput(pitchMotorOutput);
+        #endif
 }
 
 // this method will check if the motor is turning, and will return a new output to try to reach
@@ -200,11 +237,15 @@ void GimbalSubsystem::controllerInput(float yawInput, float pitchInput)
  */
 void GimbalSubsystem::cvInput(float yawInput, float pitchInput)
 {
-    yawInput = limitVal<float>(yawInput, -M_TWOPI, M_TWOPI);
-    pitchInput = limitVal<float>(pitchInput, -M_TWOPI, M_TWOPI);
-    // adds inputted angle to current angle
-    setYawAngle(currentYaw + yawInput);
-    setPitchAngle(currentPitch + pitchInput);
+    //check for non-0 inputs, if so modify target angle given current angle
+    if(yawInput){
+        yawInput = limitVal<float>(yawInput, -M_TWOPI, M_TWOPI);
+        setYawAngle(currentYaw + yawInput);
+    }
+    if(pitchInput){
+        pitchInput = limitVal<float>(pitchInput, -M_TWOPI, M_TWOPI);
+        setPitchAngle(currentPitch + pitchInput);
+    }
     inputsFound = true;
 }
 
@@ -230,5 +271,32 @@ void GimbalSubsystem::findVelocityImu(uint32_t time){
     imuVx += imuAx * time * 0.001;
     imuVy += imuAy * time * 0.001;
     imuVz += imuAz * time * 0.001;
+}
+
+void GimbalSubsystem::allignGimbal(){
+    if(!alligned){
+        cvInput(findRotation(YAW_ENCODER_OFFSET, 1), findRotation(PITCH_ENCODER_OFFSET + LEVEL_ANGLE, 0));
+        alligned = true;
+    }
+    else{
+        cvInput(0, findRotation(PITCH_ENCODER_OFFSET + LEVEL_ANGLE, 0));
+    }
+}
+
+float GimbalSubsystem::findRotation(float destination, bool yaw) const {
+    float rotation = yaw ? destination - getYawEncoder() : destination - getPitchEncoder() ;
+    if(rotation > M_TWOPI) rotation = -(rotation - M_TWOPI);
+    else if(rotation < -M_TWOPI) rotation = -(rotation + M_TWOPI);
+    return rotation;
+}
+
+void GimbalSubsystem::calibratePitch(){
+    tap::arch::MilliTimeout delay;
+    delay.restart(50);
+    while(!calibratedPitch){
+        
+        targetPitch = currentPitch + .2;
+        updatePitchPid();
+    }
 }
 }  // namespace gimbal
