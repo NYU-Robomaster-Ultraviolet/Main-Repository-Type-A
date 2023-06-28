@@ -144,6 +144,8 @@ public:
     float findRotation(float destination, bool yaw) const;
 
     void calibratePitch();
+
+    void setBeybladeMode(unsigned char mode) {beybladeMode = mode;}
 private:
     //motor interfaces
     tap::motor::DjiMotor yawMotor;
@@ -218,6 +220,9 @@ private:
     //things used for pitch angle calculations
     float pitchEncoderOffset = PITCH_ENCODER_OFFSET;
     bool calibratedPitch = false;
+
+    //used for beyblade
+    unsigned char beybladeMode = 0;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

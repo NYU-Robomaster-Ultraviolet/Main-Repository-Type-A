@@ -1,7 +1,6 @@
 #ifndef MUSIC_PLAYER_HPP_
 #define MUSIC_PLAYER_HPP_
 
-#include "drivers.hpp"
 #include "vector"
 #include "tap/communication/sensors/buzzer/buzzer.hpp"
 #include "notes.hpp"
@@ -11,6 +10,9 @@
 
 using namespace tap;
 using namespace tap::buzzer;
+namespace src{
+    class Drivers;
+}
 
 namespace music{
 
@@ -27,6 +29,7 @@ class MusicPlayer{
         void resetSong() {
             resting = false;
             index = 0;
+            isFinished = false;
             init();
         }
 

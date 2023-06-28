@@ -122,6 +122,7 @@ static void initializeIo(src::Drivers *drivers)
     drivers->djiMotorTerminalSerialHandler.init();
     drivers->uart.init<tap::communication::serial::Uart::Uart7, 115200>();
     drivers->cv_com.init();
+    drivers->music_player.init();
 }
 
 static void updateIo(src::Drivers *drivers)

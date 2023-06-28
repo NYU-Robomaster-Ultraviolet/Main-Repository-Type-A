@@ -70,8 +70,6 @@ private:
     //feeder constants
     Feeder_CONSTANTS constants;
 
-    bool inputsFound = false;
-
 };  //class FeederSubsystem
 
 }   //namespace feeder

@@ -157,11 +157,15 @@ void GimbalSubsystem::updateYawPid()
 {
     // find rotation
     yawError = targetYaw - currentYaw;
+
     //Limits the error to keep rotations consistant
     if (yawError > constants.MAX_YAW_ERROR)
         yawError -= M_TWOPI;
     else if (yawError < -constants.MAX_YAW_ERROR)
         yawError += M_TWOPI;
+
+    if(beybladeMode == 1) yawError = yawError + GIMBAL_BEYBLADE_ANGLE_INPUT;
+    else if(beybladeMode == 2) yawError = yawError - GIMBAL_BEYBLADE_ANGLE_INPUT;
     // Keeps within range of radians
     if (-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS)
     {
@@ -238,7 +242,7 @@ void GimbalSubsystem::controllerInput(float yawInput, float pitchInput)
 void GimbalSubsystem::cvInput(float yawInput, float pitchInput)
 {
     //check for non-0 inputs, if so modify target angle given current angle
-    if(yawInput){
+    if(yawInput || beybladeMode){
         yawInput = limitVal<float>(yawInput, -M_TWOPI, M_TWOPI);
         setYawAngle(currentYaw + yawInput);
     }
@@ -299,4 +303,6 @@ void GimbalSubsystem::calibratePitch(){
         updatePitchPid();
     }
 }
+
+
 }  // namespace gimbal

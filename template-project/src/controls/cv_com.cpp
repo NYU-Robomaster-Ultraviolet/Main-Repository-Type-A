@@ -166,7 +166,10 @@ int CVCom::readFromUart()
 
                     readingState = WAITING_FOR_HEADER;
                     byteIndex = 0;
-
+                    
+                    //for debugging
+                    drivers->music_player.execute();
+                    if(drivers->music_player.finishedSong()) drivers->music_player.resetSong();
                     break;
                 }
                 case 2:
@@ -177,8 +180,10 @@ int CVCom::readFromUart()
                     chassisY = c.chassisY / 1000.0;
                     chassisR = c.chassisR / 1000.0;
                     chassisReadFlag = true;
-
                     beybladeMode = c.mode;
+                    
+
+
                     break;
                 }
                 case 3:
@@ -316,6 +321,6 @@ void CVCom::update()
 {
     // set the gimbal subsystem to use the cvcom
     int bytes_read = readFromUart();
-    //sendingLoop();
+    sendingLoop();
 }
 }; //namespace cv

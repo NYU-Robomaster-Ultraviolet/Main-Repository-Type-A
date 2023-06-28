@@ -43,25 +43,26 @@ void  CVChassisCommand::execute()
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
 
-    // if(beyblade = 1)
-    //     rOutput = BEYBLADE_INPUT;
-    // else if(beyblade = 2)
-    //     rOutput = -BEYBLADE_INPUT;
+    if(beyblade = 1)
+        rOutput = BEYBLADE_INPUT;
+    else if(beyblade = 2)
+        rOutput = -BEYBLADE_INPUT;
 
     //print first then second
     //drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
     
     //check if there are inputs
-    // if(xInput || yInput || (rInput && beyblade == 0)){
-    //     xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
-    //     yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
-    //     rOutput += rInput;
-    //     // chassis->changeVelocityMoveFlag(false);
-    //     // chassis->setFowardMovement(0);
-    //     // chassis->setRotationRadians(0);
-    //     // chassis->setRotationVelocity(0);
-    //     // chassis->setTargetVelocity(0, 0);
-    // }
+    if(xInput || yInput || (rInput && beyblade == 0)){
+        xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
+        yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+        rOutput += rInput;
+        // chassis->changeVelocityMoveFlag(false);
+        // chassis->setFowardMovement(0);
+        // chassis->setRotationRadians(0);
+        // chassis->setRotationVelocity(0);
+        // chassis->setTargetVelocity(0, 0);
+        
+    }
     //check if stop command
     if(drivers->cv_com.getChassisStop()){
         // chassis->changeVelocityMoveFlag(false);
@@ -72,23 +73,25 @@ void  CVChassisCommand::execute()
         // chassis->setRotationRadians(0);
         // chassis->setRotationVelocity(0);
         // chassis->setTargetVelocity(0, 0);
-    }
-    else if(drivers->cv_com.getChassisReadFlag()){
-
-        //gets the cv inputs if valid
-        xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
-        yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
-        rInput = limitVal<float>(drivers->cv_com.getChassisR(), -1, 1);
-        //invalidate flag
-        drivers->cv_com.resetChassisReadFlag();
-        //applies rotation matrix to inputs to change inputs based on gimbal position
-        xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
-        yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
-        rOutput = rInput;
-        //sends values to the chassis subsystem
-        //chassis->changeVelocityMoveFlag(false);
+        chassis->setDesiredOutput( xOutput, yOutput, rOutput);
     }
     chassis->setDesiredOutput( xOutput, yOutput, rOutput);
+    // else if(drivers->cv_com.getChassisReadFlag()){
+
+    //     //gets the cv inputs if valid
+    //     xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
+    //     yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
+    //     rInput = limitVal<float>(drivers->cv_com.getChassisR(), -1, 1);
+    //     //invalidate flag
+    //     drivers->cv_com.resetChassisReadFlag();
+    //     //applies rotation matrix to inputs to change inputs based on gimbal position
+    //     xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
+    //     yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+    //     rOutput += rInput;
+    //     //sends values to the chassis subsystem
+    //     //chassis->changeVelocityMoveFlag(false);
+    //     chassis->setDesiredOutput( xOutput, yOutput, rOutput);
+    // }
     // else if(drivers->cv_com.getChassisPowerFlag()){
     //     //gets the cv inputs if valid
     //     xInput = limitVal<float>(drivers->cv_com.getYPower(), -1, 1);

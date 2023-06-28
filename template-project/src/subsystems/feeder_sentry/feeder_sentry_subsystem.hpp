@@ -74,8 +74,6 @@ private:
     //PID constants
     FEEDER_PID feederPid;
 
-    bool inputsFound = false;
-
 };  //class FeederSentrySubsystem
 
 }   //namespace feeder

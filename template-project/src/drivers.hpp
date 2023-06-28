@@ -24,6 +24,7 @@
 #include "controls/control_interface.hpp"
 #include "controls/cv_com.hpp"
 #include "controls/ref_interface.hpp"
+#include "subsystems/music/music_player.hpp"
 
 namespace src
 {
@@ -38,13 +39,15 @@ public:
         tap::Drivers(),
         control_interface(this),
         cv_com(this),
-        ref_interface(this)
+        ref_interface(this),
+        music_player(this, music::CYBER_ANGEL, music::CYBER_ANGEL_BPM)
          {}
 
 public:
     src::control::ControlInterface control_interface;
     cv::CVCom cv_com;
     RefInterface ref_interface;
+    music::MusicPlayer music_player;
 
 };  // class Drivers
 

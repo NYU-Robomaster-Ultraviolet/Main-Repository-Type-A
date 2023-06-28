@@ -24,14 +24,15 @@ void  GimbalBeybladeCommand::initialize() {
 
 void  GimbalBeybladeCommand::execute()
 {
-    
-    gimbal->controllerInput(drivers->control_interface.getGimbalYawInput() - rotation,
+    gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());
+    gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
         drivers->control_interface.getGimbalPitchInput());
 }
 
 void  GimbalBeybladeCommand::end(bool) {
     gimbal->controllerInput(0, 0);
     gimbal->noInputs();
+    gimbal->setBeybladeMode(0);
     }
 
 bool  GimbalBeybladeCommand::isFinished() const { return false; }

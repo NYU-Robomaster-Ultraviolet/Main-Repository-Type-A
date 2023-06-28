@@ -126,7 +126,7 @@ public:
     void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
     //
-    unsigned char getBeybladeMode() const {return 1;}
+    unsigned char getBeybladeMode() const {return 2;}
 
 
     // Send/recieve
@@ -150,7 +150,6 @@ private:
     src::Drivers *drivers;
 
 //DATA RECEIVED FROM JETSON
-
 // yaw then pitch
     int validAngle = false;
     bool hasTarget = false;

@@ -31,7 +31,7 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.66519f; //210 degrees //3.780138814;  // 216.586 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 3.31613f; //190 //3.66519f; //210 degrees //3.780138814;  // 216.586 degrees
 
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
