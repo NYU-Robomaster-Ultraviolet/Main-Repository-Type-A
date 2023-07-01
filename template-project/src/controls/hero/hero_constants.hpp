@@ -35,7 +35,10 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 0; 
 
-static constexpr float BEYBLADE_INPUT = .4f;
+
+static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = BEYBLADE_INPUT * .645;
 
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
@@ -70,11 +73,14 @@ struct CHASSIS_CONSTANTS{
     static constexpr unsigned char NUM_WHEELS = 4;
     //wheel roller radius
     static constexpr float ROLLER_RADIUS = .01f; // meters
+                                                  // constants for CV movement
+    static constexpr float MIN_RADIANS = .01f;    // min radians to travel to
+    static constexpr float MIN_DISTANCE = .01;    // min distance to travel in meters
 }; //struct CHASSIS_CONSTANTS
 
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
-    static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS1;
+    static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
 }; 
 
 struct GIMBAL_CONSTANTS{

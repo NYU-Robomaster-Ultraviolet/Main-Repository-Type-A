@@ -45,12 +45,12 @@ public:
          flywheel1(drivers,
                tap::motor::MOTOR2,
                tap::can::CanBus::CAN_BUS2,
-               false,
+               true,
                "Flywheel 1"),
         flywheel2(drivers,
-               tap::motor::MOTOR3,
+               tap::motor::MOTOR4,
                tap::can::CanBus::CAN_BUS2,
-               true,
+               false,
                "Flywheel 2"),
         pid1(pidVals.PID_KP, pidVals.PID_KI, pidVals.PID_KD,
       pidVals.PID_MAX_IOUT, pidVals.PID_MAX_OUT),
@@ -82,6 +82,8 @@ public:
     bool flywheel1Online() const {return flywheel1.isMotorOnline();}
     bool flywheel2Online() const {return flywheel2.isMotorOnline();}
 
+    void changeStopFlag() {stopFlag = !stopFlag;}
+
     //void updateRpmPid(tap::algorithms::Ramp* ramp, tap::gpio::Pwm::Pin const flywheel);
 
 private:
@@ -99,6 +101,8 @@ private:
     bool online = false;
 
     float targetRPM = 0;
+
+    bool stopFlag = false;
 
     ///< Any user input is translated into desired RPM for each motor.
 

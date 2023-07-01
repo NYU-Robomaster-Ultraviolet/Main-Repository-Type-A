@@ -28,7 +28,7 @@ public:
 
     #ifdef TARGET_HERO
     std::pair<uint16_t, uint16_t> getShooterHeat() const{
-        return std::pair<uint16_t, uint16_t>(.heat42, heat42);
+        return std::pair<uint16_t, uint16_t>(heat42, heat42);
     }
     bool nearPowerLimit() const{
         std::pair<uint16_t, uint16_t> heat = getShooterHeat();

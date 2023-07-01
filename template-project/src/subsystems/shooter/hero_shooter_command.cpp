@@ -21,7 +21,9 @@ HeroShooterCommand::HeroShooterCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(shooter));
 }
 
-void  HeroShooterCommand::initialize() {}
+void  HeroShooterCommand::initialize() {
+    shooter->changeStopFlag();
+}
 
 void  HeroShooterCommand::execute()
 {   
@@ -31,7 +33,7 @@ void  HeroShooterCommand::execute()
     shooter->setDesiredOutput(16000);
 }
 
-void  HeroShooterCommand::end(bool) { shooter->setDesiredOutput(0); }
+void  HeroShooterCommand::end(bool) { }//shooter->setDesiredOutput(0); }
 
 bool  HeroShooterCommand::isFinished() const { return false; }
 }  // namespace shooter

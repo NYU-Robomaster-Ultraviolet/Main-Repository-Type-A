@@ -31,7 +31,7 @@ public:
     feederMotor(drivers,
                constants.FEEDER_MOTOR_ID,
                constants.CAN_BUS,
-               false,
+               true,
                "Feeder Motor"),
       targetRPM(0.0f),
       currentFeederMotorSpeed(0.0f),

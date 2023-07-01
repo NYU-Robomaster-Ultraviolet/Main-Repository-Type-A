@@ -14,12 +14,14 @@ void HeroShooterSubsystem::initialize()
 {
     flywheel1.initialize();
     flywheel2.initialize();
+    flywheel1.setDesiredOutput(0);
+    flywheel2.setDesiredOutput(0);
 }
 void HeroShooterSubsystem::refresh() {
-    // drivers->leds.set(drivers->leds.A, flywheel1Online());
-    // drivers->leds.set(drivers->leds.B, !flywheel1Online());
-    // drivers->leds.set(drivers->leds.C, flywheel2Online());
-    // drivers->leds.set(drivers->leds.D, !flywheel2Online());
+    drivers->leds.set(drivers->leds.A, flywheel1Online());
+    drivers->leds.set(drivers->leds.B, !flywheel1Online());
+    drivers->leds.set(drivers->leds.C, flywheel2Online());
+    drivers->leds.set(drivers->leds.D, !flywheel2Online());
     updateRpmPid(&pid1, &flywheel1, targetRPM);
     updateRpmPid(&pid2, &flywheel2, targetRPM);
 }
@@ -32,11 +34,18 @@ float HeroShooterSubsystem::findRampOutput(float output)
 }
 void HeroShooterSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
     pid->update(desiredRpm - motor->getShaftRPM()); //updates pid
-    motor->setDesiredOutput(pid->getValue()); //feeds pid output value to motor
+    float output = pid->getValue();
+    if(fabsf(output > 100))
+        motor->setDesiredOutput(pid->getValue()); //feeds pid output value to motor
+    else motor->setDesiredOutput(0);
 }
 
 void HeroShooterSubsystem::setDesiredOutput(float output) {
-    targetRPM = output;
+    if(stopFlag){
+        targetRPM = output;
+    }
+    else targetRPM = 0;
+
 }
 
 } //namespace shooter
