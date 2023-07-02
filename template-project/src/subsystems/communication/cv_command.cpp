@@ -29,18 +29,19 @@ void  CvCommand::execute() {
     unsigned char beyblade = drivers->cv_com.getBeybladeMode();
     float yawInput = 0;
     float pitchInput = 0;
-
+    gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());
     if(drivers->cv_com.validReading()){
         yawInput = drivers->cv_com.getYaw();
         pitchInput = drivers->cv_com.getPitch();
         drivers->cv_com.invalidateAngle();
-            if(beyblade = 1)
-        yawInput += (GIMBAL_BEYBLADE_ANGLE_INPUT); // ~22 degrees
-        else if(beyblade = 2)
-            yawInput -= (GIMBAL_BEYBLADE_ANGLE_INPUT);
+        //     if(beyblade = 1)
+        // yawInput += (GIMBAL_BEYBLADE_ANGLE_INPUT); // ~22 degrees
+        // else if(beyblade = 2)
+        //     yawInput -= (GIMBAL_BEYBLADE_ANGLE_INPUT);
 
         gimbal->cvInput(yawInput, pitchInput);
     }
+    //else gimbal->cvInput(0, 0);
     // if(drivers->cv_com.getGimbalReadFlag()){
     //     float xInput = drivers->cv_com.getGimbalX();
     //     float yInput = drivers->cv_com.getGimbalY();
@@ -51,6 +52,7 @@ void  CvCommand::execute() {
 }
 
 void  CvCommand::end(bool) {
+    gimbal->setBeybladeMode(0);
     drivers->cv_com.changeCV(0);
     gimbal->cvInput(0, 0);
     gimbal->noInputs();

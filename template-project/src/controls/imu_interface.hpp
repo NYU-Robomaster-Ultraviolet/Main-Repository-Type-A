@@ -53,7 +53,7 @@ private:
     GIMBAL_CONSTANTS constants;
 
     //starting positions of yaw and pitch gimbal angles in radians.
-    float startingPitch = constants.LEVEL_ANGLE + constants.STARTING_PITCH;
+    float startingPitch = constants.LEVEL_ANGLE + constants.PITCH_STARTING_ANGLE;
     float startingYaw = 0;
     float startingRoll = 0;
 

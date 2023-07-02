@@ -60,7 +60,7 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
 void GimbalSubsystem::initialize()
 {
     pastTime = tap::arch::clock::getTimeMilliseconds();
-    setIMU(0, constants.STARTING_PITCH + constants.LEVEL_ANGLE);
+    setIMU(0, constants.PITCH_STARTING_ANGLE + constants.LEVEL_ANGLE);
     yawMotor.initialize();
     yawMotor.setDesiredOutput(0);
     pitchMotor.initialize();
@@ -79,6 +79,9 @@ void GimbalSubsystem::initialize()
     currentPitch = startingPitch;
     targetYaw = startingYaw;
     targetPitch = startingPitch;
+    // #ifdef TARGET_SENTRY
+    // calibratePitch();
+    // #endif
 }
 
 void GimbalSubsystem::refresh()
@@ -123,6 +126,7 @@ void GimbalSubsystem::refresh()
             //     }
             // }
             // else currentYaw = encoderYaw;
+            applyBeybladeOffset();
             updateYawPid();
         }
         if (pitchMotor.isMotorOnline())
@@ -163,13 +167,10 @@ void GimbalSubsystem::updateYawPid()
         yawError -= M_TWOPI;
     else if (yawError < -constants.MAX_YAW_ERROR)
         yawError += M_TWOPI;
-
-    if(beybladeMode == 1) yawError = yawError + GIMBAL_BEYBLADE_ANGLE_INPUT;
-    else if(beybladeMode == 2) yawError = yawError - GIMBAL_BEYBLADE_ANGLE_INPUT;
     // Keeps within range of radians
     if (-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS)
     {
-        yawMotor.setDesiredOutput(0.0f);
+        yawMotorOutput = 0;
     }
     // else if(isCalibrated() && imuStatesCalibrated() && -(constants.YAW_MINIMUM_IMU_RADS) < yawError &&
     //  yawError < constants.YAW_MINIMUM_IMU_RADS){
@@ -183,8 +184,8 @@ void GimbalSubsystem::updateYawPid()
             constants.MAX_YAW_SPEED);
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
-        else yawMotor.setDesiredOutput(yawMotorOutput);
     }
+    yawMotor.setDesiredOutput(yawMotorOutput);
 }
 
 // updates the pitch angle
@@ -221,7 +222,7 @@ void GimbalSubsystem::updatePitchPid()
 float GimbalSubsystem::gravityCompensation()
 {
     float limitAngle = M_PI / 2;
-    limitAngle = limitVal<float>(currentPitch - PITCH_ENCODER_OFFSET - (constants.LEVEL_ANGLE), -M_PI, M_PI);
+    limitAngle = limitVal<float>(currentPitch - pitchEncoderOffset - (constants.LEVEL_ANGLE), -M_PI, M_PI);
     return constants.GRAVITY_COMPENSATION_SCALAR * cosf(limitAngle);
 }
 
@@ -279,11 +280,11 @@ void GimbalSubsystem::findVelocityImu(uint32_t time){
 
 void GimbalSubsystem::allignGimbal(){
     if(!alligned){
-        cvInput(findRotation(YAW_ENCODER_OFFSET, 1), findRotation(PITCH_ENCODER_OFFSET + LEVEL_ANGLE, 0));
+        cvInput(findRotation(YAW_ENCODER_OFFSET, 1), findRotation(pitchEncoderOffset + LEVEL_ANGLE, 0));
         alligned = true;
     }
     else{
-        cvInput(0, findRotation(PITCH_ENCODER_OFFSET + LEVEL_ANGLE, 0));
+        cvInput(0, findRotation(pitchEncoderOffset + LEVEL_ANGLE, 0));
     }
 }
 
@@ -293,16 +294,17 @@ float GimbalSubsystem::findRotation(float destination, bool yaw) const {
     else if(rotation < -M_TWOPI) rotation = -(rotation + M_TWOPI);
     return rotation;
 }
-
+//calibrates for pitch at starting location
 void GimbalSubsystem::calibratePitch(){
-    tap::arch::MilliTimeout delay;
-    delay.restart(50);
-    while(!calibratedPitch){
-        
-        targetPitch = currentPitch + .2;
-        updatePitchPid();
-    }
+    setEncoderPitchAngle(wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped()));
+    currentPitch = encoderPitch;
+    pitchEncoderOffset = encoderPitch - constants.PITCH_STARTING_ANGLE;
 }
 
+void GimbalSubsystem::applyBeybladeOffset(){
+    if(beybladeMode == 1) setYawAngle(targetYaw + (GIMBAL_BEYBLADE_INPUT * constants.YAW_SCALE));
+    else if(beybladeMode == 2) setYawAngle(targetYaw - (GIMBAL_BEYBLADE_INPUT*  constants.YAW_SCALE));
+
+}
 
 }  // namespace gimbal

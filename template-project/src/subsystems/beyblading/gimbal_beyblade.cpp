@@ -26,7 +26,7 @@ void  GimbalBeybladeCommand::execute()
 {
     gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());
     gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
-        drivers->control_interface.getGimbalPitchInput());
+        drivers->control_interface.getGimbalPitchInput() + rotation);
 }
 
 void  GimbalBeybladeCommand::end(bool) {

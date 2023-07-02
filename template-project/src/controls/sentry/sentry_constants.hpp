@@ -17,9 +17,6 @@ static constexpr short int USER_MOUSE_PITCH_MAX = 1000;
 static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
 static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
 
-// static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
-// static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.15f;
-
 static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
 static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.2f;  //.15
 
@@ -31,7 +28,7 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.31613f; //190 //3.66519f; //210 degrees //3.780138814;  // 216.586 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 3.49066f; // 3.31613f; 200 //190 //3.66519f;
 
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
@@ -129,11 +126,13 @@ struct GIMBAL_CONSTANTS
     static constexpr float YAW_SCALE = 0.0125f;  //.25
     static constexpr float PITCH_SCALE = 0.01f;  // 0.0075f
     // Gimbal Starting angles
-    static constexpr float YAW_STARTING_ANGLE = 0.0f;
-    static constexpr float PITCH_STARTING_ANGLE = 1.91986f;  // 110 degrees
+    static constexpr float YAW_STARTING_ANGLE = 0;
+    static constexpr float PITCH_STARTING_ANGLE = 2.05949f;  // 118 degrees
     // Pitch Angle Limits
     static constexpr float PITCH_MIN_ANGLE = 1.309f; //75 degrees //1.22173f; //70
     static constexpr float PITCH_MAX_ANGLE = 1.91986f; //110 //2.05949f;  // 118 degrees, equal to starting
+    static constexpr float PITCH_MECHANICAL_MIN_ANGLE = 1.13446f; // 65 degrees
+    static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
     // gimbal yaw and pitch speed limits
     static constexpr float MIN_YAW_SPEED = 20.0f;  // 300
     static constexpr float MAX_YAW_SPEED = 30000.0f;
@@ -145,8 +144,6 @@ struct GIMBAL_CONSTANTS
     static constexpr float YAW_MINIMUM_IMU_RADS = 0.0349066;  // 2 degrees
     // minimum value for pitch RPM to be considered stable
     static constexpr float MIN_PITCH_RPM = .0005f;
-    // starting pitch angle from when the robot is turned on
-    static constexpr float STARTING_PITCH = -0.855211f;  //-49 degrees
     // starting YAW Motor rotations
     uint64_t STARTING_YAW_ROT = 10000000;  // ten million, cause why not
     // maximum pitch error

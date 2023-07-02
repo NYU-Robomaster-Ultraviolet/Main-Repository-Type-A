@@ -32,6 +32,8 @@ static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
 static constexpr float YAW_ENCODER_OFFSET = 2.81f; //31.4 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 0; 
+static constexpr float PITCH_MECHANICAL_MIN_ANGLE = 1.13446f; // 65 degrees
+static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
 
 
 static constexpr float BEYBLADE_INPUT = .6f; // .4

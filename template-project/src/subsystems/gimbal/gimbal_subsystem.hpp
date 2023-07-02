@@ -54,8 +54,8 @@ public:
     }
 
     //sets pitch angle, limits it between mechanical limits and adjusts to encoder offset
-    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE + PITCH_ENCODER_OFFSET ,
-        constants.PITCH_MAX_ANGLE + PITCH_ENCODER_OFFSET);}
+    void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE + pitchEncoderOffset ,
+        constants.PITCH_MAX_ANGLE + pitchEncoderOffset);}
 
     
     void setEncoderYawAngle(float angle) {
@@ -146,6 +146,8 @@ public:
     void calibratePitch();
 
     void setBeybladeMode(unsigned char mode) {beybladeMode = mode;}
+
+    void applyBeybladeOffset();
 private:
     //motor interfaces
     tap::motor::DjiMotor yawMotor;

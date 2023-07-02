@@ -44,9 +44,9 @@ void  CVChassisCommand::execute()
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
 
     if(beyblade = 1)
-        rOutput = BEYBLADE_INPUT;
-    else if(beyblade = 2)
         rOutput = -BEYBLADE_INPUT;
+    else if(beyblade = 2)
+        rOutput = BEYBLADE_INPUT;
 
     //print first then second
     //drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
