@@ -178,6 +178,14 @@ void ChassisSubsystem::initialize()
     updateWheelvalues();
 }
 void ChassisSubsystem::refresh() {
+    drivers->leds.set(drivers->leds.A, frontLeftMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.B, !frontLeftMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.C, frontRightMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.D, !frontRightMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.E, backLeftMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.F, !backLeftMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.G, backRightMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.H, !backRightMotor.isMotorOnline());
     updateWheelvalues();
     if(velocityMoveFlag) {
         setVelocityOutput();

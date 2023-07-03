@@ -15,20 +15,44 @@
 #endif
 
 namespace gimbal{
+    /**
+     * @brief Command that will allow for user input as well as a correction to gimbal beyblading
+     * 
+     */
 class GimbalBeybladeCommand : public tap::control::Command {
 public:
+
+/**
+ * @brief Constructor for gimbal beyblade, exact same to other gimbal commands
+ */
     GimbalBeybladeCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers);
 
+    //should never copy
     GimbalBeybladeCommand(const GimbalBeybladeCommand &other) = delete;
 
     GimbalBeybladeCommand &operator=(const GimbalBeybladeCommand &other) = delete;
 
+    /**
+     * @brief Sets the gimbal to be on beyblade Mode and raises pitch
+     * 
+     * @return ** void 
+     */
     void initialize() override;
 
     const char *getName() const { return "gimbal beyblade command"; }
 
+    /**
+     * @brief Continously called, receives and passes on gimbal remote control inputs
+     * 
+     * @return ** void 
+     */
     void execute() override;
 
+    /**
+     * @brief Called when finished, turns off beyblade mode of gimbal and end inputs
+     * 
+     * @return ** void 
+     */
     void end(bool) override;
 
     bool isFinished() const override;

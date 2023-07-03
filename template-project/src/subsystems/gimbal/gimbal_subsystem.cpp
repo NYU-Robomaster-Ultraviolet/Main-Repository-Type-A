@@ -88,14 +88,7 @@ void GimbalSubsystem::initialize()
 
 void GimbalSubsystem::refresh()
 {
-        drivers->leds.set(drivers->leds.A, yawMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.B, !yawMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.C, pitchMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.D, !pitchMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.E, false);
-        drivers->leds.set(drivers->leds.F, false);
-        drivers->leds.set(drivers->leds.G, false);
-        drivers->leds.set(drivers->leds.H, false);
+        
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;

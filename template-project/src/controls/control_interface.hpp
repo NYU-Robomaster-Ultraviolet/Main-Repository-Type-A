@@ -16,10 +16,12 @@ class ControlInterface{
     private:
         tap::Drivers *drivers;
 
+        //stored counters, used to prevent rereading signals
         uint32_t prevUpdateCounterX = 0;
         uint32_t prevUpdateCounterY = 0;
         uint32_t prevUpdateCounterRotation = 0;
 
+        //sensitivity for inputs
         uint32_t X_SENSITIVITY = 3.96f; //Max Input of 660 multiplied by sensitivity of .006
         uint32_t Y_SENSITIVITY = 3.3f; //Max Input of 660 multiplied by sensitivity of .005
 
@@ -29,7 +31,7 @@ class ControlInterface{
     public:
         ControlInterface(tap::Drivers *drivers) : drivers(drivers) {}
 
-        //final inputs 
+        //gets the stored inputs
         mockable float getChassisXInput();
         mockable float getChassisYInput();
         mockable float getChassisRotationInput();

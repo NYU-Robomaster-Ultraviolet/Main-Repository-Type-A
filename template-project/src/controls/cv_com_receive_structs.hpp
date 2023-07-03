@@ -101,6 +101,7 @@ typedef struct SetPower
         unsigned short footer = 0;
     } SetPowerObj, *SetPowerStruct;
 
+//set the velocity of the gimbal and chassis
 typedef struct SetVelocity
     {
         unsigned char header = 0xE7;
@@ -115,6 +116,7 @@ typedef struct SetVelocity
         unsigned short footer = 0;
     } SetVelocityObj, *SetVelocityStruct;
 
+//stops the chassis completely
 typedef struct StopChassis
     {
         unsigned char header = 0xE7;

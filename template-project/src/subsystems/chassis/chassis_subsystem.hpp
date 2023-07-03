@@ -95,9 +95,17 @@ public:
      */
     void setTargetVelocity(float x, float y);
     void setRotationVelocity(float r);
+
+    /**
+     * @brief Set the Target distance of movement for the robot in the frame of view of the gimbal
+     * 
+     * @param x foward
+     * @param r rotation
+     */
     void setRotationRadians(float r);
     void setFowardMovement(float x);
 
+    //sets the beyblade mode, would limit linear movements to save power
     void setBeybladeMode(int a) {beybladeMode = a;}
     /**
      * @param pid : the pid calculator for the given motor
@@ -118,9 +126,10 @@ public:
         return (M_TWOPI * static_cast<float>(encoderValue)) / tap::motor::DjiMotor::ENC_RESOLUTION;
     }
 
+    //lowers the speed limits
     void limitPower(float ratio);
 
-    
+    //sets flag to tell if it is in velocity movement mode true = yes
     void changeVelocityMoveFlag(bool flag){velocityMoveFlag = flag;}
 
     void moveAllignWithGimbal();
@@ -131,13 +140,15 @@ public:
     const tap::motor::DjiMotor &getBackLeftMotor() const { return backLeftMotor; }
     const tap::motor::DjiMotor &getBackRightMotor() const { return backRightMotor; }
 
-    //getters for motor encoder speeds
+    //getters for chassis speeds in x direction
     float getLongitude() const {return longitudinalVelocity;}
     float getGimbalFrameX() const {return gimbalFrameVelocityX;}
 
+    //getters for chassis speeds in y direction
     float getTransversal() const {return transversalVelocity;}
     float getGimbalFrameY() const {return gimbalFrameVelocityY;}
 
+    //getters for chassis rotational velocity
     float getRotationVelocity() const {return angularVelocity;}
 
     float getTargetRotation() const {return targetRadians;}

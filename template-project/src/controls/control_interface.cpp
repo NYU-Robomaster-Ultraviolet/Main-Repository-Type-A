@@ -37,9 +37,9 @@ namespace src::control{
     float ControlInterface::getChassisYInput() {
         uint32_t updateCounter = drivers->remote.getUpdateCounter();
         uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
-
+        //this is for mouse commands
         float keyboardY = drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
-
+        //check if reading a different remote input
         if (prevUpdateCounterY != updateCounter) {
             chassisYInput.update(drivers->remote.getChannel(Remote::Channel::RIGHT_VERTICAL) + keyboardY, currTime);
             prevUpdateCounterY = updateCounter;

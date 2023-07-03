@@ -90,7 +90,6 @@ void registerSubsystems(src::Drivers *drivers){
 }
 // Initialize subsystems here ---------------------------------------------
 void initializeSubsystems() {
-    //sound_track.execute();
     chassis.initialize();
     gimbal.initialize();
     feeder.initialize();

@@ -12,28 +12,20 @@
  *
  */
 
-static constexpr short int USER_MOUSE_YAW_MAX = 1000;
-static constexpr short int USER_MOUSE_PITCH_MAX = 1000;
-static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
-static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
-
-static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
-static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.2f;  //.15
-
-static constexpr float CHASSIS_MOTOR_DISTANCE = 0.2f;
-static constexpr float CHASSIS_ROTATION_SET_SCALE = 0.1f;
-
-static constexpr float WHEELBASE_LENGTH = 0.366f;
-
+//what we consider to be a level position for the gimbal
 static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
+//offset to the angle that the encoder gives you
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 3.49066f; // 3.31613f; 200 //190 //3.66519f;
 
+//inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+//input used for gimbal beyblading
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
 
+//constants used for feeder motor subsystem
 struct Feeder_CONSTANTS
 {
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR7;
@@ -43,6 +35,14 @@ struct Feeder_CONSTANTS
     static constexpr bool FEEDER_REVERSED_2 = true;
 };
 
+//constants for feeder pid
+struct FEEDER_PID
+{
+    static constexpr float PID_KP = 800.0f, PID_KI = 0.5f, PID_KD = 0.0f, PID_MAX_OUT = 10000.0f,
+                           PID_MAX_IOUT = 9000.0f;
+};  // struct FEEDER_PID
+
+//constants used for chassis motor subsystem
 struct CHASSIS_CONSTANTS
 {
     // max output for chassis motors
@@ -85,6 +85,7 @@ struct CHASSIS_CONSTANTS
     static constexpr float MIN_DISTANCE = .01;    // min distance to travel in meters
 };                                                // struct CHASSIS_CONSTANTS
 
+//constants used for gimbal motor subsystem
 struct GIMBAL_CONSTANTS
 {
     // constants for YAW and PITCH Motor IDs
@@ -169,11 +170,6 @@ struct GIMBAL_CONSTANTS
     static constexpr float GRAVITY_COMPENSATION_SCALAR = -5000;
 };  // struct GIMBAL_CONSTANTS
 
-struct FEEDER_PID
-{
-    static constexpr float PID_KP = 800.0f, PID_KI = 0.5f, PID_KD = 0.0f, PID_MAX_OUT = 10000.0f,
-                           PID_MAX_IOUT = 9000.0f;
-};  // struct FEEDER_PID
 
 #endif
 #endif

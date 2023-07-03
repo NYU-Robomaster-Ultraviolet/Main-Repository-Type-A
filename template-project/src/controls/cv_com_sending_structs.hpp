@@ -39,6 +39,7 @@ typedef struct sendingAngleStruct
         char footer = 0;
     } SendingAngleStructObj, *SendingAngleStruct;
 
+//sends a whole bunch of data received from the referee system
 typedef struct RefereeCVData{
         unsigned char header = 0xE7;
         unsigned short length = 54; //54

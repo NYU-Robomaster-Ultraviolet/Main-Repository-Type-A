@@ -15,10 +15,11 @@ CVCom::~CVCom() { delete[] buffer; }
 
 void CVCom::init()
 {
+    //set and send the color of the enemy team VERY IMPORTANT
     setColor(!drivers->refSerial.isBlueTeam);
     sendColorMsg();
     receivingTimeout.restart(RECEIVING_TIME);  // sets up timer
-    sendingTimeout.restart(100);
+    sendingTimeout.restart(100); //sets up sending timer
     // thread for CVCom::update()
 }
 int CVCom::writeToUart(const std::string &s)
@@ -44,8 +45,11 @@ int CVCom::writeToUart(char *s, int n)
 
 bool CVCom::sendingLoop()
 {
+    //prevents sending too fast
     if (!sendingTimeout.isExpired()) return 0;
     sendingTimeout.restart(SENDING_TIME);
+
+    //this part sends the data
     sendAutoAimMsg(getBeybladeMode() * 100, 500);
     //sendAutoAimMsg(imuYaw, 5);
     sendColorMsg();
@@ -263,8 +267,6 @@ int CVCom::readFromUart()
 
     return byteIndex;
 }
-
-void CVCom::UnPackMsgs(char *buffer) {}
 
 void CVCom::sendRefereeMsg()
 {

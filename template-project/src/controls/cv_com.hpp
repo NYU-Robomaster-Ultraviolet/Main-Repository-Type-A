@@ -13,6 +13,11 @@ namespace src
 class Drivers;
 }
 namespace cv{
+
+/**
+ * @brief CVCom is used as an interface for handling information send or received through the UART ports designated with
+ * communication with the external jetson computer for computer vision
+ */
 class CVCom
 {
 public:
@@ -20,55 +25,109 @@ public:
 
     ~CVCom();
 
-    int writeToUart(const std::string &s);
-
-    int writeToUart(char *s, int n);
-
-    int readFromUart();
-
-    void UnPackMsgs(char *buffer);
-
-    void sendAutoAimMsg(int pitch, int yaw);
-
-    void sendEnableMsg(bool start);
-
-    void update();
-
-    float getYaw() const { return yaw; }
-    float getPitch() const { return pitch; }
-
-    void invalidateAngle() { validAngle = false; }
-
-    bool validReading() const { return validAngle; }
-
-    bool foundTarget() const { return hasTarget; }
-
-    bool online() const { return receivingTimeout.isExpired(); }
-
-    bool sendingLoop();
-
+    /**
+     * @brief Initializes cv communication, aka timers and starting signals
+     * 
+     * @return ** void 
+     */
     void init();
 
+    /**
+     * @brief sends a string through the UART port used
+     * 
+     * @param s : a string that would be sent as a series of unsigned chars through UART
+     * @return ** int: returns the number of bytes written
+     */
+    int writeToUart(const std::string &s);
+
+    /**
+     * @brief sends a character array through the UART port used
+     * 
+     * @param s : an array of characters that would be sent as a series of unsigned chars through UART
+     * @return ** int: returns the number of bytes written
+     */
+    int writeToUart(char *s, int n);
+
+    /**
+     * @brief Reads from UART port and stores information as members if reading is valid
+     * 
+     * @return ** int: returns the bytes read
+     */
+    int readFromUart();
+
+    /**
+     * @brief Sends the pitch and yaw of the gimbal through UART, but can send anything
+     * 
+     * @param pitch : pitch angle in radians * 100
+     * @param yaw  : yaw andle in radians * 100
+     * @return ** void 
+     */
+    void sendAutoAimMsg(int pitch, int yaw);
+
+    /**
+     * @brief Sends the messaged used to tell the jetson to send data or not
+     * 
+     * @param start : boolean used as a signal to start or stop sending info, true for start sending
+     * @return ** void 
+     */
+    void sendEnableMsg(bool start);
+
+    /**
+     * @brief The loop called in main to do all actions in a cycle AKA sending and receiving loop
+     * 
+     * @return ** void 
+     */
+    void update();
+
+    /**
+     * @brief the loop for sending through UART
+     * 
+     * @return true : if information was sent in this call
+     * @return false : if the timer has yet to expire and nothing is sent
+     */
+    bool sendingLoop();
+
+    //getters for angles used in CV auto aiming, the validity of the data, and if it has locked onto a target
+    float getYaw() const { return yaw; }
+    float getPitch() const { return pitch; }
+    void invalidateAngle() { validAngle = false; }
+    bool validReading() const { return validAngle; }
+    bool foundTarget() const { return hasTarget; }
+
+    //checks if the timer for receiving has expired or not
+    bool online() const { return receivingTimeout.isExpired(); }
+
+
+    //sets angles that will be sent to the jetson
     void setAngles(int p, int y)
     {
         imuPitch = p;
         imuYaw = y;
     }
+
+    //sets accelerometer data that would be sent to jetson
     void setImu(int x, int y, int z){
         imuVelocityX = x;
         imuVelocityY = y;
         imuVelocityZ = z;
     }
+
+    //sets the color of enemy team
     void setColor(bool c) { color = c; }
 
+    //updates current hp
     void updateHP(unsigned int h) { hp = h; }
 
+    //sends the color of the enemy team
     void sendColorMsg();
 
+    //sends the data received from the referee system
     void sendRefereeMsg();
 
+    //changes if cv mode should be on or off
     void changeCV(bool on) { cv_on = on; }
 
+    //sets encoder data, multiplying by 100 for easier processing
     void setEncoder(float yaw, float pitch)
     {
         encoderYaw = yaw * 100;
@@ -83,7 +142,7 @@ public:
     float getChassisY() const { return chassisY; }
     float getChassisR() const { return chassisR; }
 
-    //for chassis movment in velocity
+    //for chassis movement at a set velocity
     bool getChassisVeloFlag() const {return setChassisFlag;}
     void resetChassisVeloFlag() {setChassisFlag = 0;}
     bool getChassisSpinFlag() const {return chassisSpinFlag;}
@@ -93,7 +152,7 @@ public:
     float getChassisRightVelo() const {return yVelocity;}
     float getChassisRotationVelo() const {return modm::toRadian( spinVelocity / 1000);}
 
-    //for chassis movement in distance or radians
+    //for chassis movement of a set distance in distance or radians
     float getChassisSpinRad() const {return modm::toRadian(spinAngle / 1000);} //1.2 to adjust for mecanum error
     bool getChassisSpinRadFlag() const {return chassisSpinFlagRadians;}
     void resetChassisSpinRadFlag() {chassisSpinFlagRadians = 0;}
@@ -113,7 +172,7 @@ public:
     bool getGimbalReadFlag() const { return gimbalReadFlag; }
     void resetGimbalReadFlag() { gimbalReadFlag = 0; }
 
-    //for gimbal power limits
+    //for mimicing remote control inputs
     float getYawPower() const {return xAnglePower;}
     float getPitchPower() const {return yAnglePower;}
     float getXPower() const {return xLinearPower;}
@@ -125,11 +184,11 @@ public:
     void resetGimbalPowerFlag() {setPowerGimbalFlag = false;}
     void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
-    //
-    unsigned char getBeybladeMode() const {return 2;}
+    //returns the mode of beyblading 0: Off 1: clockwise 2: counterclockwise
+    unsigned char getBeybladeMode() const {return beybladeMode;}
 
 
-    // Send/recieve
+    // the header structure for every message type
     typedef struct header
     {
         // unsigned char
@@ -141,6 +200,7 @@ public:
         unsigned short msg_type;
     } *Header;
 
+    //timouts for receiving and sending data along with the time between
     tap::arch::MilliTimeout receivingTimeout;
     tap::arch::MilliTimeout sendingTimeout;
     const unsigned int SENDING_TIME = 100;
