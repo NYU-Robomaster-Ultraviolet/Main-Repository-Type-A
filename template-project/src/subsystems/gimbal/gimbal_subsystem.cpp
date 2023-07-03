@@ -5,7 +5,7 @@
 
 namespace gimbal
 {
-#ifdef TARGET_SENTRY
+#if defined (TARGET_SENTRY)
 // constructor
 GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
     : tap::control::Subsystem(drivers),
@@ -65,9 +65,11 @@ void GimbalSubsystem::initialize()
     yawMotor.setDesiredOutput(0);
     pitchMotor.initialize();
     pitchMotor.setDesiredOutput(0);
+
+    //due to 2 motor build
     #ifdef TARGET_SENTRY
-    pitchMotorL.initialize();
-    pitchMotorL.setDesiredOutput(0);
+        pitchMotorL.initialize();
+        pitchMotorL.setDesiredOutput(0);
     #endif
     uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
     uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
@@ -79,9 +81,6 @@ void GimbalSubsystem::initialize()
     currentPitch = startingPitch;
     targetYaw = startingYaw;
     targetPitch = startingPitch;
-    // #ifdef TARGET_SENTRY
-    // calibratePitch();
-    // #endif
 }
 
 void GimbalSubsystem::refresh()
@@ -213,6 +212,7 @@ void GimbalSubsystem::updatePitchPid()
     if (-constants.MIN_PITCH_SPEED < pitchMotorOutput && pitchMotorOutput < constants.MIN_PITCH_SPEED)
         pitchMotorOutput = 0;
     else
+        //sentry has 2 pitch motors
         #ifdef TARGET_SENTRY
             pitchMotor.setDesiredOutput(pitchMotorOutput);
             pitchMotorL.setDesiredOutput(pitchMotorOutput);

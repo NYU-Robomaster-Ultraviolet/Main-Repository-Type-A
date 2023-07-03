@@ -20,14 +20,22 @@ ShootUserCommand::ShootUserCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(shooter));
 }
 
-void  ShootUserCommand::initialize() {}
+void  ShootUserCommand::initialize() {shooter->changeOnFlag();}
 
 void  ShootUserCommand::execute()
 {
+    drivers->music_player.execute();
+    if(drivers->music_player.finishedSong()){
+        drivers->music_player.resetSong();
+    }
+    #if  defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
     shooter->setDesiredOutput(0.3f);
+    #elif defined (TARGET_HERO)
+    shooter->setDesiredOutput(16000);
+    #endif
 }
 
-void  ShootUserCommand::end(bool) {} //shooter->setDesiredOutput(0.2f); }
+void  ShootUserCommand::end(bool) {drivers->music_player.clearNote(); }
 
 bool  ShootUserCommand::isFinished() const { return false; }
 }  // namespace shooter

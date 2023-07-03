@@ -20,11 +20,17 @@ FeederMovementCommand::FeederMovementCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(feeder));
 }
 
-void  FeederMovementCommand::initialize() {feeder->setTargetRPM(0);}
+void  FeederMovementCommand::initialize() {
+        feeder->setTargetRPM(0);
+    feeder->setTargetRPM(3000);
+    burstFireTimeout.restart(1000);
+}
 
 void  FeederMovementCommand::execute()
 {
-    feeder->setTargetRPM(1500);
+    if(burstFireTimeout.isExpired()){
+        feeder->setTargetRPM(0);
+    }
 }
 
 void  FeederMovementCommand::end(bool) { feeder->setTargetRPM(0); }

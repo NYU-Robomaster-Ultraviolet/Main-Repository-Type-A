@@ -13,8 +13,7 @@
 #include "subsystems/chassis/chassis_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 
-// #include "subsystems/shooter/shoot_user_command.hpp"
-#include "subsystems/shooter_sentry/shoot_sentry_user_command.hpp"
+#include "subsystems/shooter/shoot_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
@@ -22,8 +21,7 @@
 //#include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/music/music_player.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
-// #include "subsystems/feeder/feeder_movement_command.hpp"
-#include "subsystems/feeder_sentry/feeder_sentry_movement_command.hpp"
+#include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/beyblading/chassis_beyblade.hpp"
 #include "subsystems/beyblading/gimbal_beyblade.hpp"
 
@@ -43,8 +41,8 @@ namespace src::control{
 GimbalSubsystem gimbal(drivers());
 GimbalInterface gimbalInterface(&gimbal);
 ChassisSubsystem chassis(drivers(), &gimbalInterface);
-FeederSentrySubsystem feeder(drivers());
-ShooterSentrySubsystem shooter(drivers());
+FeederSubsystem feeder(drivers());
+ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 
@@ -54,8 +52,8 @@ CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 CvCommand cvMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
-FeederSentryMovementCommand feederMovement(&feeder, drivers());
-ShootSentryUserCommand shootUser(&shooter, drivers());
+FeederMovementCommand feederMovement(&feeder, drivers());
+ShootUserCommand shootUser(&shooter, drivers());
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 

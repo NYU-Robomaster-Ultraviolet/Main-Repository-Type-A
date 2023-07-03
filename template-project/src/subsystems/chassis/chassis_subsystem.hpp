@@ -7,15 +7,11 @@
 #include "tap/util_macros.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 
-#ifdef TARGET_STANDARD
+#if defined (TARGET_STANDARD)
 #include "controls/standard/standard_constants.hpp"
-#endif
-
-#ifdef TARGET_HERO
+#elif defined (TARGET_HERO)
 #include "controls/hero/hero_constants.hpp"
-#endif
-
-#ifdef TARGET_SENTRY
+#elif defined (TARGET_SENTRY)
 #include "controls/sentry/sentry_constants.hpp"
 #endif
 
@@ -168,13 +164,11 @@ private:
 
 
     //maximum power a robot wheel can use
-    #ifdef TARGET_STANDARD
+    #if defined (TARGET_STANDARD)
     const float STARTING_POWER_LIMIT = 6000.0f;
-    #endif
-    #ifdef TARGET_SENTRY
+    #elif defined (TARGET_SENTRY)
     const float STARTING_POWER_LIMIT = 8000.0f;
-    #endif
-    #ifdef TARGET_HERO
+    #elif defined (TARGET_HERO)
     const float STARTING_POWER_LIMIT = 8000.0f;
     #endif
     float maximumPower = STARTING_POWER_LIMIT;

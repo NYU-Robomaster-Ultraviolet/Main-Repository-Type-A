@@ -6,15 +6,11 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
 
-#ifdef TARGET_STANDARD
+#if defined (TARGET_STANDARD)
 #include "controls/standard/standard_constants.hpp"
-#endif
-
-#ifdef TARGET_HERO
+#elif defined (TARGET_HERO)
 #include "controls/hero/hero_constants.hpp"
-#endif
-
-#ifdef TARGET_SENTRY
+#elif defined (TARGET_SENTRY)
 #include "controls/sentry/sentry_constants.hpp"
 #endif
 

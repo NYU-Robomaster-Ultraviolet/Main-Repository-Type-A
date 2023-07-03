@@ -98,8 +98,6 @@ private:
 
     SHOOTER_PID pidVals;
 
-    bool online = false;
-
     float targetRPM = 0;
 
     bool stopFlag = false;

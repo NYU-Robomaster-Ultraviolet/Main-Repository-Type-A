@@ -26,21 +26,15 @@ public:
         return std::pair<uint16_t, uint16_t>(powerUsage, powerLimit);
     }
 
-    #ifdef TARGET_HERO
+    #if defined (TARGET_HERO)
     std::pair<uint16_t, uint16_t> getShooterHeat() const{
         return std::pair<uint16_t, uint16_t>(heat42, heat42);
     }
-    bool nearPowerLimit() const{
-        std::pair<uint16_t, uint16_t> heat = getShooterHeat();
-        
-    }
-    #endif
-    #ifdef TARGET_STANDARD
+    #elif defined (TARGET_STANDARD)
     std::pair<uint16_t, uint16_t> getShooterHeat() const{
         return std::pair<uint16_t, uint16_t>(heat17ID1, heatLimit17ID1);
     }
-    #endif
-    #ifdef TARGET_SENTRY
+    #elif defined (TARGET_SENTRY)
     std::vector<uint16_t> getShooterHeat() const{
         std::vector<uint16_t> vec{heat17ID1, heat17ID2, heatLimit17ID1, heatLimit17ID2};
         return vec;

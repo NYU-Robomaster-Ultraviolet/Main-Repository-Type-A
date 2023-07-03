@@ -10,11 +10,21 @@ namespace feeder
 
 void FeederSubsystem::initialize()
 {
+    #if defined (TARGET_SENTRY)
+    feederMotor1.initialize();
+    feederMotor2.initialize();
+    #elif defined (TARGET_HERO) || (TARGET_STANDARD)
     feederMotor.initialize();
+    #endif
 }
 
 void FeederSubsystem::refresh() {
+    #if defined (TARGET_SENTRY)
+    updateFeederPid(&rpmPid1, &feederMotor1, motor1TargetRPM);
+    updateFeederPid(&rpmPid2, &feederMotor2, motor2TargetRPM);
+    #elif defined (TARGET_HERO) || (TARGET_STANDARD)
     updateFeederPid(&rpmPid, &feederMotor, targetRPM);
+    #endif
 }
 
 void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
@@ -32,6 +42,11 @@ void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMoto
 */
 void FeederSubsystem::setTargetRPM(float RPM) 
 {    
+    #if defined (TARGET_SENTRY)
+    motor1TargetRPM = RPM;
+    motor2TargetRPM = RPM;
+    #elif defined (TARGET_HERO) || (TARGET_STANDARD)
     targetRPM = RPM;
+    #endif
 }
 } //namespace feeder

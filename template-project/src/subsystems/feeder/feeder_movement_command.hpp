@@ -33,7 +33,7 @@ public:
     bool isFinished() const override;
 private:
     FeederSubsystem *const feeder;
-
+    tap::arch::MilliTimeout burstFireTimeout;
     src::Drivers *drivers;
 }; //class FeederMovementCommand : public tap::control::Command
 

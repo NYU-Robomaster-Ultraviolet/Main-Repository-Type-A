@@ -6,8 +6,12 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/util_macros.hpp"
 
-#ifdef TARGET_STANDARD
+#if defined (TARGET_STANDARD)
 #include "controls/standard/standard_constants.hpp"
+#elif defined (TARGET_SENTRY)
+#include "controls/sentry/sentry_constants.hpp"
+#elif defined (TARGET_HERO)
+#include "controls/hero/hero_constants.hpp"
 #endif
 
 #include "tap/communication/gpio/pwm.hpp"
@@ -15,6 +19,7 @@
 #include "tap/drivers.hpp"
 #include "tap/algorithms/ramp.hpp"
 #include "modm/math/filter/ramp.hpp"
+#include "tap/motor/dji_motor.hpp"
 
 namespace shooter
 {
@@ -39,11 +44,37 @@ public:
      * Constructs a new shooterSubsystem with default parameters specified in
      * the private section of this class.
      */
+#if defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
     ShooterSubsystem(tap::Drivers *drivers)
         : tap::control::Subsystem(drivers),
         flywheelRamp(0.05f, 0.05f, 0.15f)
     {
     }
+#elif defined (TARGET_HERO)
+ShooterSubsystem(tap::Drivers *drivers)
+        : tap::control::Subsystem(drivers),
+        flywheelRamp(10, 10, 0),
+         flywheel1(drivers,
+               tap::motor::MOTOR2,
+               tap::can::CanBus::CAN_BUS2,
+               true,
+               "Flywheel 1"),
+        flywheel2(drivers,
+               tap::motor::MOTOR4,
+               tap::can::CanBus::CAN_BUS2,
+               false,
+               "Flywheel 2"),
+        pid1(pidVals.PID_KP, pidVals.PID_KI, pidVals.PID_KD,
+      pidVals.PID_MAX_IOUT, pidVals.PID_MAX_OUT),
+      pid2(pidVals.PID_KP, pidVals.PID_KI, pidVals.PID_KD,
+      pidVals.PID_MAX_IOUT, pidVals.PID_MAX_OUT)
+    {
+    }
+
+
+//updates pid controller based off of current rpm
+void ShooterSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
+#endif
 
     ShooterSubsystem(const ShooterSubsystem &other) = delete;
 
@@ -63,20 +94,38 @@ public:
 
     float findRampOutput(float output);
 
-    //void updateRpmPid(tap::algorithms::Ramp* ramp, tap::gpio::Pwm::Pin const flywheel);
-
-    const tap::gpio::Pwm::Pin &getFlywheel1() const { return flywheel1; }
-    const tap::gpio::Pwm::Pin &getFlywheel2() const { return flywheel2; }
+    void changeOnFlag(){on = !on;}
 
 private:
-    ///< Motors.  Use these to interact with any dji style motors.
+#if defined (TARGET_STANDARD)
+    ///pwm ports on dev board
     tap::gpio::Pwm::Pin flywheel1 = tap::gpio::Pwm::W;
     tap::gpio::Pwm::Pin flywheel2 = tap::gpio::Pwm::X;
+#elif defined (TARGET_SENTRY)
+    tap::gpio::Pwm::Pin flywheel1 = tap::gpio::Pwm::W;
+    tap::gpio::Pwm::Pin flywheel2 = tap::gpio::Pwm::X;
+    tap::gpio::Pwm::Pin flywheel3 = tap::gpio::Pwm::Y;
+    tap::gpio::Pwm::Pin flywheel4 = tap::gpio::Pwm::Z;
+#elif defined (TARGET_HERO)
+        // PID controllers for RPM feedback from wheels
+    modm::filter::Ramp<int> flywheelRamp;
+    ///< Motors.  Use these to interact with any dji style motors.
+    tap::motor::DjiMotor flywheel1;
+    tap::motor::DjiMotor flywheel2;
 
+    modm::Pid<float> pid1;
+    modm::Pid<float> pid2;
+
+    SHOOTER_PID pidVals;
+
+    float targetRPM = 0;
+#endif
     // PID controllers for RPM feedback from wheels
     modm::filter::Ramp<float> flywheelRamp;
 
     bool online = false;
+
+    bool on = false;
 
     ///< Any user input is translated into desired RPM for each motor.
 
