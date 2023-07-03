@@ -61,11 +61,11 @@ ShooterCommand shootUser(&shooter, drivers());
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
-
+ 
 HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
+HoldCommandMapping rightSwitchDown(drivers(), {&gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},

@@ -22,7 +22,7 @@ static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
 //static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
 //static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.15f;
 
-static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.3f;
+static constexpr float USER_JOYSTICK_YAW_SCALAR = 0.1f;
 static constexpr float USER_JOYSTICK_PITCH_SCALAR = 0.15f;
 
 static constexpr float CHASSIS_MOTOR_DISTANCE = 0.2f;
@@ -104,9 +104,9 @@ struct GIMBAL_CONSTANTS{
     static constexpr bool PITCH_LEFT_REVERSED = true;
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 60000.0f, //600
+        .kp = 30000.0f, //60000
         .ki = 0,
-        .kd = 500, //500
+        .kd = 200, //500
         .maxICumulative = 10.0f,
         .maxOutput = 32000.0f,
         .tQDerivativeKalman = 1.0f,
@@ -147,8 +147,8 @@ static constexpr float PITCH_STARTING_ANGLE = 1.57079632679489661923f; //pi / 2
 static constexpr float PITCH_MIN_ANGLE = 1.309f; //75 degrees
 static constexpr float PITCH_MAX_ANGLE = 2.0944f; //120 degrees
 //gimbal yaw and pitch speed limits
-static constexpr float MIN_YAW_SPEED = 300.0f;
-static constexpr float MAX_YAW_SPEED = 8000.0f; 
+static constexpr float MIN_YAW_SPEED = 500.0f;
+static constexpr float MAX_YAW_SPEED = 30000.0f; 
 static constexpr float MIN_PITCH_SPEED = 300.0f;
 static constexpr float MAX_PITCH_SPEED = 12000.0f; //20000
 //Gimbal minimum angles of movement

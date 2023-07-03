@@ -88,18 +88,17 @@ void GimbalSubsystem::initialize()
 
 void GimbalSubsystem::refresh()
 {
-    
+        drivers->leds.set(drivers->leds.A, yawMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.B, !yawMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.C, pitchMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.D, !pitchMotor.isMotorOnline());
+        drivers->leds.set(drivers->leds.E, false);
+        drivers->leds.set(drivers->leds.F, false);
+        drivers->leds.set(drivers->leds.G, false);
+        drivers->leds.set(drivers->leds.H, false);
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
-    drivers->leds.set(drivers->leds.A, encoderYaw > 1.45);
-    drivers->leds.set(drivers->leds.B, encoderYaw > 1.48);
-    drivers->leds.set(drivers->leds.C,encoderYaw > 1.52);
-    drivers->leds.set(drivers->leds.D, encoderYaw > 1.55);
-    drivers->leds.set(drivers->leds.E, encoderYaw > 1.58);
-    drivers->leds.set(drivers->leds.F, encoderYaw > 1.6);
-    drivers->leds.set(drivers->leds.G, encoderYaw > 3.5);
-    drivers->leds.set(drivers->leds.H, encoderYaw > 4);
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();
@@ -180,6 +179,10 @@ void GimbalSubsystem::updateYawPid()
     {
         yawMotorOutput = 0;
     }
+    else if((currentYaw > YAW_ENCODER_OFFSET * .98 && currentYaw < YAW_ENCODER_OFFSET * 1.02) && 
+        (targetYaw > YAW_ENCODER_OFFSET * .98 && targetYaw < YAW_ENCODER_OFFSET * 1.02)){
+        yawMotorOutput = 0;
+    }
     // else if(isCalibrated() && imuStatesCalibrated() && -(constants.YAW_MINIMUM_IMU_RADS) < yawError &&
     //  yawError < constants.YAW_MINIMUM_IMU_RADS){
     //     yawMotor.setDesiredOutput(0.0f);
@@ -238,7 +241,15 @@ float GimbalSubsystem::gravityCompensation()
 // this is the function that is called through the remote control input
 void GimbalSubsystem::controllerInput(float yawInput, float pitchInput)
 {
-    setYawAngle(targetYaw + (yawInput * constants.YAW_SCALE));
+    float newTarget = targetYaw + (yawInput * constants.YAW_SCALE);
+    float error = newTarget - currentYaw;
+    if(yawInput > 0 && error > (M_PI_2 * .95)){
+        newTarget = currentYaw + M_PI_2;
+    }
+    else if(yawInput < 0 && error < -(M_PI_2 * .95)){
+        newTarget = currentYaw - M_PI_2;
+    }
+    setYawAngle(newTarget);
     setPitchAngle(targetPitch + (pitchInput * constants.PITCH_SCALE));
     inputsFound = true;
 }
