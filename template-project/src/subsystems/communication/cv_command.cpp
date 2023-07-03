@@ -23,6 +23,11 @@ void  CvCommand::initialize() {
 }
 
 void  CvCommand::execute() {
+
+    //update power limits
+    std::pair<uint16_t, uint16_t> powerLimit = drivers->ref_interface.getPowerUsage();
+    gimbal->setPower(powerLimit.first, powerLimit.second);
+
     drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
     drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
     drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());

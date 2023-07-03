@@ -126,7 +126,7 @@ public:
     void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
     //
-    unsigned char getBeybladeMode() const {return beybladeMode;}
+    unsigned char getBeybladeMode() const {return 2;}
 
 
     // Send/recieve

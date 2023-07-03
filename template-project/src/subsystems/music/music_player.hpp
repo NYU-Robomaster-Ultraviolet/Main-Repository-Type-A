@@ -26,6 +26,8 @@ class MusicPlayer{
 
         bool nextNote() const {return timeout.isExpired();}
 
+        void clearNote();
+
         void resetSong() {
             resting = false;
             index = 0;

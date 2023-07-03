@@ -32,7 +32,7 @@ static constexpr float PITCH_ENCODER_OFFSET = 3.49066f; // 3.31613f; 200 //190 /
 
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
-static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = BEYBLADE_INPUT * .645;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
 
 struct Feeder_CONSTANTS
 {

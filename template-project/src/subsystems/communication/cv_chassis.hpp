@@ -61,6 +61,8 @@ private:
     gimbal::GimbalInterface* gimbalInterface;
 
     bool flag;
+
+    float beybladeInput = BEYBLADE_INPUT;
 }; //class CVChassisCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 

@@ -18,6 +18,7 @@ void ShooterSentrySubsystem::initialize()
 void ShooterSentrySubsystem::refresh() {
     //setDesiredOutput(&flywheel1Ramp, flywheel1);
     //setDesiredOutput(&flywheel2Ramp, flywheel2);
+    //if(output)
 }
 
 float ShooterSentrySubsystem::findRampOutput(float output)

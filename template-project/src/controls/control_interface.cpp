@@ -75,11 +75,11 @@ namespace src::control{
 
     float ControlInterface::getGimbalYawInput() {
         float MouseX = drivers->remote.getMouseX(); 
-        return limitVal<float>(-drivers->remote.getChannel(Remote::Channel::LEFT_HORIZONTAL) + MouseX, -10, 10);
+        return limitVal<float>(-drivers->remote.getChannel(Remote::Channel::LEFT_HORIZONTAL) - MouseX, -10, 10);
     }
 
     float ControlInterface::getGimbalPitchInput() {
         float MouseY = drivers->remote.getMouseY();
-        return limitVal<float>(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL) + MouseY, -10, 10);
+        return limitVal<float>(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL) - MouseY, -10, 10);
     }
 }

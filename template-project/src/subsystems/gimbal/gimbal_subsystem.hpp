@@ -148,6 +148,18 @@ public:
     void setBeybladeMode(unsigned char mode) {beybladeMode = mode;}
 
     void applyBeybladeOffset();
+
+    float getChassisBeybladeSpeed() const {return beybladeChassisInput;}
+
+    //sets power usage and limit
+    void setPower(uint16_t usage, uint16_t limit) {
+        currentPowerUsage = usage; 
+        currentMaxPower = limit;
+    }
+
+    //checks the power usage, and changes beyblading speed if needed
+    bool checkLimitBeybladeSpeed();
+
 private:
     //motor interfaces
     tap::motor::DjiMotor yawMotor;
@@ -225,6 +237,15 @@ private:
 
     //used for beyblade
     unsigned char beybladeMode = 0;
+
+    //beyblade input scaler
+    float beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT;
+
+    float beybladeChassisInput = BEYBLADE_INPUT;
+
+    //used for power limiting
+    uint16_t currentMaxPower = 20;
+    uint16_t currentPowerUsage = 0;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

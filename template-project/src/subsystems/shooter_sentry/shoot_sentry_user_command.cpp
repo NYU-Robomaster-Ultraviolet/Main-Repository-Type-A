@@ -21,13 +21,19 @@ ShootSentryUserCommand::ShootSentryUserCommand(
 }
 
 void  ShootSentryUserCommand::initialize() {
+    shooter->setDesiredOutput(.25f);
     shooter->changeOnFlag();
 }
 
 void  ShootSentryUserCommand::execute()
-{shooter->setDesiredOutput(0.3f);}
+{shooter->setDesiredOutput(0.3f);
+    drivers->music_player.execute();
+    if(drivers->music_player.finishedSong()){
+        drivers->music_player.resetSong();
+    }
+}
 
-void  ShootSentryUserCommand::end(bool) {}//shooter->setDesiredOutput(0.2f); }
+void  ShootSentryUserCommand::end(bool) {drivers->music_player.clearNote();}//shooter->setDesiredOutput(0.2f); }
 
 bool  ShootSentryUserCommand::isFinished() const { return false; }
 }  // namespace shooter

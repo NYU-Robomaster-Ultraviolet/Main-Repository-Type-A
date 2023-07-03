@@ -86,6 +86,7 @@ void GimbalSubsystem::initialize()
 
 void GimbalSubsystem::refresh()
 {
+    
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
@@ -113,6 +114,9 @@ void GimbalSubsystem::refresh()
         setEncoderPitchAngle(wrappedEncoderValueToRadians(pitchMotor.getEncoderWrapped()));
         currentPitch = encoderPitch;
     }
+
+    //check limits to beyblading if power usage is too high
+    //checkLimitBeybladeSpeed();
     // if no inputs, lock gimbal
     if (inputsFound)
     {
@@ -302,9 +306,18 @@ void GimbalSubsystem::calibratePitch(){
 }
 
 void GimbalSubsystem::applyBeybladeOffset(){
-    if(beybladeMode == 1) setYawAngle(targetYaw + (GIMBAL_BEYBLADE_INPUT * constants.YAW_SCALE));
-    else if(beybladeMode == 2) setYawAngle(targetYaw - (GIMBAL_BEYBLADE_INPUT*  constants.YAW_SCALE));
+    if(beybladeMode == 1) setYawAngle(targetYaw + (beybladeGimbalInput * constants.YAW_SCALE));
+    else if(beybladeMode == 2) setYawAngle(targetYaw - (beybladeGimbalInput *  constants.YAW_SCALE));
 
+}
+
+bool GimbalSubsystem::checkLimitBeybladeSpeed(){
+    if(currentMaxPower * .9 > currentPowerUsage){
+        beybladeChassisInput *= .9;
+        beybladeGimbalInput *= .9;
+        return true;
+    }
+    else return false;
 }
 
 }  // namespace gimbal

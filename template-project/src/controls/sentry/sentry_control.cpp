@@ -75,6 +75,14 @@ RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+
+HoldCommandMapping leftMouse(drivers(), {&feederMovement},
+RemoteMapState(RemoteMapState::MouseButton::LEFT));
+
+HoldCommandMapping rightMouse(drivers(), {&shootUser},
+RemoteMapState(RemoteMapState::MouseButton::RIGHT));
+
+//HoldCommandMapping eKeyPressed(drivers(), )
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
     drivers->commandScheduler.registerSubsystem(&chassis);
@@ -105,6 +113,8 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&rightSwitchDown);
+    drivers->commandMapper.addMap(&leftMouse);
+    drivers->commandMapper.addMap(&rightMouse);
 }
 }//namespace src::control
 

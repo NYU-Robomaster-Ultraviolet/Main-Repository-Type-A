@@ -20,13 +20,14 @@ GimbalBeybladeCommand::GimbalBeybladeCommand(GimbalSubsystem *const gimbal, src:
 void  GimbalBeybladeCommand::initialize() {
         gimbal->allignGimbal();
         noTurn = 0;
+        gimbal->setBeybladeMode(2);
     }
 
 void  GimbalBeybladeCommand::execute()
 {
-    gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());
+    //gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());
     gimbal->controllerInput(drivers->control_interface.getGimbalYawInput(),
-        drivers->control_interface.getGimbalPitchInput() + rotation);
+        drivers->control_interface.getGimbalPitchInput());
 }
 
 void  GimbalBeybladeCommand::end(bool) {

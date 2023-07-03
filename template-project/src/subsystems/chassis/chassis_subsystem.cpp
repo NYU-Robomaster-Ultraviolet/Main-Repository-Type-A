@@ -225,6 +225,10 @@ void ChassisSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
 */
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
 {   
+    if(beybladeMode){
+        x = limitVal<float> (x, -.2, .2);
+        y = limitVal<float> (y, -.2, .2);
+    }
     frontLeftDesiredRpm = tap::algorithms::limitVal<float>(
         (constants.RPM_SCALE_FACTOR * (x+y+r)), -maximumPower, maximumPower);
     frontRightDesiredRpm = tap::algorithms::limitVal<float>(

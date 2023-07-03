@@ -30,6 +30,9 @@ void  CVChassisCommand::initialize() {
 
 void  CVChassisCommand::execute()
 {
+    
+
+
     //get remote inputs
     float xInput = limitVal<float>(drivers->control_interface.getChassisXInput(), -1, 1);
     float yInput = limitVal<float>(drivers->control_interface.getChassisYInput(), -1, 1);
@@ -42,11 +45,11 @@ void  CVChassisCommand::execute()
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
-
+    beybladeInput = gimbalInterface->getChassisBeybladeInput();
     if(beyblade = 1)
-        rOutput = -BEYBLADE_INPUT;
+        rOutput = beybladeInput;
     else if(beyblade = 2)
-        rOutput = BEYBLADE_INPUT;
+        rOutput = -beybladeInput;
 
     //print first then second
     //drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
