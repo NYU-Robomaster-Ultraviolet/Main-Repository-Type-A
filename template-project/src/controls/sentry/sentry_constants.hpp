@@ -39,6 +39,8 @@ struct Feeder_CONSTANTS
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR7;
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID2 = tap::motor::MOTOR8;
     static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
+    static constexpr bool FEEDER_REVERSED = false;
+    static constexpr bool FEEDER_REVERSED_2 = true;
 };
 
 struct CHASSIS_CONSTANTS
@@ -54,6 +56,11 @@ struct CHASSIS_CONSTANTS
     static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR3;
     static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR2;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
+
+    static constexpr bool FRONT_LEFT_REVERSED = false;
+    static constexpr bool FRONT_RIGHT_REVERSED = true;
+    static constexpr bool BACK_RIGHT_REVERSED = true;
+    static constexpr bool BACK_LEFT_REVERSED = false;
 
     // M3505 motor speed PID
     static constexpr float CHASSIS_MOTOR_KP = 20.0f, CHASSIS_MOTOR_KI = 0.2f,
@@ -84,9 +91,14 @@ struct GIMBAL_CONSTANTS
     static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR6;
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR5;
     static constexpr tap::motor::MotorId PITCH_LEFT_MOTOR_ID = tap::motor::MOTOR6;
+    //which can line they are on (based off of which esc they are wired to)
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH_LEFT = tap::can::CanBus::CAN_BUS2;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
+    //if the motor direction is reversed (based on how the motors are mounted)
+    static constexpr bool YAW_REVERSED = false;
+    static constexpr bool PITCH_REVERSED = false;
+    static constexpr bool PITCH_LEFT_REVERSED = true;
 
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
         .kp = 60000.0f,  // 600

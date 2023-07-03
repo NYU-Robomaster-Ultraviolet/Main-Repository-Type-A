@@ -160,7 +160,7 @@ private:
     //motor interfaces
     tap::motor::DjiMotor yawMotor;
     tap::motor::DjiMotor pitchMotor;
-    #ifdef TARGET_SENTRY
+    #if defined (TARGET_SENTRY) || defined (TARGET_HERO)
     tap::motor::DjiMotor pitchMotorL;
     #endif
 

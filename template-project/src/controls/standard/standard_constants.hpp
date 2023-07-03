@@ -42,6 +42,7 @@ static constexpr float BEYBLADE_SPEED_ONE = .57f; //rad/seconds
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
     static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
+    static constexpr bool FEEDER_REVERSED = false;
 }; 
 
 struct CHASSIS_CONSTANTS{
@@ -54,6 +55,11 @@ struct CHASSIS_CONSTANTS{
     static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR3;
     static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR4;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
+
+    static constexpr bool FRONT_LEFT_REVERSED = false;
+    static constexpr bool FRONT_RIGHT_REVERSED = true;
+    static constexpr bool BACK_RIGHT_REVERSED = true;
+    static constexpr bool BACK_LEFT_REVERSED = false;
 
     //M3505 motor speed PID 
     static constexpr float
@@ -88,6 +94,8 @@ struct GIMBAL_CONSTANTS{
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR5;    
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS2;
+    static constexpr bool PITCH_REVERSED = false;
+    static constexpr bool YAW_REVERSED = false;
 
 //Pid configs for gimbal Pid Ku = 1,000,000 Tu = 140.625 ms
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {

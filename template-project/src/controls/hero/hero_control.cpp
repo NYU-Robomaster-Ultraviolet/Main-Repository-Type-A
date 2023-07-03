@@ -40,33 +40,33 @@ using namespace shooter;
 
 namespace src::control{
 // Define subsystems here ------------------------------------------------
-// GimbalSubsystem gimbal(drivers());
-// GimbalInterface gimbalInterface(&gimbal);
-// ChassisSubsystem chassis(drivers(), &gimbalInterface);
+GimbalSubsystem gimbal(drivers());
+GimbalInterface gimbalInterface(&gimbal);
+ChassisSubsystem chassis(drivers(), &gimbalInterface);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
 // Robot Specific Controllers ------------------------------------------------
 //MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 
 // Define commands here ---------------------------------------------------
-// ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
-// ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
-// GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-// CvCommand cvMovement(&gimbal, drivers());
-// GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
+ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
+ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
+GimbalMovementCommand gimbalMovement(&gimbal, drivers());
+CvCommand cvMovement(&gimbal, drivers());
+GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
-// HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
-// RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
+HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
+RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-// HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
-// RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
+HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
+RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
-// HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
-// RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
+HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
+RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
@@ -75,16 +75,15 @@ HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
-    // drivers->commandScheduler.registerSubsystem(&chassis);
-    // drivers->commandScheduler.registerSubsystem(&gimbal);
+    drivers->commandScheduler.registerSubsystem(&chassis);
+    drivers->commandScheduler.registerSubsystem(&gimbal);
     drivers->commandScheduler.registerSubsystem(&feeder);
     drivers->commandScheduler.registerSubsystem(&shooter);
 }
 // Initialize subsystems here ---------------------------------------------
 void initializeSubsystems() {
-    //sound_track.execute();
-    // chassis.initialize();
-    // gimbal.initialize();
+    chassis.initialize();
+    gimbal.initialize();
     feeder.initialize();
     shooter.initialize();
 }
@@ -98,9 +97,9 @@ void startupCommands(src::Drivers* drivers) {
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
-    // drivers->commandMapper.addMap(&rightSwitchMid);
-    // drivers->commandMapper.addMap(&rightSwitchUp);
-    // drivers->commandMapper.addMap(&rightSwitchDown);
+    drivers->commandMapper.addMap(&rightSwitchMid);
+    drivers->commandMapper.addMap(&rightSwitchUp);
+    drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
 }

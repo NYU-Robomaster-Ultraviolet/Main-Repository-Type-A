@@ -48,6 +48,7 @@ void  GimbalMovementCommand::execute()
         }
     }
     drivers->cv_com.setAngles(gimbal->getPitchEncoder() * 100, gimbal->getYawEncoder() * 100);
+    //drivers->music_player.playGivenNote(gimbal->getPitchEncoder() * 100);
 }
 
 void  GimbalMovementCommand::end(bool) {

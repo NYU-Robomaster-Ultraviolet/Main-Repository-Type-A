@@ -35,6 +35,8 @@ class MusicPlayer{
             init();
         }
 
+        void playGivenNote(float note);
+
         void init(){timeout.restart(1);}
 
     private:

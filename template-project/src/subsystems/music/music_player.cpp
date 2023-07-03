@@ -34,7 +34,14 @@ void MusicPlayer::execute() {
     // tap::buzzer::playNote(&(drivers->pwm), 0); //silences buzzer
     //drivers->leds.set(drivers->leds.Green, true);
 }
+
+//stops all sounds from the buzzer
 void MusicPlayer::clearNote(){
     tap::buzzer::playNote(&(drivers->pwm), 0);
+}
+
+//plays a given note
+void MusicPlayer::playGivenNote(float note){
+    tap::buzzer::playNote(&(drivers->pwm), note);
 }
 }//namespace music

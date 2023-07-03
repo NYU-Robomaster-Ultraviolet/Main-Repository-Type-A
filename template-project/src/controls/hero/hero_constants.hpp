@@ -32,8 +32,8 @@ static constexpr float WHEELBASE_LENGTH = 0.366f;
 
 static constexpr float LEVEL_ANGLE = 1.5708f; //90 degrees
 
-static constexpr float YAW_ENCODER_OFFSET = 0.548f; //31.4 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 0; 
+static constexpr float YAW_ENCODER_OFFSET = 1.45;// 340 //5.23599; //30 degrees
+static constexpr float PITCH_ENCODER_OFFSET = 2.929203537f; //167.831, 260 degrees 
 static constexpr float PITCH_MECHANICAL_MIN_ANGLE = 1.13446f; // 65 degrees
 static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
 
@@ -50,10 +50,15 @@ struct CHASSIS_CONSTANTS{
 
     ///< Hardware constants, not specific to any particular chassis.
     static constexpr tap::motor::MotorId FRONT_LEFT_MOTOR_ID = tap::motor::MOTOR2;
-    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR1;
-    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
-    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId FRONT_RIGHT_MOTOR_ID = tap::motor::MOTOR4;
+    static constexpr tap::motor::MotorId BACK_RIGHT_MOTOR_ID = tap::motor::MOTOR3;
+    static constexpr tap::motor::MotorId BACK_LEFT_MOTOR_ID = tap::motor::MOTOR1;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS = tap::can::CanBus::CAN_BUS1;
+
+    static constexpr bool FRONT_LEFT_REVERSED = false;
+    static constexpr bool FRONT_RIGHT_REVERSED = true;
+    static constexpr bool BACK_RIGHT_REVERSED = true;
+    static constexpr bool BACK_LEFT_REVERSED = false;
 
     //M3505 motor speed PID 
     static constexpr float
@@ -83,14 +88,20 @@ struct CHASSIS_CONSTANTS{
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
     static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
+    static constexpr bool FEEDER_REVERSED = true;
 }; 
 
 struct GIMBAL_CONSTANTS{
     //constants for YAW and PITCH Motor IDs
     static constexpr tap::motor::MotorId YAW_MOTOR_ID = tap::motor::MOTOR5;
     static constexpr tap::motor::MotorId PITCH_MOTOR_ID = tap::motor::MOTOR6;
-    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::motor::MotorId PITCH_LEFT_MOTOR_ID = tap::motor::MOTOR8;
     static constexpr tap::can::CanBus CAN_BUS_MOTORS_YAW = tap::can::CanBus::CAN_BUS1;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH = tap::can::CanBus::CAN_BUS2;
+    static constexpr tap::can::CanBus CAN_BUS_MOTORS_PITCH_LEFT = tap::can::CanBus::CAN_BUS2;
+    static constexpr bool YAW_REVERSED = false;
+    static constexpr bool PITCH_REVERSED = true;
+    static constexpr bool PITCH_LEFT_REVERSED = true;
 //Pid configs for gimbal Pid
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
         .kp = 60000.0f, //600
@@ -124,7 +135,7 @@ struct GIMBAL_CONSTANTS{
 
 
 //Gimbal PID output to motor speed error factor
-static constexpr float MOTOR_SPEED_FACTOR = 200.0f;
+static constexpr float MOTOR_SPEED_FACTOR = 500.0f;
 
 //the value in which controller inputs are multiplied by for gimbal movement, basically sensitivity
 static constexpr float YAW_SCALE = 0.0125f; //.25
@@ -133,8 +144,8 @@ static constexpr float PITCH_SCALE = 0.01f; // 0.0075f
 static constexpr float YAW_STARTING_ANGLE = 0.0f;
 static constexpr float PITCH_STARTING_ANGLE = 1.57079632679489661923f; //pi / 2
 //Pitch Angle Limits
-static constexpr float PITCH_MIN_ANGLE = 0.698132f; //40 degrees
-static constexpr float PITCH_MAX_ANGLE = 2.61799; //150 degrees
+static constexpr float PITCH_MIN_ANGLE = 1.309f; //75 degrees
+static constexpr float PITCH_MAX_ANGLE = 2.0944f; //120 degrees
 //gimbal yaw and pitch speed limits
 static constexpr float MIN_YAW_SPEED = 300.0f;
 static constexpr float MAX_YAW_SPEED = 8000.0f; 
@@ -157,7 +168,7 @@ static constexpr float LEVEL_ANGLE = 1.5708; //90 degrees
 static constexpr float BARREL_LENGTH = 165.0f; //turret barrel length in mm
 static constexpr float BARREL_MIN_HEIGHT = 135.6f; 
 static constexpr float BARREL_LEVEL_HEIGHT = 172.8f; 
-static constexpr float GRAVITY_COMPENSATION_SCALAR = 5800;
+static constexpr float GRAVITY_COMPENSATION_SCALAR = 10000; //5800;
 };//struct GIMBAL_CONSTANTS
 
 struct FEEDER_PID
@@ -175,7 +186,7 @@ struct SHOOTER_PID
     static constexpr float
     PID_KP = 16000.0f,
     PID_KI = 0.5f,
-    PID_KD = 0.0f,
+    PID_KD = 100.0f,
     PID_MAX_OUT = 16000.0f,
     PID_MAX_IOUT = 9000.0f;
 };  // struct FEEDER_PID

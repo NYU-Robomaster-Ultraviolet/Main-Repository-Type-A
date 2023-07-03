@@ -5,7 +5,7 @@
 
 namespace gimbal
 {
-#if defined (TARGET_SENTRY)
+#if defined (TARGET_SENTRY) || defined (TARGET_HERO)
 // constructor
 GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
     : tap::control::Subsystem(drivers),
@@ -13,17 +13,19 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
           drivers,
           constants.YAW_MOTOR_ID,
           constants.CAN_BUS_MOTORS_YAW,
-          false,
+          constants.YAW_REVERSED,
           "Yaw Motor",
           tap::motor::DjiMotor::ENC_RESOLUTION / 2,
           constants.STARTING_YAW_ROT),
       pitchMotor(drivers, 
         constants.PITCH_MOTOR_ID, 
-        constants.CAN_BUS_MOTORS_PITCH, false, 
+        constants.CAN_BUS_MOTORS_PITCH, 
+        constants.PITCH_REVERSED, 
         "Pitch Motor"),
       pitchMotorL(drivers, 
       constants.PITCH_LEFT_MOTOR_ID,
-      constants.CAN_BUS_MOTORS_PITCH_LEFT, true,
+      constants.CAN_BUS_MOTORS_PITCH_LEFT, 
+      constants.PITCH_LEFT_REVERSED,
       ("Pitch Motor Left")),
       targetYaw(0.0f),
       targetPitch(0.0f),
@@ -37,16 +39,17 @@ GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
 GimbalSubsystem::GimbalSubsystem(src::Drivers *drivers)
     : tap::control::Subsystem(drivers),
       yawMotor(
-          drivers,
-          constants.YAW_MOTOR_ID,
-          constants.CAN_BUS_MOTORS_YAW,
-          false,
-          "Yaw Motor",
-          tap::motor::DjiMotor::ENC_RESOLUTION / 2,
-          constants.STARTING_YAW_ROT),
+        drivers,
+        constants.YAW_MOTOR_ID,
+        constants.CAN_BUS_MOTORS_YAW,
+        constants.YAW_REVERSED,
+        "Yaw Motor",
+        tap::motor::DjiMotor::ENC_RESOLUTION / 2,
+        constants.STARTING_YAW_ROT),
       pitchMotor(drivers, 
         constants.PITCH_MOTOR_ID, 
-        constants.CAN_BUS_MOTORS_PITCH, false, 
+        constants.CAN_BUS_MOTORS_PITCH, 
+        constants.PITCH_REVERSED, 
         "Pitch Motor"),
       targetYaw(0.0f),
       targetPitch(0.0f),
@@ -67,7 +70,7 @@ void GimbalSubsystem::initialize()
     pitchMotor.setDesiredOutput(0);
 
     //due to 2 motor build
-    #ifdef TARGET_SENTRY
+    #if defined (TARGET_SENTRY) || defined (TARGET_HERO)
         pitchMotorL.initialize();
         pitchMotorL.setDesiredOutput(0);
     #endif
@@ -89,14 +92,14 @@ void GimbalSubsystem::refresh()
     u_int32_t currentTime = tap::arch::clock::getTimeMilliseconds();
     timeError = currentTime - pastTime;
     pastTime = currentTime;
-    // drivers->leds.set(drivers->leds.A, true);
-    // drivers->leds.set(drivers->leds.B, pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.C,pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.D, pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.E, pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.F, pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.G, pitchMotorL.isMotorOnline());
-    // drivers->leds.set(drivers->leds.H, false);
+    drivers->leds.set(drivers->leds.A, encoderYaw > 1.45);
+    drivers->leds.set(drivers->leds.B, encoderYaw > 1.48);
+    drivers->leds.set(drivers->leds.C,encoderYaw > 1.52);
+    drivers->leds.set(drivers->leds.D, encoderYaw > 1.55);
+    drivers->leds.set(drivers->leds.E, encoderYaw > 1.58);
+    drivers->leds.set(drivers->leds.F, encoderYaw > 1.6);
+    drivers->leds.set(drivers->leds.G, encoderYaw > 3.5);
+    drivers->leds.set(drivers->leds.H, encoderYaw > 4);
     if(isCalibrated() && imuStatesCalibrated()){
         setPitchImu();
         setYawImu();
@@ -164,14 +167,16 @@ void GimbalSubsystem::updateYawPid()
 {
     // find rotation
     yawError = targetYaw - currentYaw;
-
+    
     //Limits the error to keep rotations consistant
     if (yawError > constants.MAX_YAW_ERROR)
         yawError -= M_TWOPI;
     else if (yawError < -constants.MAX_YAW_ERROR)
         yawError += M_TWOPI;
     // Keeps within range of radians
-    if (-(constants.YAW_MINIMUM_RADS) < yawError && yawError < constants.YAW_MINIMUM_RADS)
+    float minYaw = constants.YAW_MINIMUM_RADS;
+    //if(targetYaw < 0.00872665 || targetYaw >  6.2744587) minYaw = minYaw * 2;
+    if ((-(minYaw) < yawError && yawError < minYaw))
     {
         yawMotorOutput = 0;
     }
@@ -213,7 +218,7 @@ void GimbalSubsystem::updatePitchPid()
         pitchMotorOutput = 0;
     else
         //sentry has 2 pitch motors
-        #ifdef TARGET_SENTRY
+        #if defined (TARGET_SENTRY) || defined (TARGET_HERO)
             pitchMotor.setDesiredOutput(pitchMotorOutput);
             pitchMotorL.setDesiredOutput(pitchMotorOutput);
         #else
