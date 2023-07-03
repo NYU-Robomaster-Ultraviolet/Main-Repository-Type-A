@@ -7,7 +7,7 @@
 
 namespace shooter
 {
-ShootUserCommand::ShootUserCommand(
+ShooterCommand::ShooterCommand(
     ShooterSubsystem *const shooter,
     src::Drivers *drivers)
     : shooter(shooter),
@@ -20,9 +20,9 @@ ShootUserCommand::ShootUserCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(shooter));
 }
 
-void  ShootUserCommand::initialize() {shooter->changeOnFlag();}
+void  ShooterCommand::initialize() {shooter->changeOnFlag();}
 
-void  ShootUserCommand::execute()
+void  ShooterCommand::execute()
 {
     drivers->music_player.execute();
     if(drivers->music_player.finishedSong()){
@@ -35,7 +35,7 @@ void  ShootUserCommand::execute()
     #endif
 }
 
-void  ShootUserCommand::end(bool) {drivers->music_player.clearNote(); }
+void  ShooterCommand::end(bool) {drivers->music_player.clearNote(); }
 
-bool  ShootUserCommand::isFinished() const { return false; }
+bool  ShooterCommand::isFinished() const { return false; }
 }  // namespace shooter

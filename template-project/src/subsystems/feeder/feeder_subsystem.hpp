@@ -77,7 +77,7 @@ FeederSubsystem(tap::Drivers *drivers)
 
     bool motor2Online() { return feederMotor2.isMotorOnline(); }
 
-    #elif defined (TARGET_HERO || TARGET_STANDARD)
+    #elif defined (TARGET_HERO) || defined (TARGET_STANDARD)
     bool motorOnline(){ return feederMotor.isMotorOnline();
     }
 

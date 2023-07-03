@@ -173,7 +173,7 @@ struct FEEDER_PID
 struct SHOOTER_PID
 {
     static constexpr float
-    PID_KP = 800.0f,
+    PID_KP = 16000.0f,
     PID_KI = 0.5f,
     PID_KD = 0.0f,
     PID_MAX_OUT = 16000.0f,

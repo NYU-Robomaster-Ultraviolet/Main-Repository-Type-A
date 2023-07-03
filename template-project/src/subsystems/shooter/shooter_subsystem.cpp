@@ -45,7 +45,7 @@ float ShooterSubsystem::findRampOutput(float output)
 void ShooterSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
     pid->update(desiredRpm - motor->getShaftRPM()); //updates pid
     float output = pid->getValue();
-    if(fabsf(output > 100))
+    if(fabsf(output > 1000))
         motor->setDesiredOutput(pid->getValue()); //feeds pid output value to motor
     else motor->setDesiredOutput(0);
 }

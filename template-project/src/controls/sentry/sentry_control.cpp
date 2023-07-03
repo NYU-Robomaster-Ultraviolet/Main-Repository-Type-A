@@ -53,7 +53,7 @@ GimbalMovementCommand gimbalMovement(&gimbal, drivers());
 CvCommand cvMovement(&gimbal, drivers());
 // FeederMovementCommand feederMovement(&feeder, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
-ShootUserCommand shootUser(&shooter, drivers());
+ShooterCommand shootUser(&shooter, drivers());
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 

@@ -7,7 +7,7 @@
 #include "drivers.hpp"
 namespace shooter{
 
-class ShootUserCommand : public tap::control::Command{
+class ShooterCommand : public tap::control::Command{
 public:
     /**
      * Initializes the command with the passed in ShooterSubsystem.  Must not
@@ -16,11 +16,11 @@ public:
      * @param[in] shooter a pointer to the shooter to be passed in that this
      *      Command will interact with.
      */
-    ShootUserCommand(ShooterSubsystem *const shooter, src::Drivers *drivers);
+    ShooterCommand(ShooterSubsystem *const shooter, src::Drivers *drivers);
 
-    ShootUserCommand(const ShootUserCommand &other) = delete;
+    ShooterCommand(const ShooterCommand &other) = delete;
 
-    ShootUserCommand &operator=(const ShootUserCommand &other) = delete;
+    ShooterCommand &operator=(const ShooterCommand &other) = delete;
 
     void initialize() override;
 

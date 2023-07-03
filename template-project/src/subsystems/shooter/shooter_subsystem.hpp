@@ -73,7 +73,7 @@ ShooterSubsystem(tap::Drivers *drivers)
 
 
 //updates pid controller based off of current rpm
-void ShooterSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
+void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 #endif
 
     ShooterSubsystem(const ShooterSubsystem &other) = delete;
@@ -107,8 +107,6 @@ private:
     tap::gpio::Pwm::Pin flywheel3 = tap::gpio::Pwm::Y;
     tap::gpio::Pwm::Pin flywheel4 = tap::gpio::Pwm::Z;
 #elif defined (TARGET_HERO)
-        // PID controllers for RPM feedback from wheels
-    modm::filter::Ramp<int> flywheelRamp;
     ///< Motors.  Use these to interact with any dji style motors.
     tap::motor::DjiMotor flywheel1;
     tap::motor::DjiMotor flywheel2;

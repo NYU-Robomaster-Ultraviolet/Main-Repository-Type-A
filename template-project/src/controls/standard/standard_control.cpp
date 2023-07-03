@@ -57,7 +57,7 @@ CvCommand cvMovement(&gimbal, drivers());
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
-ShootUserCommand shootUser(&shooter, drivers());
+ShooterCommand shootUser(&shooter, drivers());
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 
 // Define command mappings here -------------------------------------------

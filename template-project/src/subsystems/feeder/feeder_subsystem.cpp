@@ -28,7 +28,7 @@ void FeederSubsystem::refresh() {
 }
 
 void FeederSubsystem::updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm) {
-    if(desiredRpm || motor->getShaftRPM() > 50){
+    if(desiredRpm || motor->getShaftRPM() > 100){
         pid->update(desiredRpm - motor->getShaftRPM());
         motor->setDesiredOutput(pid->getValue());
     }
