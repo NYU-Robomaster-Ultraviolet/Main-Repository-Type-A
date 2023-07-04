@@ -101,12 +101,12 @@ int main()
         // #endif
         drivers->cv_com.update();
         drivers->ref_interface.updateData();
-        if(drivers->ref_interface.getData().currHP != 0){
-            drivers->music_player.execute();
-            if(drivers->music_player.finishedSong())
-                drivers->music_player.resetSong();
-        }
-        else drivers->music_player.clearNote();
+        // if(drivers->ref_interface.getData().currHP != 0){
+        //     drivers->music_player.execute();
+        //     //if(drivers->music_player.finishedSong())
+        //         //drivers->music_player.resetSong();
+        // }
+        // else drivers->music_player.clearNote();
         modm::delay_us(10);
     }
     return 0;
@@ -121,12 +121,13 @@ static void initializeIo(src::Drivers *drivers)
     drivers->can.initialize();
     drivers->errorController.init();
     drivers->remote.initialize();
-    drivers->mpu6500.init();
+    drivers->mpu6500.init(500, .1, 0);
     drivers->refSerial.initialize();
     drivers->terminalSerial.initialize();
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
     drivers->uart.init<tap::communication::serial::Uart::Uart7, 115200>();
+    drivers->uart.init<tap::communication::serial::Uart::Uart8, 115200>();
     drivers->cv_com.init();
     drivers->music_player.init();
 }

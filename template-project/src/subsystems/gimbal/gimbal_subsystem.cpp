@@ -198,7 +198,7 @@ void GimbalSubsystem::updatePitchPid()
     pitchError = (targetPitch - currentPitch);
     pitchMotorPid.runController(
         pitchError * constants.MOTOR_SPEED_FACTOR,
-        getPitchMotorRPM(),
+        getPitchMotorRPM() ,
         timeError);
     if (-(constants.PITCH_MINIMUM_RADS) < pitchError && pitchError < constants.PITCH_MINIMUM_RADS)
     {   

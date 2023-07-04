@@ -17,8 +17,7 @@ static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
 //offset to the angle that the encoder gives you
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.49066f; // 3.31613f; 200 //190 //3.66519f;
-
+static constexpr float PITCH_ENCODER_OFFSET = 3.75246f; //215 degrees //3.49066f; // 3.31613f;
 //inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 //input used for gimbal beyblading
@@ -149,7 +148,7 @@ struct GIMBAL_CONSTANTS
     // gimbal yaw and pitch speed limits
     static constexpr float MIN_YAW_SPEED = 20.0f;  // 300
     static constexpr float MAX_YAW_SPEED = 30000.0f;
-    static constexpr float MIN_PITCH_SPEED = 20.0f;
+    static constexpr float MIN_PITCH_SPEED = 100.0f; //20
     static constexpr float MAX_PITCH_SPEED = 30000.0f;  // 20000
     // Gimbal minimum angles of movement
     static constexpr float YAW_MINIMUM_RADS = 0.00436332;  //.25 //.5 degrees

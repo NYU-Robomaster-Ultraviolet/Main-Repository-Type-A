@@ -27,7 +27,8 @@ void  GimbalMovementCommand::initialize() {
 
 void  GimbalMovementCommand::execute()
 {
-    drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
+    drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET), 
+        modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
     if(timeout.isExpired()){
         if(!gimbal->isCalibrated()) {
             drivers->mpu6500.requestCalibration();
@@ -47,7 +48,6 @@ void  GimbalMovementCommand::execute()
             drivers->control_interface.getGimbalPitchInput());
         }
     }
-    drivers->cv_com.setAngles(gimbal->getPitchEncoder() * 100, gimbal->getYawEncoder() * 100);
     //drivers->music_player.playGivenNote(gimbal->getPitchEncoder() * 100);
 }
 

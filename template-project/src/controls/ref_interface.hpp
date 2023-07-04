@@ -16,8 +16,6 @@ public:
 
     void updateData();
 
-    
-
 
     cv::RefStructObj getData() const {return returnData;}
 
@@ -40,6 +38,10 @@ public:
         return vec;
     }
     #endif
+
+    uint8_t getLevel() const {return returnData.robotLevel;}
+
+    uint16_t getHp() const {return returnData.currHP;}
 private:
 
 //chassis data power usage

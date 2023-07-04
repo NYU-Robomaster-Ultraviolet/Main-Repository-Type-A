@@ -22,8 +22,8 @@ FeederMovementCommand::FeederMovementCommand(
 
 void  FeederMovementCommand::initialize() {
         feeder->setTargetRPM(0);
-    feeder->setTargetRPM(3000);
-    burstFireTimeout.restart(1000);
+    feeder->setTargetRPM(1500); //3000
+    burstFireTimeout.restart(2000); //1000
 }
 
 void  FeederMovementCommand::execute()

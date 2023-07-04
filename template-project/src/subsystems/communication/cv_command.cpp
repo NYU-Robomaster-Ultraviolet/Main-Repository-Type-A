@@ -25,12 +25,14 @@ void  CvCommand::initialize() {
 void  CvCommand::execute() {
 
     //update power limits
-    std::pair<uint16_t, uint16_t> powerLimit = drivers->ref_interface.getPowerUsage();
-    gimbal->setPower(powerLimit.first, powerLimit.second);
+    // std::pair<uint16_t, uint16_t> powerLimit = drivers->ref_interface.getPowerUsage();
+    // gimbal->setPower(powerLimit.first, powerLimit.second);
 
-    drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
-    drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
-    drivers->cv_com.setAngles(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
+    // drivers->cv_com.setEncoder(gimbal->getYawEncoder(), gimbal->getPitchEncoder());
+    // drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
+    drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET) - 90, 
+        modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
+
     unsigned char beyblade = drivers->cv_com.getBeybladeMode();
     float yawInput = 0;
     float pitchInput = 0;
@@ -39,18 +41,12 @@ void  CvCommand::execute() {
         yawInput = drivers->cv_com.getYaw();
         pitchInput = drivers->cv_com.getPitch();
         drivers->cv_com.invalidateAngle();
-        //     if(beyblade = 1)
-        // yawInput += (GIMBAL_BEYBLADE_ANGLE_INPUT); // ~22 degrees
-        // else if(beyblade = 2)
-        //     yawInput -= (GIMBAL_BEYBLADE_ANGLE_INPUT);
-
         gimbal->cvInput(yawInput, pitchInput);
     }
-    //else gimbal->cvInput(0, 0);
-    // if(drivers->cv_com.getGimbalReadFlag()){
-    //     float xInput = drivers->cv_com.getGimbalX();
+    // else if(drivers->cv_com.getGimbalReadFlag()){
+    //     //float xInput = drivers->cv_com.getGimbalX();
     //     float yInput = drivers->cv_com.getGimbalY();
-    //     gimbal->controllerInput(xInput, yInput);
+    //     gimbal->controllerInput(yInput, 0);
     //     drivers->cv_com.resetGimbalReadFlag();
     // }
     //beyblade inputs

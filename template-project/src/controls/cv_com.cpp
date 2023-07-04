@@ -50,7 +50,7 @@ bool CVCom::sendingLoop()
     sendingTimeout.restart(SENDING_TIME);
 
     //this part sends the data
-    sendAutoAimMsg(getBeybladeMode() * 100, 500);
+    sendAutoAimMsg(imuPitch * 1000000, imuYaw * 1000000);
     //sendAutoAimMsg(imuYaw, 5);
     sendColorMsg();
     sendEnableMsg(cv_on);
@@ -171,23 +171,20 @@ int CVCom::readFromUart()
                     readingState = WAITING_FOR_HEADER;
                     byteIndex = 0;
                     
-                    //for debugging
-                    drivers->music_player.execute();
-                    if(drivers->music_player.finishedSong()) drivers->music_player.resetSong();
+                    // //for debugging
+                    // drivers->music_player.execute();
+                    // if(drivers->music_player.finishedSong()) drivers->music_player.resetSong();
                     break;
                 }
                 case 2:
                 {
-                    // chassisMovement
+                    // chassisMovement + gimbal revolution
                     chassisMoveStruct c = *reinterpret_cast<chassisMoveStruct *>(buffer);
                     chassisX = c.chassisX / 1000.0;
                     chassisY = c.chassisY / 1000.0;
                     chassisR = c.chassisR / 1000.0;
                     chassisReadFlag = true;
                     beybladeMode = c.mode;
-                    
-
-
                     break;
                 }
                 case 3:
@@ -271,7 +268,6 @@ int CVCom::readFromUart()
 void CVCom::sendRefereeMsg()
 {
     cv::RefStructObj refData = drivers->ref_interface.getData();
-    //refData.robotID = 12;
     uint8_t str[sizeof(refData)];
     memcpy(str, &refData, sizeof(refData));
     drivers->uart.write(
@@ -309,7 +305,7 @@ void CVCom::sendEnableMsg(bool start)
 {
     ColorStructObj sending = ColorStructObj();
     sending.color = start;
-
+    sending.msg_type = 3;
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
     drivers->uart.write(

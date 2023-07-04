@@ -62,7 +62,13 @@ private:
 
     bool flag;
 
+    float prevX = 0;
+    float prevY = 0;
+    float prevR = 0;
+
     float beybladeInput = BEYBLADE_INPUT;
+
+    tap::arch::MilliTimeout timeout;
 }; //class CVChassisCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
