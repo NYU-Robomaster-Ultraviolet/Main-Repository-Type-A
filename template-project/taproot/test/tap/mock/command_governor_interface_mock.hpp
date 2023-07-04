@@ -3,7 +3,7 @@
 /*****************************************************************************/
 
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -21,14 +21,23 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_REF_SERIAL_CONSTANTS_HPP_
-#define TAPROOT_REF_SERIAL_CONSTANTS_HPP_
+#ifndef TAPROOT_COMMAND_GOVERNOR_INTERFACE_MOCK_HPP_
+#define TAPROOT_COMMAND_GOVERNOR_INTERFACE_MOCK_HPP_
 
-#include "uart.hpp"
+#include <gmock/gmock.h>
 
-namespace tap::communication::serial::bound_ports
+#include "tap/control/governor/command_governor_interface.hpp"
+
+namespace tap::mock
 {
-    static constexpr Uart::UartPort REF_SERIAL_UART_PORT = Uart::UartPort::Uart3;
-}  // namespace tap::communication::serial::bound_ports
+class CommandGovernorInterfaceMock : public tap::control::governor::CommandGovernorInterface
+{
+public:
+    CommandGovernorInterfaceMock();
+    ~CommandGovernorInterfaceMock();
+    MOCK_METHOD(bool, isReady, (), (override));
+    MOCK_METHOD(bool, isFinished, (), (override));
+};
+}  // namespace tap::mock
 
-#endif  // TAPROOT_REF_SERIAL_CONSTANTS_HPP_
+#endif  // TAPROOT_COMMAND_GOVERNOR_INTERFACE_MOCK_HPP_
