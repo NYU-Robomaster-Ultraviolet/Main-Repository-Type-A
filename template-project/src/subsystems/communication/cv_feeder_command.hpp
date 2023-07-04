@@ -43,6 +43,9 @@ public:
 private:
     FeederSubsystem *const feeder;
 
+    tap::arch::MilliTimeout burstFireTimeout;
+    tap::arch::MilliTimeout burstFireCooldown;
+
     src::Drivers *drivers;
 }; //class CVFeeder : public tap::control::Command
 

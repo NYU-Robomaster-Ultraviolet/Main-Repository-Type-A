@@ -20,17 +20,23 @@ CVFeeder::CVFeeder(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(feeder));
 }
 
-void  CVFeeder::initialize() {feeder->setTargetRPM(0);}
+void  CVFeeder::initialize() {
+    feeder->setTargetRPM(0);
+    burstFireCooldown.restart(10);
+    burstFireTimeout.restart(10);
+    }
 
 void  CVFeeder::execute()
 {
 
 #ifdef TARGET_SENTRY
-    if(drivers->cv_com.foundTarget()){
-        feeder->setTargetRPM(1500);
-    }
-    else{
+    if(burstFireTimeout.isExpired()){
         feeder->setTargetRPM(0);
+    }
+    if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
+            feeder->setTargetRPM(3000);
+            burstFireTimeout.restart(1000);
+            burstFireCooldown.restart(6000);
     }
 #endif
 }

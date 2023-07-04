@@ -227,7 +227,7 @@ private:
     float gimbalY;
     bool gimbalReadFlag = 0;
     //beyblade or no beyblade
-    unsigned char beybladeMode = 1;
+    unsigned char beybladeMode = 0;
 
     //chassis move straight
     int forwardDistance = 0; //in mm
