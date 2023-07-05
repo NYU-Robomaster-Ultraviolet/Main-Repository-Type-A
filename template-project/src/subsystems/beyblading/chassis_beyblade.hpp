@@ -61,6 +61,9 @@ public:
      * which should never be the case for this command
      */
     bool isFinished() const override;
+
+    //Will check power consumpion, limiting power if approaches limit, otherwise remove limits if not nearby
+    bool checkPowerLimits();
 private:
     ChassisSubsystem *const chassis;
 
@@ -68,9 +71,11 @@ private:
 
     gimbal::GimbalInterface* gimbalInterface;
 
-    bool flag;
+    float limitValueRange = 1;
 
     float rotation = BEYBLADE_INPUT;
+
+    tap::arch::MicroTimeout checkPowerTimeout;
 }; //class ChassisBeybladeCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 

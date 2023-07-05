@@ -20,7 +20,7 @@ GimbalBeybladeCommand::GimbalBeybladeCommand(GimbalSubsystem *const gimbal, src:
 void  GimbalBeybladeCommand::initialize() {
         gimbal->allignGimbal();
         noTurn = 0;
-        gimbal->setBeybladeMode(2);
+        gimbal->setBeybladeMode(1);
     }
 
 void  GimbalBeybladeCommand::execute()

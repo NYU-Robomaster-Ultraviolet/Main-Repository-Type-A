@@ -29,7 +29,7 @@ void  ShooterCommand::execute()
         drivers->music_player.resetSong();
     }
     #if  defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
-    shooter->setDesiredOutput(0.3f);
+    shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
     #elif defined (TARGET_HERO)
     shooter->setDesiredOutput(16000);
     #endif

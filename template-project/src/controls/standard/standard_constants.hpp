@@ -36,13 +36,29 @@ static constexpr float PITCH_MECHANICAL_MIN_ANGLE = 1.13446f; // 65 degrees
 static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
 
 
-static constexpr float BEYBLADE_INPUT = .6f; // .4
-static constexpr float BEYBLADE_SPEED_ONE = .57f; //rad/seconds
+//inputs used for chassis beyblading
+static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+//input used for gimbal beyblading
+static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
+
+//speeds of flywheels at different levels
+static constexpr float LEVEL_ONE_FLYWHEEL = .3f;
+static constexpr float LEVEL_TWO_FLYWHEEL = .4f;
+static constexpr float LEVEL_THREE_FLYWHEEL = .5f;
+
+//speeds feeder at different levels
+static constexpr float LEVEL_ONE_FEEDER_RPM = 1500;
+static constexpr float LEVEL_TWO_FEEDER_RPM = 2000;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 2000;
+
 
 struct Feeder_CONSTANTS{
     static constexpr tap::motor::MotorId FEEDER_MOTOR_ID = tap::motor::MOTOR1;
     static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
     static constexpr bool FEEDER_REVERSED = false;
+
+    //speeds feeder at different levels
 }; 
 
 struct CHASSIS_CONSTANTS{

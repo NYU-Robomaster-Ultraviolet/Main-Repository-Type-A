@@ -42,6 +42,16 @@ static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = BEYBLADE_INPUT * .645;
 
+//speeds of flywheels at different levels
+static constexpr float LEVEL_ONE_FLYWHEEL = 8000;
+static constexpr float LEVEL_TWO_FLYWHEEL = 1000;
+static constexpr float LEVEL_THREE_FLYWHEEL = 12000;
+
+//speeds feeder at different levels
+static constexpr float LEVEL_ONE_FEEDER_RPM = 6000;
+static constexpr float LEVEL_TWO_FEEDER_RPM = 6000;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 6000;
+
 struct CHASSIS_CONSTANTS{
     //max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
@@ -102,9 +112,9 @@ struct GIMBAL_CONSTANTS{
     static constexpr bool YAW_REVERSED = false;
     static constexpr bool PITCH_REVERSED = true;
     static constexpr bool PITCH_LEFT_REVERSED = true;
-//Pid configs for gimbal Pid
+//Pid configs for gimbal Pid 
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 30000.0f, //60000
+        .kp = 20000.0f, //30000
         .ki = 0,
         .kd = 200, //500
         .maxICumulative = 10.0f,

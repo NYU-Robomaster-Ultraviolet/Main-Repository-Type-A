@@ -276,10 +276,6 @@ void ChassisSubsystem::setFowardMovement(float x){
     targetDistance = x;
 }
 
-void ChassisSubsystem::limitPower(float ratio){
-    maximumPower *= ratio;
-}
-
 void ChassisSubsystem::moveAllignWithGimbal(){
     float rotation = gimbalInterface->getYawEncoder();
     if(rotation > .005 && (rotation < M_TWOPI - .005 )){

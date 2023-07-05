@@ -36,9 +36,9 @@ void  CVChassisCommand::execute()
     float yInput = limitVal<float>(drivers->control_interface.getChassisYInput(), -1, 1);
     float rInput = limitVal<float>(drivers->control_interface.getChassisRotationInput(), -1, 1);
     
-    float xOutput = prevX;
-    float yOutput = prevY;
-    float rOutput = prevR;
+    float xOutput = 0;
+    float yOutput = 0;
+    float rOutput = 0;
     unsigned char beyblade = drivers->cv_com.getBeybladeMode();
 
     //gets current cos and sin of yaw angle from starting point of gimbal
@@ -46,9 +46,9 @@ void  CVChassisCommand::execute()
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
     beybladeInput = gimbalInterface->getChassisBeybladeInput();
     if(beyblade == 1)
-        rOutput -= beybladeInput;
-    else if(beyblade == 2)
         rOutput += beybladeInput;
+    else if(beyblade == 2)
+        rOutput -= beybladeInput;
 
     //print first then second
     //drivers->cv_com.setEncoder(chassis->getTargetRotation() * 100, chassis->getRotationVelocity() * 100);
@@ -63,10 +63,10 @@ void  CVChassisCommand::execute()
         // chassis->setRotationRadians(0);
         // chassis->setRotationVelocity(0);
         // chassis->setTargetVelocity(0, 0);
-        
+        chassis->setDesiredOutput( xOutput, yOutput, rOutput);
     }
     //check if stop command
-    if(drivers->cv_com.getChassisStop()){
+    else if(drivers->cv_com.getChassisStop()){
         // chassis->changeVelocityMoveFlag(false);
         xOutput = 0;
         yOutput = 0;
@@ -88,15 +88,13 @@ void  CVChassisCommand::execute()
         //applies rotation matrix to inputs to change inputs based on gimbal position
         xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
         yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
-        rOutput = rInput;
-        prevX = xInput;
-        prevY = yInput;
-        prevR = rInput;
+        // if(rInput)
+        //     rOutput = rInput;
+        chassis->setDesiredOutput( xOutput, yOutput, rOutput);
         //sends values to the chassis subsystem
         //chassis->changeVelocityMoveFlag(false);
         //chassis->setDesiredOutput( xOutput, yOutput, rOutput);
     }
-    chassis->setDesiredOutput( xOutput, yOutput, rOutput);
     // else if(drivers->cv_com.getChassisPowerFlag()){
     //     //gets the cv inputs if valid
     //     xInput = limitVal<float>(drivers->cv_com.getYPower(), -1, 1);

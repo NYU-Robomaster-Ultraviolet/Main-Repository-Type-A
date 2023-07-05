@@ -20,6 +20,7 @@
 #include "subsystems/communication/cv_chassis.hpp"
 #include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/communication/cv_shooter.hpp"
+#include "subsystems/shooter/flywheel_initialization.hpp"
 #include "subsystems/music/music_player.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
 #include "subsystems/feeder/feeder_movement_command.hpp"
@@ -44,6 +45,7 @@ GimbalInterface gimbalInterface(&gimbal);
 ChassisSubsystem chassis(drivers(), &gimbalInterface);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
+
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 
@@ -57,6 +59,7 @@ FeederMovementCommand feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
+FlywheelInitialization flywheelInit(&shooter, drivers());
 
 
 // Define command mappings here -------------------------------------------
@@ -98,7 +101,7 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    //chassis.setDefaultCommand(&chassisMovement);
+    shooter.setDefaultCommand(&flywheelInit);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {

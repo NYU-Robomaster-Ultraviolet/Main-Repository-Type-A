@@ -44,9 +44,9 @@ void  CvCommand::execute() {
         gimbal->cvInput(yawInput, pitchInput);
     }
     // else if(drivers->cv_com.getGimbalReadFlag()){
-    //     //float xInput = drivers->cv_com.getGimbalX();
+    //     float xInput = drivers->cv_com.getGimbalX();
     //     float yInput = drivers->cv_com.getGimbalY();
-    //     gimbal->controllerInput(yInput, 0);
+    //     gimbal->controllerInput(xInput, yInput);
     //     drivers->cv_com.resetGimbalReadFlag();
     // }
     //beyblade inputs

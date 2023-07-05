@@ -185,6 +185,7 @@ int CVCom::readFromUart()
                     chassisR = c.chassisR / 1000.0;
                     chassisReadFlag = true;
                     beybladeMode = c.mode;
+                    drivers->music_player.execute();
                     break;
                 }
                 case 3:
@@ -210,6 +211,7 @@ int CVCom::readFromUart()
                     gimbalY = g.gimbalY / 1000.0;
                     gimbalReadFlag = true;
                     beybladeMode = g.mode;
+                    //drivers->music_player.execute();
                     break;
                 }
                 case 5:

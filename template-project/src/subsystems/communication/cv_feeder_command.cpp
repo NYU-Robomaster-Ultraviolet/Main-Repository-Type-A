@@ -30,10 +30,10 @@ void  CVFeeder::execute()
 {
 
 #ifdef TARGET_SENTRY
-    if(burstFireTimeout.isExpired()){
+    if(burstFireTimeout.isExpired() || checkBarrelHeatLimit()){
         feeder->setTargetRPM(0);
     }
-    if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
+    else if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
             feeder->setTargetRPM(3000);
             burstFireTimeout.restart(1000);
             burstFireCooldown.restart(6000);
@@ -44,4 +44,22 @@ void  CVFeeder::execute()
 void  CVFeeder::end(bool) { feeder->setTargetRPM(0); }
 
 bool  CVFeeder::isFinished() const { return false; }
+
+bool CVFeeder::checkBarrelHeatLimit() const {
+    if(drivers->ref_interface.revDataValid()){
+        #if defined(Target_STANDARD)
+            std::pair<uint16_t, uint16_t> heatLimits = drivers->ref_interface.getShooterHeat();
+            if(heatLimits.first > heatLimits.second - 30) return true;
+        #elif defined (TARGET_HERO)
+            std::pair<uint16_t, uint16_t> heatLimits = drivers->ref_interface.getShooterHeat();
+                if(heatLimits.first > heatLimits.second - 100) return true;
+        #elif defined (TARGET_SENTRY)
+            std::vector<uint16_t> heatLimits = drivers->ref_interface.getShooterHeat();
+            if((heatLimits[0] > heatLimits[1] - 30) || (heatLimits[2] > heatLimits[3] - 30))
+                return true;
+        #endif
+    }
+    return false;
+}
+
 }  // namespace feeder

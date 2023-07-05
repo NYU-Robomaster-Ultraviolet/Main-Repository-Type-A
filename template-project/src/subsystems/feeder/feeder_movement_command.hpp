@@ -31,10 +31,14 @@ public:
     void end(bool) override;
 
     bool isFinished() const override;
+
+    //returns if you are about to hit the heat limit or not
+    bool checkBarrelHeatLimit() const;
 private:
     FeederSubsystem *const feeder;
     tap::arch::MilliTimeout burstFireTimeout;
     src::Drivers *drivers;
+
 }; //class FeederMovementCommand : public tap::control::Command
 
 } //namespace Feeder

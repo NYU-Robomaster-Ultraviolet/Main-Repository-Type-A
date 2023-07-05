@@ -24,6 +24,16 @@ static constexpr float BEYBLADE_INPUT = .7f;//.4f;
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
 
+//speeds of flywheels at different levels
+static constexpr float LEVEL_ONE_FLYWHEEL = .5f;
+static constexpr float LEVEL_TWO_FLYWHEEL = .5f;
+static constexpr float LEVEL_THREE_FLYWHEEL = .5f;
+
+//speeds feeder at different levels
+static constexpr float LEVEL_ONE_FEEDER_RPM = 6000;
+static constexpr float LEVEL_TWO_FEEDER_RPM = 6000;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 6000;
+
 //constants used for feeder motor subsystem
 struct Feeder_CONSTANTS
 {
@@ -32,6 +42,8 @@ struct Feeder_CONSTANTS
     static constexpr tap::can::CanBus CAN_BUS = tap::can::CanBus::CAN_BUS2;
     static constexpr bool FEEDER_REVERSED = false;
     static constexpr bool FEEDER_REVERSED_2 = true;
+
+
 };
 
 //constants for feeder pid

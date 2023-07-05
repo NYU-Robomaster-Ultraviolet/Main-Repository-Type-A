@@ -63,4 +63,7 @@ void RefInterface::updateData(){
    heatLimit17ID1 = data.turret.heatLimit17ID1;
    heatLimit17ID2 = data.turret.heatLimit17ID2;
    heatLimit42 = data.turret.heatLimit42;
+
+   //shooter power status, shooter online is 4th value
+   shooterPowerStatus = data.robotPower.value & 4;
 }

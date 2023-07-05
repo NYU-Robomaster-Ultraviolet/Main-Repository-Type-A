@@ -10,20 +10,7 @@ namespace shooter
 
 void ShooterSubsystem::initialize()
 {
-    #if defined (TARGET_SENTRY) || defined (TARGET_STANDARD)
-    drivers->pwm.write(0.25f, flywheel1);
-    drivers->pwm.write(0.25f, flywheel2);
-    #endif
-    //add 2 more motors for sentry, or use dji motors instead if hero
-    #if defined (TARGET_SENTRY)
-    drivers->pwm.write(0.25f, flywheel3);
-    drivers->pwm.write(0.25f, flywheel4);
-    #elif defined (TARGET_HERO)
-    flywheel1.initialize();
-    flywheel2.initialize();
-    flywheel1.setDesiredOutput(0);
-    flywheel2.setDesiredOutput(0);
-    #endif
+   initializeFlywheel();
 }
 void ShooterSubsystem::refresh() {
     #if defined (TARGET_HERO)
@@ -71,5 +58,22 @@ void ShooterSubsystem::setDesiredOutput(float output) {
         }
     else targetRPM = 0;
     #endif
+    }
+
+    void ShooterSubsystem::initializeFlywheel(){
+         #if defined (TARGET_SENTRY) || defined (TARGET_STANDARD)
+        drivers->pwm.write(0.25f, flywheel1);
+        drivers->pwm.write(0.25f, flywheel2);
+        #endif
+        //add 2 more motors for sentry, or use dji motors instead if hero
+        #if defined (TARGET_SENTRY)
+        drivers->pwm.write(0.25f, flywheel3);
+        drivers->pwm.write(0.25f, flywheel4);
+        #elif defined (TARGET_HERO)
+        flywheel1.initialize();
+        flywheel2.initialize();
+        flywheel1.setDesiredOutput(0);
+        flywheel2.setDesiredOutput(0);
+        #endif
     }
 } //namespace shooter

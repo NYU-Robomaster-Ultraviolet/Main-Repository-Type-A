@@ -23,7 +23,7 @@ ChassisBeybladeCommand::ChassisBeybladeCommand(
 //stop any movement
 void  ChassisBeybladeCommand::initialize() {
     chassis->setDesiredOutput(0, 0, 0);
-    //chassis->setBeybladeMode(1);
+    checkPowerTimeout.restart(10);
 }
 
 void  ChassisBeybladeCommand::execute()
@@ -35,6 +35,10 @@ void  ChassisBeybladeCommand::execute()
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
+
+    //check on power consumption
+    checkPowerLimits();
+    
     //gets the controller inputs
     float xInput = drivers->control_interface.getChassisXInput();
     float yInput = drivers->control_interface.getChassisYInput();
@@ -55,4 +59,19 @@ void  ChassisBeybladeCommand::end(bool) {
     }
 
 bool  ChassisBeybladeCommand::isFinished() const { return false; }
+
+bool ChassisBeybladeCommand::checkPowerLimits(){
+    if(drivers->ref_interface.revDataValid() && checkPowerTimeout.isExpired()){
+        checkPowerTimeout.restart(100);
+        std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
+        if(powerLimits.first > powerLimits.second * .9){
+            limitValueRange -= .1;
+        }
+        else if(powerLimits.first < powerLimits.second * .8 && limitValueRange < 1){
+            limitValueRange += .1;
+        }
+        return true;
+    }
+    return false;
+}
 }  // namespace chassis

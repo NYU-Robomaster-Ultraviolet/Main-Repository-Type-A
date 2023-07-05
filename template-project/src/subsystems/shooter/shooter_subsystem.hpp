@@ -96,6 +96,8 @@ void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, floa
 
     void changeOnFlag(){on = !on;}
 
+    void initializeFlywheel();
+
 private:
 #if defined (TARGET_STANDARD)
     ///pwm ports on dev board
@@ -124,6 +126,7 @@ private:
     bool online = false;
 
     bool on = false;
+
 
     ///< Any user input is translated into desired RPM for each motor.
 

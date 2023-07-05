@@ -256,7 +256,7 @@ void GimbalSubsystem::controllerInput(float yawInput, float pitchInput)
 void GimbalSubsystem::cvInput(float yawInput, float pitchInput)
 {
     //check for non-0 inputs, if so modify target angle given current angle
-    if(yawInput || beybladeMode){
+    if(yawInput){
         yawInput = limitVal<float>(yawInput, -M_TWOPI, M_TWOPI);
         setYawAngle(currentYaw + yawInput);
     }
@@ -315,8 +315,8 @@ void GimbalSubsystem::calibratePitch(){
 }
 
 void GimbalSubsystem::applyBeybladeOffset(){
-    if(beybladeMode == 1) setYawAngle(targetYaw + (beybladeGimbalInput * constants.YAW_SCALE));
-    else if(beybladeMode == 2) setYawAngle(targetYaw - (beybladeGimbalInput *  constants.YAW_SCALE));
+    if(beybladeMode == 1) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE));
+    else if(beybladeMode == 2) setYawAngle(targetYaw + (beybladeGimbalInput *  constants.YAW_SCALE));
 
 }
 

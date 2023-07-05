@@ -126,9 +126,6 @@ public:
         return (M_TWOPI * static_cast<float>(encoderValue)) / tap::motor::DjiMotor::ENC_RESOLUTION;
     }
 
-    //lowers the speed limits
-    void limitPower(float ratio);
-
     //sets flag to tell if it is in velocity movement mode true = yes
     void changeVelocityMoveFlag(bool flag){velocityMoveFlag = flag;}
 

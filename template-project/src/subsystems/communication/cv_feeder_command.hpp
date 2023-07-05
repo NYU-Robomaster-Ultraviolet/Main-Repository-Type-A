@@ -40,6 +40,9 @@ public:
     void end(bool) override;
 
     bool isFinished() const override;
+
+    //returns if you are about to hit the heat limit or not, true for reaching limit, false if not
+    bool checkBarrelHeatLimit() const;
 private:
     FeederSubsystem *const feeder;
 
