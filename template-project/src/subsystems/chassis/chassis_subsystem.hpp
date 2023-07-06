@@ -171,6 +171,10 @@ public:
 
     //sets tracker for robot level
     void setRobotLevel(uint8_t level) {robotLevel = level;}
+
+    void handleChassisFrameDistanceMovement();
+
+    void handleGimbalFrameDistanceMovement();
 private:
     //all constants used in this subsystem
     CHASSIS_CONSTANTS constants;

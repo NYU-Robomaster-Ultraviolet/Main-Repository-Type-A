@@ -205,36 +205,7 @@ void ChassisSubsystem::refresh() {
     }
 
     //for driving a set amount of distance
-    if(targetRadians || targetDistance) {
-        distanceReached = false; //tracks if finished movement
-        if(fabsf(targetRadians) < constants.MIN_RADIANS){ //deadzone to prevent overshoots
-            targetRadians = 0;
-        }
-        else {
-            targetRadians -= radiansTraveled; //removes from target radians
-            //chances velocity to match the given rotational velocity against measured velocity from encoder value
-            if(angularVelocity != 0 && fabsf(angularVelocity - targetRotationVelocity) > .017){
-                currRotationSampleInput += (angularVelocity < targetRotationVelocity) ? .002 : -.002;
-            }
-        }
-        if(fabsf(targetDistance) < constants.MIN_DISTANCE){ //deadzone to prevent overshoots
-            targetDistance = 0;
-        }
-        else {
-            targetDistance -= chassisFrameDistanceTraveledX; //removes from target distance
-            //chances velocity to match the given velocity against measured velocity from encoder value
-            if(longitudinalVelocity != 0 && fabsf(longitudinalVelocity - targetFowardVelocity) > .02){
-                currFowardSampleInput += (longitudinalVelocity < targetFowardVelocity) ? .002 : -.002;
-            }
-        }
-        //stops movement if reached targets
-        setDesiredOutput(
-            0,
-            targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
-            targetRadians ? limitVal<float>(currRotationSampleInput, -1, 1) : 0
-        );
-    }
-    else distanceReached = true;
+    handleChassisFrameDistanceMovement();
 
     //flag to stop moving
     if(stopFlag) setDesiredOutput(0, 0, 0);
@@ -308,5 +279,77 @@ void ChassisSubsystem::moveAllignWithGimbal(){
     }
     else targetRadians = 0;
     }
+void ChassisSubsystem::handleChassisFrameDistanceMovement(){
+    if(targetRadians || targetDistance) {
+        distanceReached = false; //tracks if finished movement
+        if(fabsf(targetRadians) < constants.MIN_RADIANS){ //deadzone to prevent overshoots
+            targetRadians = 0;
+        }
+        else {
+            targetRadians -= radiansTraveled; //removes from target radians
+            //chances velocity to match the given rotational velocity against measured velocity from encoder value
+            if(angularVelocity != 0 && fabsf(angularVelocity - targetRotationVelocity) > .017){
+                currRotationSampleInput += (angularVelocity < targetRotationVelocity) ? .002 : -.002;
+            }
+        }
+        if(fabsf(targetDistance) < constants.MIN_DISTANCE){ //deadzone to prevent overshoots
+            targetDistance = 0;
+        }
+        else {
+            targetDistance -= chassisFrameDistanceTraveledX; //removes from target distance
+            //chances velocity to match the given velocity against measured velocity from encoder value
+            if(longitudinalVelocity != 0 && fabsf(longitudinalVelocity - targetFowardVelocity) > .02){
+                currFowardSampleInput += (longitudinalVelocity < targetFowardVelocity) ? .002 : -.002;
+            }
+        }
+        //stops movement if reached targets
+        setDesiredOutput(
+            targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
+            0,
+            targetRadians ? limitVal<float>(currRotationSampleInput, -1, 1) : 0
+        );
+    }
+    else distanceReached = true;
+}
+
+void ChassisSubsystem::handleGimbalFrameDistanceMovement(){
+    if(targetRadians || targetDistance) {
+        distanceReached = false; //tracks if finished movement
+        if(fabsf(targetRadians) < constants.MIN_RADIANS){ //deadzone to prevent overshoots
+            targetRadians = 0;
+        }
+        else {
+            targetRadians -= radiansTraveled; //removes from target radians
+            //chances velocity to match the given rotational velocity against measured velocity from encoder value
+            if(angularVelocity != 0 && fabsf(angularVelocity - targetRotationVelocity) > .017){
+                currRotationSampleInput += (angularVelocity < targetRotationVelocity) ? .002 : -.002;
+            }
+        }
+        if(fabsf(targetDistance) < constants.MIN_DISTANCE){ //deadzone to prevent overshoots
+            targetDistance = 0;
+        }
+        else {
+            targetDistance -= gimbalFrameDistanceTraveledX; //removes from target distance
+            //chances velocity to match the given velocity against measured velocity from encoder value
+            if(gimbalFrameVelocityX != 0 && fabsf(gimbalFrameVelocityX  - targetFowardVelocity) > .02){
+                currFowardSampleInput += (gimbalFrameVelocityX  < targetFowardVelocity) ? .002 : -.002;
+            }
+        }
+        //apply rotation matrix to inputs
+        float cosYaw = cosf(gimbalInterface->getYawEncoder());
+        float sinYaw = sinf(gimbalInterface->getYawEncoder());
+        //gets the controller inputs
+        //applies rotation matrix to inputs to change inputs based on gimbal position
+        float xOutput = ((cosYaw * currFowardSampleInput) - (sinYaw * 0));
+        float yOutput = ((cosYaw * 0) + (sinYaw * currFowardSampleInput));
+        //stops movement if reached targets
+        setDesiredOutput(
+            targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
+            0,
+            targetRadians ? limitVal<float>(currRotationSampleInput, -1, 1) : 0
+        );
+    }
+    else distanceReached = true;
+}
 
 } //namespace chassis
