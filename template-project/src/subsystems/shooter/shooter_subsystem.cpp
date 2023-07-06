@@ -70,8 +70,11 @@ void ShooterSubsystem::setDesiredOutput(float output) {
         drivers->pwm.write(0.25f, flywheel3);
         drivers->pwm.write(0.25f, flywheel4);
         #elif defined (TARGET_HERO)
-        flywheel1.initialize();
-        flywheel2.initialize();
+        if(!initialized) {
+            flywheel1.initialize();
+            flywheel2.initialize();
+            initialized = true;
+        }
         flywheel1.setDesiredOutput(0);
         flywheel2.setDesiredOutput(0);
         #endif

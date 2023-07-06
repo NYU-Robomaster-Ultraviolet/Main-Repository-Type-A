@@ -25,14 +25,6 @@ void MusicPlayer::execute() {
         tap::buzzer::playNote(&drivers->pwm, 0);
         isFinished = true;
     }
-    // for(size_t i = 0; i < yourSong.size(); i++){
-    //     tap::buzzer::playNote(&drivers->pwm, (yourSong[i]).first);
-    //     modm::delay_ms(tempo * (yourSong[i]).second * 0.8f);
-    //     tap::buzzer::playNote(&(drivers->pwm), 0);
-    //     modm::delay_ms(tempo * (yourSong[i]).second * 0.2f);
-    // }
-    // tap::buzzer::playNote(&(drivers->pwm), 0); //silences buzzer
-    //drivers->leds.set(drivers->leds.Green, true);
 }
 
 //stops all sounds from the buzzer
@@ -43,5 +35,17 @@ void MusicPlayer::clearNote(){
 //plays a given note
 void MusicPlayer::playGivenNote(float note){
     tap::buzzer::playNote(&(drivers->pwm), note);
+}
+void MusicPlayer::resetSong() {
+    resting = false;
+    index = 0;
+    isFinished = false;
+    init();
+}
+    
+void MusicPlayer::changeSong(const vector<pair<float, float>>& newScore, unsigned newTempo){
+    yourSong = newScore;
+    tempo = newTempo;
+    resetSong();
 }
 }//namespace music

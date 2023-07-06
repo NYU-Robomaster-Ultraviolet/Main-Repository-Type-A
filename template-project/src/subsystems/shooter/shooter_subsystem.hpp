@@ -119,6 +119,8 @@ private:
     SHOOTER_PID pidVals;
 
     float targetRPM = 0;
+
+    bool initialized = false;
 #endif
     // PID controllers for RPM feedback from wheels
     modm::filter::Ramp<float> flywheelRamp;

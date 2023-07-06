@@ -23,7 +23,13 @@ FeederMovementCommand::FeederMovementCommand(
 void  FeederMovementCommand::initialize() {
     feeder->setTargetRPM(0);
     if(!checkBarrelHeatLimit()){
-        feeder->setTargetRPM(LEVEL_ONE_FEEDER_RPM); //3000
+        uint8_t level = drivers->ref_interface.getLevel();
+        if(level == 3)
+            feeder->setTargetRPM(LEVEL_THREE_FEEDER_RPM); //3000
+        else if(level == 2)
+            feeder->setTargetRPM(LEVEL_TWO_FEEDER_RPM);
+        else
+            feeder->setTargetRPM(LEVEL_THREE_FEEDER_RPM);
         burstFireTimeout.restart(2000); //1000
     }
 }

@@ -19,6 +19,9 @@ namespace src::control{
 
     float keyboardX = drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
 
+    if(ctrMode) keyboardX *= .3;
+    else if(!shiftMode) keyboardX *= .6;
+    
     if (prevUpdateCounterX != updateCounter) {
         chassisXInput.update(drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL) + keyboardX, currTime);
         prevUpdateCounterX = updateCounter;
@@ -39,11 +42,17 @@ namespace src::control{
         uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
         //this is for mouse commands
         float keyboardY = drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
+
+
+        if(ctrMode) keyboardY *= .3;
+        else if(!shiftMode) keyboardY *= .6;
+
         //check if reading a different remote input
         if (prevUpdateCounterY != updateCounter) {
             chassisYInput.update(drivers->remote.getChannel(Remote::Channel::RIGHT_VERTICAL) + keyboardY, currTime);
             prevUpdateCounterY = updateCounter;
         }
+
 
         //float finalY = limitVal<float>((chassisYInput.getInterpolatedValue(currTime))*Y_SENSITIVITY, -Y_SENSITIVITY, Y_SENSITIVITY);
         float finalY = limitVal<float>((chassisYInput.getInterpolatedValue(currTime)), -1, 1);
@@ -66,7 +75,8 @@ namespace src::control{
         }
 
         float keyBoardR = drivers->remote.keyPressed(Remote::Key::X) - drivers->remote.keyPressed(Remote::Key::Z);  
-
+        if(ctrMode) keyBoardR *= .3;
+        else if(!shiftMode) keyBoardR *= .6;
         //float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime)) * Y_SENSITIVITY, -Y_SENSITIVITY, Y_SENSITIVITY);
         float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR), -1, 1);
 
@@ -81,5 +91,28 @@ namespace src::control{
     float ControlInterface::getGimbalPitchInput() {
         float MouseY = drivers->remote.getMouseY();
         return limitVal<float>(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL) - MouseY, -10, 10);
+    }
+
+    void ControlInterface::init(){
+        shiftCheckTimeout.restart(10);
+        ctrChecKTimeout.restart(10);
+    }
+
+    void ControlInterface::checkKeyPresses() {
+        if(shiftCheckTimeout.isExpired()){
+            if(drivers->remote.keyPressed(Remote::Key::SHIFT)){
+                shiftMode = !shiftMode;
+                ctrMode = false;
+                shiftCheckTimeout.restart(1000);
+            }
+        }
+
+        if(ctrChecKTimeout.isExpired()){
+            if(drivers->remote.keyPressed(Remote::Key::CTRL)){
+                ctrMode = !ctrMode;
+                shiftMode = false;
+                ctrChecKTimeout.restart(1000);
+            }
+        }
     }
 }

@@ -52,7 +52,7 @@ ShooterSubsystem shooter(drivers());
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-CvCommand cvMovement(&gimbal, drivers());
+CVGimbal cvGimbal(&gimbal, drivers());
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
@@ -62,7 +62,7 @@ ShooterCommand shootUser(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
  
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &chassisMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &chassisMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalMovement},
@@ -73,6 +73,10 @@ RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+
+HoldCommandMapping beyblade(drivers(), {&chassisBeyblade, &gimbalBeyblade},
+RemoteMapState({tap::communication::serial::Remote::Key::E}, {tap::communication::serial::Remote::Key::Q}));
+
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
     drivers->commandScheduler.registerSubsystem(&chassis);
@@ -89,7 +93,8 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    //chassis.setDefaultCommand(&chassisMovement);
+    chassis.setDefaultCommand(&chassisMovement);
+    gimbal.setDefaultCommand(&gimbalMovement);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
@@ -97,11 +102,12 @@ void startupCommands(src::Drivers* drivers) {
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
-    drivers->commandMapper.addMap(&rightSwitchMid);
+    //drivers->commandMapper.addMap(&rightSwitchMid);
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
+    drivers->commandMapper.addMap(&beyblade);
 }
 }//namespace src::control
 

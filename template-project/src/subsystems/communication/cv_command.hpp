@@ -15,13 +15,13 @@
 
 namespace gimbal{
 
-class CvCommand : public tap::control::Command {
+class CVGimbal : public tap::control::Command {
 public:
-    CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers);
+    CVGimbal(GimbalSubsystem *const gimbal, src::Drivers *drivers);
 
-    CvCommand(const CvCommand &other) = delete;
+    CVGimbal(const CVGimbal &other) = delete;
 
-    CvCommand &operator=(const CvCommand &other) = delete;
+    CVGimbal &operator=(const CVGimbal &other) = delete;
 
     void initialize() override;
 
@@ -38,7 +38,7 @@ private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
 
-}; //CvCommand
+}; //CVGimbal
 
 
 }// namespace cv

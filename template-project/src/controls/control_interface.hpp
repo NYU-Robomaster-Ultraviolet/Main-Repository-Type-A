@@ -3,6 +3,7 @@
 
 #include "tap/algorithms/linear_interpolation_predictor.hpp"
 #include "tap/util_macros.hpp"
+#include "tap/architecture/timeout.hpp"
 
 using namespace tap :: algorithms;
 
@@ -28,6 +29,13 @@ class ControlInterface{
         LinearInterpolationPredictor chassisXInput;
         LinearInterpolationPredictor chassisYInput;
         LinearInterpolationPredictor chassisRotationInput;
+
+        tap::arch::MilliTimeout shiftCheckTimeout;
+        tap::arch::MilliTimeout ctrChecKTimeout;
+
+        bool shiftMode = false;
+        bool ctrMode = false;
+
     public:
         ControlInterface(tap::Drivers *drivers) : drivers(drivers) {}
 
@@ -38,6 +46,13 @@ class ControlInterface{
 
         mockable float getGimbalYawInput();
         mockable float getGimbalPitchInput();
+
+        //initializes timeouts for checking key presses
+        void init();
+
+        //will check key presses for ctr and shift, set flags if read then delay the mode change by a second
+        void checkKeyPresses();
+        
 };
 
 

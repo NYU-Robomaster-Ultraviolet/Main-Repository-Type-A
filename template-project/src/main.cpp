@@ -96,9 +96,7 @@ int main()
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.encodeAndSendCanData, ());
             PROFILE(drivers->profiler, drivers->terminalSerial.update, ());
         }
-        // #ifdef CV_ACTIVE
-        // drivers->cv_com.update();
-        // #endif
+        drivers->control_interface.checkKeyPresses();
         drivers->cv_com.update();
         drivers->ref_interface.updateData();
         // if(drivers->ref_interface.getData().currHP != 0){
@@ -126,6 +124,7 @@ static void initializeIo(src::Drivers *drivers)
     drivers->terminalSerial.initialize();
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
+    drivers->control_interface.init();
     drivers->uart.init<tap::communication::serial::Uart::Uart7, 115200>();
     drivers->uart.init<tap::communication::serial::Uart::Uart8, 115200>();
     drivers->cv_com.init();

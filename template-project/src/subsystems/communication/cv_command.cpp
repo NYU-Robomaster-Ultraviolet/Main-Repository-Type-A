@@ -7,7 +7,7 @@
 
 namespace gimbal
 {
-CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
+CVGimbal::CVGimbal(GimbalSubsystem *const gimbal, src::Drivers *drivers)
 : gimbal(gimbal), drivers(drivers)
 {
      if (gimbal == nullptr)
@@ -16,13 +16,13 @@ CvCommand::CvCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
     }
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(gimbal));
 }
-void  CvCommand::initialize() {
+void  CVGimbal::initialize() {
     gimbal->allignGimbal();
     drivers->cv_com.changeCV(true);
     gimbal->setBeybladeMode(0);
 }
 
-void  CvCommand::execute() {
+void  CVGimbal::execute() {
 
     //update power limits
     // std::pair<uint16_t, uint16_t> powerLimit = drivers->ref_interface.getPowerUsage();
@@ -52,14 +52,14 @@ void  CvCommand::execute() {
     //beyblade inputs
 }
 
-void  CvCommand::end(bool) {
+void  CVGimbal::end(bool) {
     gimbal->setBeybladeMode(0);
     drivers->cv_com.changeCV(0);
     gimbal->cvInput(0, 0);
     gimbal->noInputs();
 }
 
-bool  CvCommand::isFinished() const { return false; }
+bool  CVGimbal::isFinished() const { return false; }
 
 
 

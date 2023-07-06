@@ -53,9 +53,9 @@ MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-CvCommand cvMovement(&gimbal, drivers());
-// FeederMovementCommand feederMovement(&feeder, drivers());
+CVGimbal cvGimbal(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
+CVFeeder cvFeeder(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
@@ -66,7 +66,7 @@ FlywheelInitialization flywheelInit(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
@@ -102,6 +102,10 @@ void initializeSubsystems() {
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
     shooter.setDefaultCommand(&flywheelInit);
+    feeder.setDefaultCommand(&cvFeeder);
+    gimbal.setDefaultCommand(&cvGimbal);
+    gimbal.setDefaultCommand(&cvChassis);
+
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {

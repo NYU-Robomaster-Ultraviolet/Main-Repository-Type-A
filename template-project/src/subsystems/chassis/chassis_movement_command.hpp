@@ -52,8 +52,13 @@ public:
      * which should never be the case for this command
      */
     bool isFinished() const override;
-    
-    void checkPowerLimit();
+    /**
+     * @brief This function will check the power usage against the limit, then speeds
+     * if approaching the limit
+     * @return true : speed was limited
+     * @return false : speed was not limited
+     */
+    bool checkPowerLimit();
 private:
     ChassisSubsystem *const chassis;
 
@@ -61,7 +66,9 @@ private:
 
     gimbal::GimbalInterface* gimbalInterface;
 
-    bool flag;
+    float limitValueRange = 1;
+
+    tap::arch::MicroTimeout checkPowerTimeout;
 }; //class ChassisMovementCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 

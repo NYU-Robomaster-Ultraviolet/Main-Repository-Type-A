@@ -53,7 +53,7 @@ MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-CvCommand cvMovement(&gimbal, drivers());
+CVGimbal cvGimbal(&gimbal, drivers());
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
@@ -64,7 +64,7 @@ CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvMovement, &cvChassis},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
@@ -81,6 +81,10 @@ RemoteMapState(RemoteMapState::MouseButton::LEFT));
 
 HoldCommandMapping feederMouse(drivers(), {&feederMovement},
 RemoteMapState(RemoteMapState::MouseButton::RIGHT));
+
+HoldCommandMapping beyblade(drivers(), {&chassisBeyblade, &gimbalBeyblade},
+RemoteMapState({tap::communication::serial::Remote::Key::E}, {tap::communication::serial::Remote::Key::Q}));
+
 
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
@@ -99,7 +103,8 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    //chassis.setDefaultCommand(&chassisMovement);
+    chassis.setDefaultCommand(&chassisMovement);
+    gimbal.setDefaultCommand(&gimbalMovement);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
@@ -107,13 +112,14 @@ void startupCommands(src::Drivers* drivers) {
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
-    drivers->commandMapper.addMap(&rightSwitchMid);
+    //drivers->commandMapper.addMap(&rightSwitchMid);
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&shooterMouse);
     drivers->commandMapper.addMap(&feederMouse);
+    drivers->commandMapper.addMap(&beyblade);
 }
 }//namespace src::control
 

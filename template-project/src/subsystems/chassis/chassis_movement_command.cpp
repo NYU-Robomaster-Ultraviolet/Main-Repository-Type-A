@@ -34,8 +34,10 @@ void  ChassisMovementCommand::execute()
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
     //gets the controller inputs
-    float xInput = drivers->control_interface.getChassisXInput();
-    float yInput = drivers->control_interface.getChassisYInput();
+    float xInput = limitVal<float>(drivers->control_interface.getChassisXInput(), -limitValueRange,
+    limitValueRange);
+    float yInput = limitVal<float>(drivers->control_interface.getChassisYInput(), -limitValueRange,
+    limitValueRange);
     //applies rotation matrix to inputs to change inputs based on gimbal position
     float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
     float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
@@ -43,7 +45,8 @@ void  ChassisMovementCommand::execute()
     chassis->setDesiredOutput(
         xOutput,
         yOutput,
-        drivers->control_interface.getChassisRotationInput());
+        limitVal<float>(drivers->control_interface.getChassisRotationInput(), -limitValueRange,
+        limitValueRange));
         //0);
     //chassis->moveAllignWithGimbal();
 }
@@ -53,7 +56,19 @@ void  ChassisMovementCommand::end(bool) {
     chassis->setDesiredOutput(0, 0, 0);
     }
 
-void ChassisMovementCommand::checkPowerLimit(){
+bool ChassisMovementCommand::checkPowerLimit(){
+    if(drivers->ref_interface.revDataValid() && checkPowerTimeout.isExpired()){
+        checkPowerTimeout.restart(100);
+        std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
+        if(powerLimits.first > powerLimits.second * .9){
+            limitValueRange -= .05;
+        }
+        else if(powerLimits.first < powerLimits.second * .8 && limitValueRange < 1){
+            limitValueRange += .05;
+        }
+        return true;
+    }
+    return false;
 }
 
 bool  ChassisMovementCommand::isFinished() const { return false; }

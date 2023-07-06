@@ -28,10 +28,10 @@ void  CVShooterCommand::execute()
         shooter->changeOnFlag();
         flyWheelsOn = !flyWheelsOn;
     }
-    shooter->setDesiredOutput(0.3f);
+    shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
 }
 
-void  CVShooterCommand::end(bool) {drivers->music_player.clearNote(); }
+void  CVShooterCommand::end(bool) {}
 
 bool  CVShooterCommand::isFinished() const { return false; }
 }  // namespace shooter

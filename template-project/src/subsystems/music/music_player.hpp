@@ -28,21 +28,18 @@ class MusicPlayer{
 
         void clearNote();
 
-        void resetSong() {
-            resting = false;
-            index = 0;
-            isFinished = false;
-            init();
-        }
+        void resetSong();
 
         void playGivenNote(float note);
 
         void init(){timeout.restart(1);}
 
+        void changeSong(const vector<pair<float, float>>& newScore, unsigned newTempo);
+
     private:
         src::Drivers* drivers;
-        const vector<pair<float, float>> yourSong;
-        const unsigned tempo;
+        vector<pair<float, float>> yourSong;
+        unsigned tempo;
         size_t index;
         bool resting;
         bool isFinished;

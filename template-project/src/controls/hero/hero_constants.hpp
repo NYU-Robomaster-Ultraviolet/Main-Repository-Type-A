@@ -44,8 +44,8 @@ static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = BEYBLADE_INPUT * .645;
 
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = 8000;
-static constexpr float LEVEL_TWO_FLYWHEEL = 1000;
-static constexpr float LEVEL_THREE_FLYWHEEL = 12000;
+static constexpr float LEVEL_TWO_FLYWHEEL = 8000;
+static constexpr float LEVEL_THREE_FLYWHEEL = 8000;
 
 //speeds feeder at different levels
 static constexpr float LEVEL_ONE_FEEDER_RPM = 6000;

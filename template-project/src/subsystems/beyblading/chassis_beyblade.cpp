@@ -65,10 +65,10 @@ bool ChassisBeybladeCommand::checkPowerLimits(){
         checkPowerTimeout.restart(100);
         std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
         if(powerLimits.first > powerLimits.second * .9){
-            limitValueRange -= .1;
+            limitValueRange -= .05;
         }
         else if(powerLimits.first < powerLimits.second * .8 && limitValueRange < 1){
-            limitValueRange += .1;
+            limitValueRange += .05;
         }
         return true;
     }

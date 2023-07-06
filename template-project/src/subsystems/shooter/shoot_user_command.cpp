@@ -28,11 +28,18 @@ void  ShooterCommand::execute()
     if(drivers->music_player.finishedSong()){
         drivers->music_player.resetSong();
     }
-    #if  defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
-    shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
-    #elif defined (TARGET_HERO)
-    shooter->setDesiredOutput(16000);
-    #endif
+    //different measured speeds based on allowed bullet speeds at each level. Defaults level 1 if ref data isn't read
+    uint8_t level = drivers->ref_interface.getLevel();
+    // #if  defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
+    if(level == 3)
+        shooter->setDesiredOutput(LEVEL_THREE_FLYWHEEL);
+    else if(level == 2)
+        shooter->setDesiredOutput(LEVEL_TWO_FLYWHEEL);
+    else
+        shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
+    // #elif defined (TARGET_HERO)
+    // shooter->setDesiredOutput(16000);
+    // #endif
 }
 
 void  ShooterCommand::end(bool) {drivers->music_player.clearNote(); }

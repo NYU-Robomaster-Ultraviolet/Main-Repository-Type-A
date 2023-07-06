@@ -28,16 +28,21 @@ void  CVFeeder::initialize() {
 
 void  CVFeeder::execute()
 {
-
-#ifdef TARGET_SENTRY
-    if(burstFireTimeout.isExpired() || checkBarrelHeatLimit()){
+    if(checkBarrelHeatLimit() || (burstFireTimeout.isExpired() && !drivers->cv_com.foundTarget())) 
         feeder->setTargetRPM(0);
+    else if(drivers->cv_com.foundTarget()){
+        feeder->setTargetRPM(LEVEL_ONE_FEEDER_RPM);
+        burstFireTimeout.restart(1000);
     }
-    else if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
-            feeder->setTargetRPM(3000);
-            burstFireTimeout.restart(1000);
-            burstFireCooldown.restart(6000);
-    }
+#ifdef TARGET_SENTRY
+    // if(burstFireTimeout.isExpired() || checkBarrelHeatLimit()){
+    //     feeder->setTargetRPM(0);
+    // }
+    // else if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
+    //         feeder->setTargetRPM(3000);
+    //         burstFireTimeout.restart(1000);
+    //         burstFireCooldown.restart(6000);
+    // }
 #endif
 }
 
