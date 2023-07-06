@@ -31,6 +31,9 @@ void  CVChassisCommand::initialize() {
 
 void  CVChassisCommand::execute()
 {
+    //checks level and updates the level of chassis
+    updateChassisLevel();
+    
     //get remote inputs
     float xInput = limitVal<float>(drivers->control_interface.getChassisXInput(), -1, 1);
     float yInput = limitVal<float>(drivers->control_interface.getChassisYInput(), -1, 1);
@@ -80,9 +83,9 @@ void  CVChassisCommand::execute()
     else if(drivers->cv_com.getChassisReadFlag()){
 
         //gets the cv inputs if valid
-        xInput = limitVal<float>(drivers->cv_com.getChassisX(), -1, 1);
-        yInput = limitVal<float>(drivers->cv_com.getChassisY(), -1, 1);
-        rInput = limitVal<float>(drivers->cv_com.getChassisR(), -1, 1);
+        xInput = limitVal<float>(drivers->cv_com.getChassisX(), -limitValueRange, limitValueRange);
+        yInput = limitVal<float>(drivers->cv_com.getChassisY(), -limitValueRange, limitValueRange);
+        rInput = limitVal<float>(drivers->cv_com.getChassisR(), -limitValueRange, limitValueRange);
         //invalidate flag
         drivers->cv_com.resetChassisReadFlag();
         //applies rotation matrix to inputs to change inputs based on gimbal position
@@ -144,4 +147,28 @@ void  CVChassisCommand::end(bool) {
     }
 
 bool  CVChassisCommand::isFinished() const { return false; }
+
+bool CVChassisCommand::checkPowerLimit(){
+    if(drivers->ref_interface.refDataValid() && checkPowerTimeout.isExpired()){
+        checkPowerTimeout.restart(500);
+        std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
+        if(powerLimits.first > powerLimits.second * .9){
+            limitValueRange -= .05;
+        }
+        else if(powerLimits.first < powerLimits.second * .8 && limitValueRange < 1){
+            limitValueRange += .05;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool CVChassisCommand::updateChassisLevel() {
+    if(drivers->ref_interface.refDataValid()){
+        chassis->setRobotLevel(drivers->ref_interface.getLevel());
+        return true;
+    }
+    return false;
+}
+
 }  // namespace chassis

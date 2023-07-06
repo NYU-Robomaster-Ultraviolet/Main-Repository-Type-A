@@ -53,6 +53,11 @@ static constexpr float LEVEL_TWO_FEEDER_RPM = 6000;
 static constexpr float LEVEL_THREE_FEEDER_RPM = 6000;
 
 struct CHASSIS_CONSTANTS{
+    //power limits at each level
+    const float POWER_LIMIT_ONE = 6000;
+    const float POWER_LIMIT_TWO = 7000;
+    const float POWER_LIMIT_THREE = 8000;
+
     //max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
     // Scale factor for converting joystick movement into RPM setpoint

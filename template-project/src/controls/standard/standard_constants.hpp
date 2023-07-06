@@ -50,7 +50,7 @@ static constexpr float LEVEL_THREE_FLYWHEEL = .35f;
 //speeds feeder at different levels
 static constexpr float LEVEL_ONE_FEEDER_RPM = 1500;
 static constexpr float LEVEL_TWO_FEEDER_RPM = 2000;
-static constexpr float LEVEL_THREE_FEEDER_RPM = 2000;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 2500;
 
 
 struct Feeder_CONSTANTS{
@@ -62,6 +62,11 @@ struct Feeder_CONSTANTS{
 }; 
 
 struct CHASSIS_CONSTANTS{
+    //power limits at each level
+    const float POWER_LIMIT_ONE = 6000;
+    const float POWER_LIMIT_TWO = 7000;
+    const float POWER_LIMIT_THREE = 8000;
+
     // Scale factor for converting joystick movement into RPM setpoint
     static constexpr float RPM_SCALE_FACTOR = 4000.0f;
 

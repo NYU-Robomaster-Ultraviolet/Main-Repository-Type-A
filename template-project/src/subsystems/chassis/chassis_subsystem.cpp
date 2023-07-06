@@ -186,7 +186,17 @@ void ChassisSubsystem::refresh() {
         drivers->leds.set(drivers->leds.F, !backLeftMotor.isMotorOnline());
         drivers->leds.set(drivers->leds.G, backRightMotor.isMotorOnline());
         drivers->leds.set(drivers->leds.H, !backRightMotor.isMotorOnline());
+    //changes maximum wheel ouput based on level
+    if(robotLevel == 3)
+        maximumPower = constants.POWER_LIMIT_THREE;
+    else if(robotLevel == 2)
+        maximumPower = constants.POWER_LIMIT_TWO;
+    else 
+        maximumPower = constants.POWER_LIMIT_ONE;
+
+    //runs pid and sets output for wheels
     updateWheelvalues();
+    
     if(velocityMoveFlag) {
         setVelocityOutput();
     }

@@ -28,7 +28,8 @@ void  ChassisBeybladeCommand::initialize() {
 
 void  ChassisBeybladeCommand::execute()
 {
-
+    //checks level and updates the level of chassis
+    updateChassisLevel();
     //print second then first
     //drivers->cv_com.setEncoder(chassis->getRotationVelocity(), gimbalInterface->getYawVelocity());
 
@@ -61,8 +62,8 @@ void  ChassisBeybladeCommand::end(bool) {
 bool  ChassisBeybladeCommand::isFinished() const { return false; }
 
 bool ChassisBeybladeCommand::checkPowerLimits(){
-    if(drivers->ref_interface.revDataValid() && checkPowerTimeout.isExpired()){
-        checkPowerTimeout.restart(100);
+    if(drivers->ref_interface.refDataValid() && checkPowerTimeout.isExpired()){
+        checkPowerTimeout.restart(500);
         std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
         if(powerLimits.first > powerLimits.second * .9){
             limitValueRange -= .05;
@@ -70,6 +71,14 @@ bool ChassisBeybladeCommand::checkPowerLimits(){
         else if(powerLimits.first < powerLimits.second * .8 && limitValueRange < 1){
             limitValueRange += .05;
         }
+        return true;
+    }
+    return false;
+}
+
+bool ChassisBeybladeCommand::updateChassisLevel() {
+    if(drivers->ref_interface.refDataValid()){
+        chassis->setRobotLevel(drivers->ref_interface.getLevel());
         return true;
     }
     return false;

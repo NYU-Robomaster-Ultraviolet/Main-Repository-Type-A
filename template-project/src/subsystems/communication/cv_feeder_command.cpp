@@ -51,7 +51,7 @@ void  CVFeeder::end(bool) { feeder->setTargetRPM(0); }
 bool  CVFeeder::isFinished() const { return false; }
 
 bool CVFeeder::checkBarrelHeatLimit() const {
-    if(drivers->ref_interface.revDataValid()){
+    if(drivers->ref_interface.refDataValid()){
         #if defined(Target_STANDARD)
             std::pair<uint16_t, uint16_t> heatLimits = drivers->ref_interface.getShooterHeat();
             if(heatLimits.first > heatLimits.second - 30) return true;

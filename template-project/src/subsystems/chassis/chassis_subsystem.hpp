@@ -166,6 +166,9 @@ public:
 
     //set beyblade mode and direction
     void setBeybladeMode(uint8_t mode) {beybladeMode = mode;}
+
+    //sets tracker for robot level
+    void setRobotLevel(uint8_t level) {robotLevel = level;}
 private:
     //all constants used in this subsystem
     CHASSIS_CONSTANTS constants;
@@ -177,7 +180,7 @@ private:
     #elif defined (TARGET_SENTRY)
     const float STARTING_POWER_LIMIT = 8000.0f;
     #elif defined (TARGET_HERO)
-    const float STARTING_POWER_LIMIT = 8000.0f;
+    const float STARTING_POWER_LIMIT = 7000.0f;
     #endif
     float maximumPower = STARTING_POWER_LIMIT;
     ///< Motors.  Use these to interact with any dji style motors.
@@ -268,6 +271,9 @@ private:
 
     //mode of beyblade, 0: off, 1-3 corolate with speeds given by level
     uint8_t beybladeMode = 0;
+
+    //tracks level of robot, increases chassis maximum speed if needed
+    uint8_t robotLevel = 1;
 
 };  // class ChassisSubsystem
 

@@ -53,6 +53,10 @@ public:
      * which should never be the case for this command
      */
     bool isFinished() const override;
+
+    bool checkPowerLimit();
+
+    bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;
 
@@ -69,6 +73,10 @@ private:
     float beybladeInput = BEYBLADE_INPUT;
 
     tap::arch::MilliTimeout timeout;
+
+    float limitValueRange = 1;
+
+    tap::arch::MicroTimeout checkPowerTimeout;
 }; //class CVChassisCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 

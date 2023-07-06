@@ -59,6 +59,8 @@ public:
      * @return false : speed was not limited
      */
     bool checkPowerLimit();
+
+    bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;
 

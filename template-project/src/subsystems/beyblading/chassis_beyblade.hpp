@@ -64,6 +64,8 @@ public:
 
     //Will check power consumpion, limiting power if approaches limit, otherwise remove limits if not nearby
     bool checkPowerLimits();
+
+    bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;
 

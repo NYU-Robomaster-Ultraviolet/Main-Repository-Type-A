@@ -46,7 +46,7 @@ public:
 
     uint16_t getHp() const {return returnData.currHP;}
 
-    bool revDataValid() const {return returnData.maxHP;}
+    bool refDataValid() const {return returnData.maxHP;}
 
     bool getShooterPowerStatus() const {return shooterPowerStatus;}
 

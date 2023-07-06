@@ -30,6 +30,8 @@ void  ChassisMovementCommand::execute()
     //print second then first
     //drivers->cv_com.setEncoder(chassis->getRotationVelocity() * 100, chassis->getTransversal() * 100);
 
+    //checks level and updates the level of chassis
+    updateChassisLevel();
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
@@ -57,8 +59,8 @@ void  ChassisMovementCommand::end(bool) {
     }
 
 bool ChassisMovementCommand::checkPowerLimit(){
-    if(drivers->ref_interface.revDataValid() && checkPowerTimeout.isExpired()){
-        checkPowerTimeout.restart(100);
+    if(drivers->ref_interface.refDataValid() && checkPowerTimeout.isExpired()){
+        checkPowerTimeout.restart(500);
         std::pair<uint16_t, uint16_t> powerLimits = drivers->ref_interface.getPowerUsage();
         if(powerLimits.first > powerLimits.second * .9){
             limitValueRange -= .05;
@@ -72,4 +74,12 @@ bool ChassisMovementCommand::checkPowerLimit(){
 }
 
 bool  ChassisMovementCommand::isFinished() const { return false; }
+
+bool ChassisMovementCommand::updateChassisLevel() {
+    if(drivers->ref_interface.refDataValid()){
+        chassis->setRobotLevel(drivers->ref_interface.getLevel());
+        return true;
+    }
+    return false;
+}
 }  // namespace chassis

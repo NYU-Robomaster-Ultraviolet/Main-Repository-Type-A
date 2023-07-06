@@ -56,6 +56,11 @@ struct FEEDER_PID
 //constants used for chassis motor subsystem
 struct CHASSIS_CONSTANTS
 {
+    //power limits at each level
+    const float POWER_LIMIT_ONE = 8000;
+    const float POWER_LIMIT_TWO = 8000;
+    const float POWER_LIMIT_THREE = 8000;
+
     // max output for chassis motors
     static constexpr float MAX_CURRENT_OUTPUT = 8000.0f;
     // Scale factor for converting joystick movement into RPM setpoint
