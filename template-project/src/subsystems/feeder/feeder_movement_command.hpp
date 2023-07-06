@@ -22,12 +22,15 @@ public:
 
     FeederMovementCommand &operator=(const FeederMovementCommand &other) = delete;
 
+    //sets the feeder to move to target rpm based on robot level
     void initialize() override;
 
     const char *getName() const { return "feeder drive command"; }
 
+    //checks if about to reach heat limit, if so, turn off feeder
     void execute() override;
 
+    //turns off feeder
     void end(bool) override;
 
     bool isFinished() const override;

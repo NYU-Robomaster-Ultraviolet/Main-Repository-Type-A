@@ -21,7 +21,7 @@ namespace feeder{
 class FeederSubsystem : public tap::control::Subsystem
 {
 public:
-
+//constructor for sentry feeder, needs 2 motors
 #if defined(TARGET_SENTRY)
 FeederSubsystem(tap::Drivers *drivers)
     : tap::control::Subsystem(drivers),
@@ -58,14 +58,17 @@ FeederSubsystem(tap::Drivers *drivers)
       feederPid.PID_MAX_IOUT, feederPid.PID_MAX_OUT)
       {}
 #endif
-
+    //initializes motors
     void initialize() override;
+    //updates the pid controllers for the feeder motors and sets desired output
     void refresh() override;
 
     const char* getName() override {return "feeder subsystem";}
 
+    //called by command, sets the rpm to a given target
     void setTargetRPM(float RPM);
 
+    //this will update the pid controller
     void updateFeederPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 
     #if defined (TARGET_SENTRY)

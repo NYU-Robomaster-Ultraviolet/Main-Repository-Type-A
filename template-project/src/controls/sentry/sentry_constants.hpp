@@ -18,11 +18,18 @@ static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 //offset to the angle that the encoder gives you
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
 static constexpr float PITCH_ENCODER_OFFSET = 3.75246f; //215 degrees //3.49066f; // 3.31613f;
+
 //inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+static constexpr float BEYBLADE_INPUT_TWO = .8f;//.4f
+static constexpr float BEYBLADE_INPUT_THREE = .9f;//.4f
 //input used for gimbal beyblading
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .645;
 
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = .5f;

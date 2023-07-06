@@ -60,6 +60,7 @@ public:
      */
     bool checkPowerLimit();
 
+    //updates the level of the chassis subsystem
     bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;

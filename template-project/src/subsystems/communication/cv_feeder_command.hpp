@@ -31,10 +31,21 @@ public:
 
     CVFeeder &operator=(const CVFeeder &other) = delete;
 
+    /**
+     * @brief stops any feeder movement and resets timers
+     * 
+     * @return ** void 
+     */
     void initialize() override;
 
     const char *getName() const { return "feeder CV command"; }
 
+    /**
+     * @brief Waits for cv to indicate that a target has been found, if so, fire for minimum of 1 second before checking
+     * if the target is still valid. If approaching barrel heat limit or target lost, stop firing.
+     * 
+     * @return ** void 
+     */
     void execute() override;
 
     void end(bool) override;

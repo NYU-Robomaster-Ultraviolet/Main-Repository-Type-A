@@ -54,8 +54,15 @@ public:
      */
     bool isFinished() const override;
 
+    /**
+     * @brief This function will check the power usage against the limit, then speeds
+     * if approaching the limit
+     * @return true : speed was limited
+     * @return false : speed was not limited
+     */
     bool checkPowerLimit();
 
+    //updates the level of the chassis and beyblade output
     bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;
@@ -64,18 +71,21 @@ private:
 
     gimbal::GimbalInterface* gimbalInterface;
 
-    bool flag;
-
+    //previous input, used to prevent overiding cv commands
     float prevX = 0;
     float prevY = 0;
     float prevR = 0;
 
+    //beyblade input
     float beybladeInput = BEYBLADE_INPUT;
 
+    //timeout to phase out cv commands
     tap::arch::MilliTimeout timeout;
 
+    //the limit of inputs, this can decrease from power limiting
     float limitValueRange = 1;
 
+    //used to delay power management check
     tap::arch::MicroTimeout checkPowerTimeout;
 }; //class CVChassisCommand : public tap::control::Command
 } //namespace Chassis

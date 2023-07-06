@@ -157,14 +157,24 @@ void ChassisSubsystem::updateWheelvalues(){
     radiansTraveled = (prevAngularVelocity * timeError / 1000) ;
      //   + (.5 * (angularVelocity - prevAngularVelocity) * timeErrorSeconds);
 
+    //distance moved by chassis foward and back in chassis frame
     chassisFrameDistanceTraveledX = (longitudinalVelocity * timeError / 1000);
     //    + (.5 * (longitudinalVelocity - prevLongitudinalVelocity) * timeErrorSeconds);
 
-    chassisFrameDistanceTraveledY = (prevTransversalVelocity * timeErrorSeconds);
+    //distance moved by chassis left and right in chassis frame
+    chassisFrameDistanceTraveledY = (prevTransversalVelocity * timeError / 1000);
         // + (.5 * (transversalVelocity - prevTransversalVelocity) * timeErrorSeconds);
+    
+    //distance moved by chassis foward and back in gimbal frame
+    gimbalFrameDistanceTraveledX = gimbalFrameVelocityX * timeError / 1000;
 
+    //distance moved by chassis left and right in gimbal frame
+    gimbalFrameDistanceTraveledY = gimbalFrameVelocityY * timeError / 1000;
+
+    //toldal distance traveled fowards in gimbal frame
     gimbalFrameDistanceTraveled = gimbalFrameOffsetX * timeErrorSeconds;
 
+    //tracks previous velocities
     prevAngularVelocity = angularVelocity;
     prevLongitudinalVelocity = longitudinalVelocity;
     prevTransversalVelocity = transversalVelocity;
@@ -178,14 +188,6 @@ void ChassisSubsystem::initialize()
     updateWheelvalues();
 }
 void ChassisSubsystem::refresh() {
-    drivers->leds.set(drivers->leds.A, frontLeftMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.B, !frontLeftMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.C, frontRightMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.D, !frontRightMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.E, backLeftMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.F, !backLeftMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.G, backRightMotor.isMotorOnline());
-        drivers->leds.set(drivers->leds.H, !backRightMotor.isMotorOnline());
     //changes maximum wheel ouput based on level
     if(robotLevel == 3)
         maximumPower = constants.POWER_LIMIT_THREE;
@@ -197,37 +199,47 @@ void ChassisSubsystem::refresh() {
     //runs pid and sets output for wheels
     updateWheelvalues();
     
+    //is set to drive at given velocity, change velocity
     if(velocityMoveFlag) {
         setVelocityOutput();
     }
+
+    //for driving a set amount of distance
     if(targetRadians || targetDistance) {
-        if(fabsf(targetRadians) < constants.MIN_RADIANS){
+        distanceReached = false; //tracks if finished movement
+        if(fabsf(targetRadians) < constants.MIN_RADIANS){ //deadzone to prevent overshoots
             targetRadians = 0;
         }
         else {
-            targetRadians -= radiansTraveled;
+            targetRadians -= radiansTraveled; //removes from target radians
+            //chances velocity to match the given rotational velocity against measured velocity from encoder value
             if(angularVelocity != 0 && fabsf(angularVelocity - targetRotationVelocity) > .017){
                 currRotationSampleInput += (angularVelocity < targetRotationVelocity) ? .002 : -.002;
             }
         }
-        if(fabsf(targetDistance) < constants.MIN_DISTANCE){
+        if(fabsf(targetDistance) < constants.MIN_DISTANCE){ //deadzone to prevent overshoots
             targetDistance = 0;
         }
         else {
-            targetDistance -= chassisFrameDistanceTraveledX;
+            targetDistance -= chassisFrameDistanceTraveledX; //removes from target distance
+            //chances velocity to match the given velocity against measured velocity from encoder value
             if(longitudinalVelocity != 0 && fabsf(longitudinalVelocity - targetFowardVelocity) > .02){
                 currFowardSampleInput += (longitudinalVelocity < targetFowardVelocity) ? .002 : -.002;
             }
         }
-
+        //stops movement if reached targets
         setDesiredOutput(
             0,
             targetDistance ? limitVal<float>(currFowardSampleInput, -1, 1) : 0,
             targetRadians ? limitVal<float>(currRotationSampleInput, -1, 1) : 0
         );
     }
+    else distanceReached = true;
+
+    //flag to stop moving
     if(stopFlag) setDesiredOutput(0, 0, 0);
 
+    //updates pid controllers with current rpms
     updateRpmPid(&frontLeftPid, &frontLeftMotor, frontLeftDesiredRpm);
     updateRpmPid(&frontRightPid, &frontRightMotor, frontRightDesiredRpm);
     updateRpmPid(&backLeftPid, &backLeftMotor, backLeftDesiredRpm);

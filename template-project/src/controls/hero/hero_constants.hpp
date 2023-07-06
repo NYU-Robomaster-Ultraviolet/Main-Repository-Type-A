@@ -38,9 +38,18 @@ static constexpr float PITCH_MECHANICAL_MIN_ANGLE = 1.13446f; // 65 degrees
 static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
 
 
-static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+//inputs used for chassis beyblading
+static constexpr float BEYBLADE_INPUT = .7f;//
+static constexpr float BEYBLADE_INPUT_TWO = .8f;//
+static constexpr float BEYBLADE_INPUT_THREE = .9f;//
+
+//input used for gimbal beyblading
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
-static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = BEYBLADE_INPUT * .645;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .645;
 
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = 8000;

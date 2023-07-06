@@ -9,7 +9,10 @@ namespace src
 {
 class Drivers;
 }
-
+/**
+ * @brief RefInterface is an interface for retreiving specific referee data.
+ * 
+ */
 class RefInterface{
 public:
     RefInterface(src::Drivers * drivers) : drivers(drivers) {}

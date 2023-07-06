@@ -26,6 +26,7 @@ public:
 
     const char *getName() const { return "shooter command"; }
 
+    // Will turn on the flywheels the first time a target is found, and never turn them back off
     void execute() override;
 
     void end(bool) override;

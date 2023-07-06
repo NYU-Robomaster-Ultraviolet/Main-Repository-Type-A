@@ -65,6 +65,7 @@ public:
     //Will check power consumpion, limiting power if approaches limit, otherwise remove limits if not nearby
     bool checkPowerLimits();
 
+    //updates the level of the chassis subsystem and changes beyblade speeds
     bool updateChassisLevel();
 private:
     ChassisSubsystem *const chassis;
@@ -76,6 +77,8 @@ private:
     float limitValueRange = 1;
 
     float rotation = BEYBLADE_INPUT;
+
+    uint8_t robotLevel = 1;
 
     tap::arch::MicroTimeout checkPowerTimeout;
 }; //class ChassisBeybladeCommand : public tap::control::Command

@@ -38,9 +38,15 @@ static constexpr float PITCH_MECHANICAL_MAX_ANGLE = 2.05949f; // 118 degrees
 
 //inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
+static constexpr float BEYBLADE_INPUT_TWO = .8f;//.4f
+static constexpr float BEYBLADE_INPUT_THREE = .9f;//.4f
 //input used for gimbal beyblading
 static constexpr float GIMBAL_BEYBLADE_INPUT = -BEYBLADE_INPUT * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT = -BEYBLADE_INPUT * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .645;
+static constexpr float GIMBAL_BEYBLADE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .6f;
+static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .645;
 
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = .3f;
@@ -134,7 +140,7 @@ struct GIMBAL_CONSTANTS{
     };
 
     static constexpr tap::algorithms::SmoothPidConfig PITCH_PID = {
-        .kp = 900.0f, //1850.0f 
+        .kp = 400.0f, //900.0f 
         .ki = 0.0f,
         .kd = 150.0f,
         .maxICumulative = 10.0f,

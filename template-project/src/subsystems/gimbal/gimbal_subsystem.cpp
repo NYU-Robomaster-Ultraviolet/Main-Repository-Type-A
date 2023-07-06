@@ -236,11 +236,13 @@ void GimbalSubsystem::controllerInput(float yawInput, float pitchInput)
 {
     float newTarget = targetYaw + (yawInput * constants.YAW_SCALE);
     float error = newTarget - currentYaw;
-    if(yawInput > 0 && error > (M_PI_2 * .95)){
-        newTarget = currentYaw + M_PI_2;
+    float limitAngleRange =  M_PI_2 * .95;
+    if(beybladeMode) limitAngleRange -= (beybladeGimbalInput * constants.YAW_SCALE);
+    if(yawInput > 0 && error > (limitAngleRange)){
+        newTarget = currentYaw + (limitAngleRange * .5);
     }
-    else if(yawInput < 0 && error < -(M_PI_2 * .95)){
-        newTarget = currentYaw - M_PI_2;
+    else if(yawInput < 0 && error < -(limitAngleRange)){
+        newTarget = currentYaw - (limitAngleRange * .5);
     }
     setYawAngle(newTarget);
     setPitchAngle(targetPitch + (pitchInput * constants.PITCH_SCALE));
@@ -315,18 +317,16 @@ void GimbalSubsystem::calibratePitch(){
 }
 
 void GimbalSubsystem::applyBeybladeOffset(){
+    //change beyblade input based on level
+    if(level == 3) beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT_THREE;
+    else if(level == 2) beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT_TWO;
+    else beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT;
+
+    //apply modification to target angle to offset chassis rotation
     if(beybladeMode == 1) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE));
     else if(beybladeMode == 2) setYawAngle(targetYaw + (beybladeGimbalInput *  constants.YAW_SCALE));
 
 }
 
-bool GimbalSubsystem::checkLimitBeybladeSpeed(){
-    if(currentMaxPower * .9 > currentPowerUsage){
-        beybladeChassisInput *= .9;
-        beybladeGimbalInput *= .9;
-        return true;
-    }
-    else return false;
-}
 
 }  // namespace gimbal

@@ -7,8 +7,8 @@
 
 namespace gimbal
 {
-CVGimbal::CVGimbal(GimbalSubsystem *const gimbal, src::Drivers *drivers)
-: gimbal(gimbal), drivers(drivers)
+CVGimbal::CVGimbal(GimbalSubsystem *const gimbal, src::Drivers *drivers, GimbalInterface * gimbalInter)
+: gimbal(gimbal), drivers(drivers), gimbalInterface(gimbalInter)
 {
      if (gimbal == nullptr)
     {
@@ -32,8 +32,11 @@ void  CVGimbal::execute() {
     // drivers->cv_com.setImu(gimbal->getImuVx(), gimbal->getImuVy(), gimbal->getImuVz());
     drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET) - 90, 
         modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
-
+    #if defined (TARGET_SENTRY)
     unsigned char beyblade = drivers->cv_com.getBeybladeMode();
+    #elif defined (TARGET_HERO) || defined (TARGET_STANDARD)
+    unsigned char beyblade = gimbalInterface->getBeybladeMote();
+    #endif
     float yawInput = 0;
     float pitchInput = 0;
     gimbal->setBeybladeMode(drivers->cv_com.getBeybladeMode());

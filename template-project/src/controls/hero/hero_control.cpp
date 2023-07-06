@@ -51,8 +51,8 @@ ShooterSubsystem shooter(drivers());
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
-GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-CVGimbal cvGimbal(&gimbal, drivers());
+GimbalMovementCommand gimbalMovement(&gimbal, drivers(), &gimbalInterface) ;
+CVGimbal cvGimbal(&gimbal, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
@@ -74,8 +74,17 @@ RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping beyblade(drivers(), {&chassisBeyblade, &gimbalBeyblade},
-RemoteMapState({tap::communication::serial::Remote::Key::E}, {tap::communication::serial::Remote::Key::Q}));
+HoldCommandMapping shooterMouse(drivers(), {&shootUser},
+RemoteMapState(RemoteMapState::MouseButton::LEFT));
+
+HoldCommandMapping feederMouse(drivers(), {&feederMovement},
+RemoteMapState(RemoteMapState::MouseButton::RIGHT));
+
+HoldCommandMapping beyblade(drivers(), {&chassisBeyblade},
+RemoteMapState({tap::communication::serial::Remote::Key::Q}, {tap::communication::serial::Remote::Key::E}));
+
+HoldCommandMapping turnCVOn(drivers(), {&cvGimbal},
+RemoteMapState({tap::communication::serial::Remote::Key::C}, {tap::communication::serial::Remote::Key::V}));
 
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
@@ -107,7 +116,10 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
+    drivers->commandMapper.addMap(&shooterMouse);
+    drivers->commandMapper.addMap(&feederMouse);
     drivers->commandMapper.addMap(&beyblade);
+    drivers->commandMapper.addMap(&turnCVOn);
 }
 }//namespace src::control
 

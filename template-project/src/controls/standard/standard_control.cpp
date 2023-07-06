@@ -52,8 +52,8 @@ MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 // Define commands here ---------------------------------------------------
 ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
-GimbalMovementCommand gimbalMovement(&gimbal, drivers());
-CVGimbal cvGimbal(&gimbal, drivers());
+GimbalMovementCommand gimbalMovement(&gimbal, drivers(), &gimbalInterface);
+CVGimbal cvGimbal(&gimbal, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers());
 //CVFeeder feederMovement(&feeder, drivers());
@@ -67,7 +67,7 @@ RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &cvChassis},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
+HoldCommandMapping rightSwitchDown(drivers(), {&chassisBeyblade},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
@@ -82,8 +82,11 @@ RemoteMapState(RemoteMapState::MouseButton::LEFT));
 HoldCommandMapping feederMouse(drivers(), {&feederMovement},
 RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 
-HoldCommandMapping beyblade(drivers(), {&chassisBeyblade, &gimbalBeyblade},
-RemoteMapState({tap::communication::serial::Remote::Key::E}, {tap::communication::serial::Remote::Key::Q}));
+HoldCommandMapping beyblade(drivers(), {&chassisBeyblade},
+RemoteMapState({tap::communication::serial::Remote::Key::Q}, {tap::communication::serial::Remote::Key::E}));
+
+HoldCommandMapping turnCVOn(drivers(), {&cvGimbal},
+RemoteMapState({tap::communication::serial::Remote::Key::C}, {tap::communication::serial::Remote::Key::V}));
 
 
 // Register subsystems here -----------------------------------------------
@@ -120,6 +123,7 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&shooterMouse);
     drivers->commandMapper.addMap(&feederMouse);
     drivers->commandMapper.addMap(&beyblade);
+    drivers->commandMapper.addMap(&turnCVOn);
 }
 }//namespace src::control
 

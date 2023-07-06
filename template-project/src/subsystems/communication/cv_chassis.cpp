@@ -47,7 +47,6 @@ void  CVChassisCommand::execute()
     //gets current cos and sin of yaw angle from starting point of gimbal
     float cosYaw = cosf(gimbalInterface->getYawEncoder());
     float sinYaw = sinf(gimbalInterface->getYawEncoder());
-    beybladeInput = gimbalInterface->getChassisBeybladeInput();
     if(beyblade == 1)
         rOutput += beybladeInput;
     else if(beyblade == 2)
@@ -164,8 +163,13 @@ bool CVChassisCommand::checkPowerLimit(){
 }
 
 bool CVChassisCommand::updateChassisLevel() {
+    
     if(drivers->ref_interface.refDataValid()){
-        chassis->setRobotLevel(drivers->ref_interface.getLevel());
+        uint8_t level = drivers->ref_interface.getLevel();
+        if(level == 3) beybladeInput = BEYBLADE_INPUT_THREE;
+        else if(level == 2) beybladeInput = BEYBLADE_INPUT_TWO;
+        else beybladeInput = BEYBLADE_INPUT;
+        chassis->setRobotLevel(level);
         return true;
     }
     return false;

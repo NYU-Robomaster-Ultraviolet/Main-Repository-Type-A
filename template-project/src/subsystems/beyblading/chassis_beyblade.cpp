@@ -39,6 +39,9 @@ void  ChassisBeybladeCommand::execute()
 
     //check on power consumption
     checkPowerLimits();
+
+    //update beyblade mode
+    gimbalInterface->setBeyblade(true);
     
     //gets the controller inputs
     float xInput = drivers->control_interface.getChassisXInput();
@@ -48,15 +51,16 @@ void  ChassisBeybladeCommand::execute()
     float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
     //sends values to the chassis subsystem
     chassis->setDesiredOutput(
-        xOutput,
-        yOutput,
-        BEYBLADE_INPUT);
+        xOutput * .8, //limits movement when beyblading
+        yOutput * .8,
+        rotation);
 }
 
 //stops movement again
 void  ChassisBeybladeCommand::end(bool) {
     chassis->setDesiredOutput(0, 0, 0);
     chassis->setBeybladeMode(0);
+     gimbalInterface->setBeyblade(false);
     }
 
 bool  ChassisBeybladeCommand::isFinished() const { return false; }
@@ -78,7 +82,12 @@ bool ChassisBeybladeCommand::checkPowerLimits(){
 
 bool ChassisBeybladeCommand::updateChassisLevel() {
     if(drivers->ref_interface.refDataValid()){
-        chassis->setRobotLevel(drivers->ref_interface.getLevel());
+        robotLevel = drivers->ref_interface.getLevel();
+        if(robotLevel == 2) rotation = BEYBLADE_INPUT_TWO;
+        else if(robotLevel == 3) rotation = BEYBLADE_INPUT_THREE;
+        else rotation = BEYBLADE_INPUT;
+        
+        chassis->setRobotLevel(robotLevel);
         return true;
     }
     return false;

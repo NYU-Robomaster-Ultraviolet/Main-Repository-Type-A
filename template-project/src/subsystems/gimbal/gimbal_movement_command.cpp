@@ -10,8 +10,8 @@
 
 namespace gimbal
 {
-GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers)
-: gimbal(gimbal), drivers(drivers)
+GimbalMovementCommand::GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers, GimbalInterface *gimbalInt)
+: gimbal(gimbal), drivers(drivers), gimbalInterface(gimbalInt)
 {
      if (gimbal == nullptr)
     {
@@ -29,6 +29,8 @@ void  GimbalMovementCommand::execute()
 {
     drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET), 
         modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
+    //sets beyblade mode
+    gimbal->setBeybladeMode(gimbalInterface->getBeybladeMote());
     if(timeout.isExpired()){
         if(!gimbal->isCalibrated()) {
             drivers->mpu6500.requestCalibration();

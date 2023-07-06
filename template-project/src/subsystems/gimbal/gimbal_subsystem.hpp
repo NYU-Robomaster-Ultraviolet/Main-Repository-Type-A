@@ -29,12 +29,20 @@ class GimbalSubsystem : public tap::control::Subsystem
 {
 public:
     GimbalSubsystem(src::Drivers *drivers);
-
+    //initializes all motors and sets base values for variables
     void initialize() override;
+
+    /**
+     * @brief loop that checks for changes in the target angle with current angle
+     * and corrects until current angle is withing range of the target angle
+     * 
+     * @return ** void 
+     */
     void refresh() override;
 
     const char* getName() override {return "gimbal subsystem";}
 
+    //takes in a wrapped encoder value and turns it into radians
     static inline float wrappedEncoderValueToRadians(int64_t encoderValue);
 
     //wraps an angle around 0 and 2PI (0 - 360 degrees)
@@ -53,20 +61,15 @@ public:
     void setPitchAngle(float angle) {targetPitch = limitVal<float>(angle , constants.PITCH_MIN_ANGLE + pitchEncoderOffset ,
         constants.PITCH_MAX_ANGLE + pitchEncoderOffset);}
 
-    
+    //sets encoder values, wrapping the yaw angle
     void setEncoderYawAngle(float angle) {
         encoderYaw = wrapAngle(angle);
     }
-
     void setEncoderPitchAngle(float angle) {
         encoderPitch = angle;
     }
 
-    void setPowerOutput(float yaw, float pitch){
-        yawPowerOutput = yaw;
-        pitchPowerOutput = pitch;
-    }
-
+    //returns the pitch given by the imu
     float getImuPitch(){ 
         // float pitch = modm::toRadian(drivers->mpu6500.getPitch());
         // float roll = modm::toRadian(drivers->mpu6500.getRoll());
@@ -78,17 +81,18 @@ public:
         return tilt + LEVEL_ANGLE;
     }
 
+    //returns yaw given by imu
     float getImuYaw() const {
         float yaw = -modm::toRadian(drivers->mpu6500.getYaw() - 180);
         return wrapAngle(yaw);
     }
 
-
+    //sets stored imu angles and velocity calculations from time measurements
     void setYawImu(){ imuPitch = getImuYaw();}
     void setPitchImu(){ imuYaw = getImuPitch();}
     void findVelocityImu(uint32_t time);
 
-
+    //get measured rpms of both motors
     float getYawMotorRPM() const {return yawMotor.isMotorOnline() ? yawMotor.getShaftRPM() : 0.0f; }
     float getPitchMotorRPM() const {return pitchMotor.isMotorOnline() ? pitchMotor.getShaftRPM() : 0.0f; }
 
@@ -136,25 +140,30 @@ public:
 
     //alligns gimbal to chassis if not done already, else puts pitch to level position
     void allignGimbal();
-
+    
+    /**
+     * @brief Finds the shortest rotation between two points, returning the target angle to achieve
+     * said rotation
+     * @param destination : the desired angle to set the motor to
+     * @param yaw : if the motor is the yaw or pitch, true for yaw 
+     * @return ** float 
+     */
     float findRotation(float destination, bool yaw) const;
 
+    //sets encoder offset by measuring the given encoder value against a measured angle
     void calibratePitch();
 
+    //sets the beyblade mode gimbal compesation 0: no comp 1: counter clocksise, 2: clockwise
     void setBeybladeMode(unsigned char mode) {beybladeMode = mode;}
 
+    //sets robot level, used for calculating beyblade offset
+    void setRobotLevel(uint8_t lev) {level = lev;}
+
+    //applies the beybladeOffset to the target angle
     void applyBeybladeOffset();
 
+    //getter for the chassis beyblade speed
     float getChassisBeybladeSpeed() const {return beybladeChassisInput;}
-
-    //sets power usage and limit
-    void setPower(uint16_t usage, uint16_t limit) {
-        currentPowerUsage = usage; 
-        currentMaxPower = limit;
-    }
-
-    //checks the power usage, and changes beyblading speed if needed
-    bool checkLimitBeybladeSpeed();
 
 private:
     //motor interfaces
@@ -187,10 +196,6 @@ private:
     //motor speed given in revolutions / min
     float currentYawMotorSpeed;
     float currentPitchMotorSpeed;
-
-    //power output in percentages
-    float yawPowerOutput = 1;
-    float pitchPowerOutput = 1;
 
     //pid calculators that take in angular displacement and  angular velocity
     tap::algorithms::SmoothPid yawMotorPid;
@@ -237,11 +242,11 @@ private:
     //beyblade input scaler
     float beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT;
 
+    //updates the level of the chassis subsystem
     float beybladeChassisInput = BEYBLADE_INPUT;
 
-    //used for power limiting
-    uint16_t currentMaxPower = 20;
-    uint16_t currentPowerUsage = 0;
+    //gimbal level
+    uint8_t level = 1;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

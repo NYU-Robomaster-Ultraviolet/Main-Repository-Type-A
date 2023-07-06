@@ -114,7 +114,6 @@ public:
      * using pid calculator to calculate a rpm to set to given motor to after feeding the calculator
      * the desiredRpm
      */
-
     void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, float desiredRpm);
 
     //checks if every motor is online
@@ -129,6 +128,11 @@ public:
     //sets flag to tell if it is in velocity movement mode true = yes
     void changeVelocityMoveFlag(bool flag){velocityMoveFlag = flag;}
 
+    /**
+     * @brief makes the chassis rotate to match the gimbal rotation
+     * 
+     * @note THIS ONLY WORKS IF THE GIMBAL IS USING IMU TO TRACK ANGLES
+     */
     void moveAllignWithGimbal();
 
     //getters for each motor
@@ -148,21 +152,19 @@ public:
     //getters for chassis rotational velocity
     float getRotationVelocity() const {return angularVelocity;}
 
+    //returns target values for debugging
     float getTargetRotation() const {return targetRadians;}
-
     float getTargetDistance() const {return targetDistance;}
-
     float getTargetVelocity() const {return targetFowardVelocity;}
+    float getTargetRotationalVelocity() const {return targetRotationVelocity;}
 
+    //getters for measured values for debugging
     float getAcceleration() const {return longitudinalAcceleration;}
-
     float getDistanceX() const {return chassisFrameDistanceTraveledX;}
 
+    //getters for sample inputs for chassis inputs given when told to move set distances/velocity, used for debugging
     float getFowardSampleFactor() const {return currFowardSampleInput;}
-
     float getRotationSampleFactor() const {return currRotationSampleInput;}
-
-    float getTargetRotationalVelocity() const {return targetRotationVelocity;}
 
     //set beyblade mode and direction
     void setBeybladeMode(uint8_t mode) {beybladeMode = mode;}
@@ -195,7 +197,7 @@ private:
     modm::Pid<float> backLeftPid;
     modm::Pid<float> backRightPid;
 
-    //stored inputs
+    //stored previous inputs for debugging
     float lastX = 0;
     float lastY = 0;
     float lastR = 0;
@@ -209,25 +211,30 @@ private:
     float backLeftDesiredRpm;
     float backRightDesiredRpm;
 
-
-    //for caculating speeds from mecanum wheels
+    //used to access gimbal values
     gimbal::GimbalInterface * gimbalInterface;
+
+    //for caculating speeds from mecanum wheels for set distance movements
     // FR = front right, FL = front left, BR = Back Right, BL = Back Left
+    
     //Rotations per minute (degrees/min)
     float FRRPM = 0;
     float FLRPM = 0;
     float BRRPM = 0;
     float BLRPM = 0;
+
     //Encoder Position
     float FRPos = 0;
     float FLPos = 0;
     float BRPos = 0;
     float BLPos = 0;
+
     //Angular Velocity (w) rad/sec
     float FRVelocity = 0;
     float FLVelocity = 0;
     float BRVelocity = 0;
     float BLVelocity = 0;
+
     //robot reference values
     float longitudinalVelocity = 0; //foward and backward motion m/s
     float transversalVelocity = 0; //left and right motion m/s
@@ -235,12 +242,15 @@ private:
     float prevTransversalVelocity = 0; //
     float longitudinalAcceleration = 0; //estimated accelerations
     float transversalAcceleration = 0;
-    //rotational movement
+
+    //rotational movement measured velocities
     float angularVelocity = 0; //rad/s
     float prevAngularVelocity = 0;
     float angularAcceleration = 0;
 
+    //direction of movement relative to chassis
     float directionOfMovement = 0; //rad
+    //speed of movement of chassis
     float resultantVelocity = 0; //m/s
 
     //velocity in with the frame of view of the gimbal (wherever it points is forwards)
@@ -248,24 +258,42 @@ private:
     float gimbalFrameVelocityX = 0; 
     float gimbalFrameVelocityY = 0;
 
+    //target velocities given by commands
     float targetFowardVelocity = 0;
     float targetRightVelocity = 0;
     float targetRotationVelocity = 0;
+
+    //current inputs used to get given speed/distance movements
     float currFowardSampleInput = 0;
     float currRightSampleInput = 0;
     float currRotationSampleInput = 0;
 
+    //target rotation angle
     float targetRadians = 0;
-
+    //how much of the target rotated in each cycle
     float radiansTraveled = 0;
 
+    //targeted distance of travel
     float targetDistance = 0; //in mm;
+    
+    //if the target movements have completed
+    bool distanceReached = true;
 
+    //used to stop the chassis
     bool stopFlag = false;
+
+    //measured distances traveled from the gimbal frame
     float gimbalFrameDistanceTraveled = 0;
+
+    //measured x and y components of distance traveled by robot from chassis frame in each cycle
     float chassisFrameDistanceTraveledX = 0;
     float chassisFrameDistanceTraveledY = 0;
 
+    //measured x and y components of distance traveled by robot from chassis frame in each cycle
+    float gimbalFrameDistanceTraveledX = 0;
+    float gimbalFrameDistanceTraveledY = 0;
+
+    //measured passing of time
     uint32_t prevTime = 0; //in ms;
     uint32_t timeError = 0;
 

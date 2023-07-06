@@ -5,11 +5,12 @@
 #include "tap/architecture/timeout.hpp"
 #include "gimbal_subsystem.hpp"
 #include "drivers.hpp"
+#include "gimbal_motor_interface.hpp"
 
 namespace gimbal{
 class GimbalMovementCommand : public tap::control::Command {
 public:
-    GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers);
+    GimbalMovementCommand(GimbalSubsystem *const gimbal, src::Drivers *drivers, GimbalInterface *gimbalInt);
 
     GimbalMovementCommand(const GimbalMovementCommand &other) = delete;
 
@@ -28,11 +29,9 @@ public:
 private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
+    GimbalInterface* gimbalInterface; 
     bool noTurn;
     tap::arch::MilliTimeout timeout;
 }; //GimbalMovementCommand
-
-
-}// namespace gimbal
-
+}//namespace gimbal
 #endif

@@ -39,7 +39,7 @@ class ControlInterface{
     public:
         ControlInterface(tap::Drivers *drivers) : drivers(drivers) {}
 
-        //gets the stored inputs
+        //gets the inputs from keyboard and mouse
         mockable float getChassisXInput();
         mockable float getChassisYInput();
         mockable float getChassisRotationInput();
