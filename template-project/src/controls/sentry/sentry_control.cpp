@@ -107,7 +107,7 @@ void setDefaultCommands(src::Drivers* drivers) {
     shooter.setDefaultCommand(&cvShooter);
     feeder.setDefaultCommand(&cvFeeder);
     gimbal.setDefaultCommand(&cvGimbal);
-    gimbal.setDefaultCommand(&chassisBeyblade);
+    chassis.setDefaultCommand(&chassisBeyblade);
 
 }
 // Set Commands scheduled on startup
