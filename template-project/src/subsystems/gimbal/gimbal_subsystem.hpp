@@ -165,11 +165,12 @@ public:
 
     //getter for the chassis beyblade speed
     float getChassisBeybladeSpeed() const {return beybladeChassisInput;}
-
-    //wrap a given angle between 0 and 2pi
-    float wrapLargeAngle(float angle) const;
  
     void changeCVMode(bool on) {cvActive = on;}
+
+    void changeSlowBeyblade(float factor) {slowBeyblade = factor;}
+
+    float getSlowBeyblade() const {return slowBeyblade;}
 
 private:
     //motor interfaces
@@ -256,6 +257,9 @@ private:
 
     //cv is active or not
     bool cvActive;
+
+    //beyblade at half speed or not
+    float slowBeyblade = 1;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

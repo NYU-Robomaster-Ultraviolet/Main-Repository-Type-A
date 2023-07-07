@@ -52,8 +52,8 @@ static constexpr float GIMBAL_BEYBLADE_CV_OFFSET_ONE = 1.3;
 
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = .3f;
-static constexpr float LEVEL_TWO_FLYWHEEL = .35f;
-static constexpr float LEVEL_THREE_FLYWHEEL = .35f;
+static constexpr float LEVEL_TWO_FLYWHEEL = .31f;
+static constexpr float LEVEL_THREE_FLYWHEEL = .31f;
 
 //speeds feeder at different levels
 static constexpr float LEVEL_ONE_FEEDER_RPM = 1500;

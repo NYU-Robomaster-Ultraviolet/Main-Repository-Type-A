@@ -69,7 +69,7 @@ CVShooterCommand cvShooter(&shooter, drivers());
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &cvChassis},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &chassisBeyblade},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
@@ -90,10 +90,10 @@ RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 //HoldCommandMapping eKeyPressed(drivers(), )
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
-    drivers->commandScheduler.registerSubsystem(&chassis);
-    drivers->commandScheduler.registerSubsystem(&gimbal);
-    drivers->commandScheduler.registerSubsystem(&feeder);
-    drivers->commandScheduler.registerSubsystem(&shooter);
+    // drivers->commandScheduler.registerSubsystem(&chassis);
+    // drivers->commandScheduler.registerSubsystem(&gimbal);
+    // drivers->commandScheduler.registerSubsystem(&feeder);
+    // drivers->commandScheduler.registerSubsystem(&shooter);
 }
 // Initialize subsystems here ---------------------------------------------
 void initializeSubsystems() {
@@ -104,10 +104,10 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    shooter.setDefaultCommand(&flywheelInit);
-    // feeder.setDefaultCommand(&cvFeeder);
-    // gimbal.setDefaultCommand(&cvGimbal);
-    // gimbal.setDefaultCommand(&cvChassis);
+    shooter.setDefaultCommand(&cvShooter);
+    feeder.setDefaultCommand(&cvFeeder);
+    gimbal.setDefaultCommand(&cvGimbal);
+    gimbal.setDefaultCommand(&cvChassis);
 
 }
 // Set Commands scheduled on startup

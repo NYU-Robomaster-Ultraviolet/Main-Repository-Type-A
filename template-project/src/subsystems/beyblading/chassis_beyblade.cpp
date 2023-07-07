@@ -53,7 +53,7 @@ void  ChassisBeybladeCommand::execute()
     chassis->setDesiredOutput(
         xOutput * .8, //limits movement when beyblading
         yOutput * .8,
-        rotation);
+        rotation * gimbalInterface->getSlowBeyblade());
 }
 
 //stops movement again

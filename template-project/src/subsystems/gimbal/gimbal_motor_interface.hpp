@@ -25,6 +25,8 @@ public:
     //this allows the gimbal to check if it should be beyblading or not (from cv inputs mostly)
     bool getBeybladeMote() const {return beybladeOn;}
     void setBeyblade(bool on) {beybladeOn = on;}
+
+    float getSlowBeyblade() const {return gimbal->getSlowBeyblade();}
 private:
     GimbalSubsystem* gimbal;
     bool beybladeOn = false;

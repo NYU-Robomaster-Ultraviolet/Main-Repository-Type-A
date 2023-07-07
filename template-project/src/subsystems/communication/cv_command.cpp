@@ -53,9 +53,10 @@ void  CVGimbal::execute() {
             }
             //sets to adjustment phase
             else if(drivers->cv_com.foundTarget()){
+                gimbal->changeSlowBeyblade(.5);
                 gimbal->setBeybladeMode(4);
                 targetFoundAdjustmentWindow.restart(1000);
-                targetFoundCooldown.restart(10000);
+                targetFoundCooldown.restart(5000);
             }
             // //compensate for cv
             // else if(drivers->cv_com.foundTarget()){
@@ -66,6 +67,7 @@ void  CVGimbal::execute() {
             // }
             #if defined TARGET_SENTRY //return to scouting mode
                 else if(targetFoundCooldown.isExpired()){
+                    gimbal->changeSlowBeyblade(1);
                     gimbal->setBeybladeMode(3);
                     beyblading = false;
                 }
@@ -96,6 +98,7 @@ void  CVGimbal::end(bool) {
     gimbal->cvInput(0, 0);
     gimbal->noInputs();
     beyblading = false;
+    gimbal->changeSlowBeyblade(1);
 }
 
 bool  CVGimbal::isFinished() const { return false; }

@@ -327,11 +327,11 @@ void GimbalSubsystem::applyBeybladeOffset(){
 
     //apply modification to target angle to offset chassis rotation
     if(beybladeMode == 1) 
-        setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE));
-    else if(beybladeMode == 2) setYawAngle(targetYaw + (beybladeGimbalInput *  constants.YAW_SCALE));
-    else if(beybladeMode == 3) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * .5));
-    else if(beybladeMode == 4) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * 2));
-    else if(beybladeMode == 5) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * GIMBAL_BEYBLADE_CV_OFFSET_ONE));
+        setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE) * slowBeyblade);
+    else if(beybladeMode == 2) setYawAngle(targetYaw + (beybladeGimbalInput *  constants.YAW_SCALE)* slowBeyblade);
+    else if(beybladeMode == 3) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * .5)* slowBeyblade);
+    else if(beybladeMode == 4) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * 2)* slowBeyblade);
+    else if(beybladeMode == 5) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * GIMBAL_BEYBLADE_CV_OFFSET_ONE)* slowBeyblade);
 
 
 }
