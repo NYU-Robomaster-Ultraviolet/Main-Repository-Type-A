@@ -104,15 +104,15 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    shooter.setDefaultCommand(&cvShooter);
-    feeder.setDefaultCommand(&cvFeeder);
+    // shooter.setDefaultCommand(&cvShooter);
+    // feeder.setDefaultCommand(&cvFeeder);
     gimbal.setDefaultCommand(&cvGimbal);
-    gimbal.setDefaultCommand(&chassisBeyblade);
+    chassis.setDefaultCommand(&chassisBeyblade);
 
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
-
+    //chassis.set
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
