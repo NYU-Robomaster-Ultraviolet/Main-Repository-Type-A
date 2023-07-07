@@ -40,7 +40,7 @@ void  ShooterCommand::execute()
                 shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
             wasOffline = false;
             #elif defined (TARGET_HERO)
-            shooter->setDesiredOutput(16000);
+            shooter->setDesiredOutput(LEVEL_ONE_FLYWHEEL);
             #endif
         }
         else if(drivers->ref_interface.getShooterPowerStatus()){

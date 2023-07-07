@@ -35,8 +35,9 @@ void ShooterSubsystem::updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor*
     else{
         pid->update(error); //updates pid
         float output = pid->getValue();
-        if(fabsf(output > 1000))
-            motor->setDesiredOutput(pid->getValue()); //feeds pid output value to motor
+        if(fabsf(output > 500)){
+            motor->setDesiredOutput(output); //feeds pid output value to motor
+        }
         else motor->setDesiredOutput(0);
     }
 }

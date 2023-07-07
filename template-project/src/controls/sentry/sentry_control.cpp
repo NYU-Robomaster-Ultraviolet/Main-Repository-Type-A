@@ -27,6 +27,7 @@
 #include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/beyblading/chassis_beyblade.hpp"
 #include "subsystems/beyblading/gimbal_beyblade.hpp"
+#include "subsystems/communication/first_move.hpp"
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
 
@@ -63,7 +64,7 @@ ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FlywheelInitialization flywheelInit(&shooter, drivers());
 CVShooterCommand cvShooter(&shooter, drivers());
-
+FirstMove firstMove(&chassis, drivers(), &gimbalInterface);
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
@@ -112,7 +113,7 @@ void setDefaultCommands(src::Drivers* drivers) {
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
-    //chassis.set
+    //drivers->commandScheduler.addCommand(&firstMove);
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {

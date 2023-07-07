@@ -1,5 +1,5 @@
-#ifndef CV_SHOOTER_COMMAND_HPP_
-#define CV_SHOOTER_COMMAND_HPP_
+#ifndef FIRST_MOVE_HPP_
+#define FIRST_MOVE_HPP_
 
 #include "tap/control/command.hpp"
 
