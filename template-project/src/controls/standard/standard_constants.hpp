@@ -56,9 +56,9 @@ static constexpr float LEVEL_TWO_FLYWHEEL = .31f;
 static constexpr float LEVEL_THREE_FLYWHEEL = .31f;
 
 //speeds feeder at different levels
-static constexpr float LEVEL_ONE_FEEDER_RPM = 1500;
-static constexpr float LEVEL_TWO_FEEDER_RPM = 2000;
-static constexpr float LEVEL_THREE_FEEDER_RPM = 2500;
+static constexpr float LEVEL_ONE_FEEDER_RPM = 2000;
+static constexpr float LEVEL_TWO_FEEDER_RPM = 2500;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 3000;
 
 
 struct Feeder_CONSTANTS{
