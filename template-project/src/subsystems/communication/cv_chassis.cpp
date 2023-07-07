@@ -31,6 +31,8 @@ void  CVChassisCommand::initialize() {
 
 void  CVChassisCommand::execute()
 {
+    
+    if(!drivers->ref_interface.gameStarted()) return;
     //checks level and updates the level of chassis
     updateChassisLevel();
     

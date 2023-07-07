@@ -24,6 +24,7 @@ void  CVShooterCommand::initialize() {}
 
 void  CVShooterCommand::execute()
 {
+    if(!drivers->ref_interface.gameStarted()) return;
     if((drivers->cv_com.foundTarget() && !flyWheelsOn)){
         shooter->changeOnFlag();
         flyWheelsOn = !flyWheelsOn;

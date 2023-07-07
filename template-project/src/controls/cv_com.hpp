@@ -185,7 +185,7 @@ public:
     void resetChassisPowerFlag() {setPowerChassisFlag = false;}
 
     //returns the mode of beyblading 0: Off 1: clockwise 2: counterclockwise
-    unsigned char getBeybladeMode() const {return beybladeMode;}
+    unsigned char getBeybladeMode() const {return 1;}
 
 
     // the header structure for every message type

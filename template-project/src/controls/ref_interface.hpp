@@ -55,6 +55,8 @@ public:
 
     bool getEnemyColor() const{return returnData.robotID < 10;}
 
+    bool gameStarted() const {return returnData.stage == 4;}
+
     //bool getShooterPowerStatus() const{}
 private:
     src::Drivers * drivers;

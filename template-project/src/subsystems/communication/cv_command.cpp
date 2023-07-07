@@ -23,14 +23,17 @@ void  CVGimbal::initialize() {
     gimbal->allignGimbal();
     drivers->cv_com.changeCV(true);
     #if defined (TARGET_SENTRY)
-    //gimbal->setBeybladeMode(3);
+    gimbal->setBeybladeMode(1);
     #else
     gimbal->setBeybladeMode(0);
     #endif
 }
 
 void  CVGimbal::execute() {
-
+    #if defined (TARGET_STANDARD)
+    //don't do anyting until game starts
+    if(!drivers->ref_interface.gameStarted()) return;
+    #endif
     drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET) - 90, 
         modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
     // #if defined (TARGET_SENTRY)
@@ -48,23 +51,20 @@ void  CVGimbal::execute() {
     if(drivers->cv_com.validReading()){
         if(gimbalInterface->getBeybladeMote()){
             //adjustment phase
+            if(drivers->cv_com.foundTarget()){
+                //gimbal->changeSlowBeyblade(.5);
+                gimbal->setBeybladeMode(1);
+            }
             if(!targetFoundAdjustmentWindow.isExpired()){
                 gimbal->setBeybladeMode(4);
             }
             //sets to adjustment phase
             else if(drivers->cv_com.foundTarget()){
-                gimbal->changeSlowBeyblade(.5);
+                //gimbal->changeSlowBeyblade(.5);
                 gimbal->setBeybladeMode(4);
                 targetFoundAdjustmentWindow.restart(1000);
                 targetFoundCooldown.restart(5000);
             }
-            // //compensate for cv
-            // else if(drivers->cv_com.foundTarget()){
-            //     gimbal->setBeybladeMode(5);
-            //     beyblading = true;
-                
-            //     targetFoundCooldown.restart(10000);
-            // }
             #if defined TARGET_SENTRY //return to scouting mode
                 else if(targetFoundCooldown.isExpired()){
                     gimbal->changeSlowBeyblade(1);

@@ -5,6 +5,8 @@
 
 #include "shooter_subsystem.hpp"
 #include "drivers.hpp"
+#include "tap/architecture/timeout.hpp"
+
 namespace shooter{
 
 class ShooterCommand : public tap::control::Command{
@@ -35,6 +37,12 @@ private:
     ShooterSubsystem *const shooter;
 
     src::Drivers *drivers;
+
+    bool wasOffline;
+
+    tap::arch::MilliTimeout initTimeout;
+
+
 }; //class ShooterUserCommand : public tap::control::Command
 } //namespace shooter
 #endif  // SHOOT_MOVEMENT_COMMAND_HPP_

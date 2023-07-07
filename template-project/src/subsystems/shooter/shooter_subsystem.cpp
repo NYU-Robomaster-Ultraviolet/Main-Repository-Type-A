@@ -61,6 +61,7 @@ void ShooterSubsystem::setDesiredOutput(float output) {
     }
 
     void ShooterSubsystem::initializeFlywheel(){
+        online = true;
          #if defined (TARGET_SENTRY) || defined (TARGET_STANDARD)
         drivers->pwm.write(0.25f, flywheel1);
         drivers->pwm.write(0.25f, flywheel2);

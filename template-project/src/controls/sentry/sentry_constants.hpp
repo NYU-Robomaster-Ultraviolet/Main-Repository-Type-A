@@ -17,7 +17,7 @@ static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
 //offset to the angle that the encoder gives you
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.31613f; //190 //3.75246f;
+static constexpr float PITCH_ENCODER_OFFSET = 3.05433;//175 //3.31613f; //190 //3.75246f;
 
 //inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;

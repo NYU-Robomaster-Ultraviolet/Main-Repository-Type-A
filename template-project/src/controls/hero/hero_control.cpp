@@ -26,6 +26,7 @@
 #include "subsystems/feeder/feeder_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
 #include "subsystems/communication/cv_feeder_command.hpp"
+#include "subsystems/shooter/flywheel_initialization.hpp"
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -59,6 +60,7 @@ GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 //CVFeeder feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
+FlywheelInitialization stopShooting(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
@@ -73,20 +75,20 @@ RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
-HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
+HoldCommandMapping leftSwitchUp(drivers(), {&stopShooting},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping shooterMouse(drivers(), {&shootUser},
-RemoteMapState(RemoteMapState::MouseButton::LEFT));
-
-HoldCommandMapping feederMouse(drivers(), {&feederMovement},
+HoldCommandMapping shooterMouse(drivers(), {&stopShooting},
 RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 
-HoldCommandMapping beyblade(drivers(), {&chassisBeyblade},
-RemoteMapState({tap::communication::serial::Remote::Key::Q}, {tap::communication::serial::Remote::Key::E}));
+HoldCommandMapping feederMouse(drivers(), {&feederMovement},
+RemoteMapState(RemoteMapState::MouseButton::LEFT));
 
-HoldCommandMapping turnCVOn(drivers(), {&cvGimbal},
-RemoteMapState({tap::communication::serial::Remote::Key::C}, {tap::communication::serial::Remote::Key::V}));
+// HoldCommandMapping beyblade(drivers(), {&chassisBeyblade},
+// RemoteMapState({tap::communication::serial::Remote::Key::Q}, {tap::communication::serial::Remote::Key::E}));
+
+// HoldCommandMapping turnCVOn(drivers(), {&cvGimbal},
+// RemoteMapState({tap::communication::serial::Remote::Key::C}, {tap::communication::serial::Remote::Key::V}));
 
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
@@ -104,8 +106,9 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    // chassis.setDefaultCommand(&chassisMovement);
-    // gimbal.setDefaultCommand(&gimbalMovement);
+    chassis.setDefaultCommand(&chassisMovement);
+    gimbal.setDefaultCommand(&gimbalMovement);
+    shooter.setDefaultCommand(&shootUser);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
@@ -120,8 +123,8 @@ void registerIOMappings(src::Drivers* drivers) {
     drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&shooterMouse);
     drivers->commandMapper.addMap(&feederMouse);
-    drivers->commandMapper.addMap(&beyblade);
-    drivers->commandMapper.addMap(&turnCVOn);
+    // drivers->commandMapper.addMap(&beyblade);
+    // drivers->commandMapper.addMap(&turnCVOn);
 }
 }//namespace src::control
 

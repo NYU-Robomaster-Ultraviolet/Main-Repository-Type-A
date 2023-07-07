@@ -28,6 +28,7 @@ void  CVFeeder::initialize() {
 
 void  CVFeeder::execute()
 {
+    if(!drivers->ref_interface.gameStarted()) return;
     //checking if getting near heat limit, or checks if target is lost every second
     if(checkBarrelHeatLimit() || (burstFireTimeout.isExpired() && !drivers->cv_com.foundTarget())) 
         feeder->setTargetRPM(0);

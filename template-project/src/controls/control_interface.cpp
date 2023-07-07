@@ -78,8 +78,12 @@ namespace src::control{
         if(ctrMode) keyBoardR *= .3;
         else if(!shiftMode) keyBoardR *= .6;
         //float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime)) * Y_SENSITIVITY, -Y_SENSITIVITY, Y_SENSITIVITY);
+        #if defined TARGET_HERO
+        float MouseX = drivers->remote.getMouseX();
+        float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR + MouseX), -1, 1);
+        #else
         float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR), -1, 1);
-
+        #endif
         return finalRotation;
     }
 

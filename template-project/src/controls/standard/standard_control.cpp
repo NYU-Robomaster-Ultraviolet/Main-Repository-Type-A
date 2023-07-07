@@ -27,6 +27,7 @@
 #include "subsystems/communication/cv_command.hpp"
 #include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/communication/cv_chassis.hpp"
+#include "subsystems/shooter/flywheel_initialization.hpp"
 
 
 
@@ -62,6 +63,7 @@ FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 //CVFeeder feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
+FlywheelInitialization stopShooter(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
@@ -76,14 +78,14 @@ RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 
-HoldCommandMapping leftSwitchUp(drivers(), {&shootUser},
+HoldCommandMapping leftSwitchUp(drivers(), {&stopShooter},
 RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping shooterMouse(drivers(), {&shootUser},
-RemoteMapState(RemoteMapState::MouseButton::LEFT));
+HoldCommandMapping shooterMouse(drivers(), {&stopShooter},
+RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 
 HoldCommandMapping feederMouse(drivers(), {&feederMovement},
-RemoteMapState(RemoteMapState::MouseButton::RIGHT));
+RemoteMapState(RemoteMapState::MouseButton::LEFT));
 
 HoldCommandMapping beyblade(drivers(), {&chassisBeyblade},
 RemoteMapState({tap::communication::serial::Remote::Key::Q}, {tap::communication::serial::Remote::Key::E}));
@@ -111,6 +113,7 @@ void initializeSubsystems() {
 void setDefaultCommands(src::Drivers* drivers) {
     chassis.setDefaultCommand(&chassisMovement);
     gimbal.setDefaultCommand(&gimbalMovement);
+    shooter.setDefaultCommand(&shootUser);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {

@@ -20,22 +20,18 @@ FlywheelInitialization::FlywheelInitialization(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(shooter));
 }
 
-void  FlywheelInitialization::initialize() {initializeTimeout.restart(1);}
+void  FlywheelInitialization::initialize() {shooter->changeOnFlag();}
 
 void  FlywheelInitialization::execute()
 {   
-    if(!initializeTimeout.isExpired()){
+    if(initializeTimeout.isExpired()){
+        initializeTimeout.restart(1000);
         shooter->initializeFlywheel();
     }
-    if(drivers->ref_interface.getShooterPowerStatus() && !prevShooterPowerStatus){
-        shooter->initializeFlywheel();
-        initializeTimeout.restart(2000);
-    }
-        
-    prevShooterPowerStatus = drivers->ref_interface.getShooterPowerStatus();
+    
 }
 
-void  FlywheelInitialization::end(bool) {}
+void  FlywheelInitialization::end(bool) {shooter->changeOnFlag();}
 
 bool  FlywheelInitialization::isFinished() const { return false; }
 }  // namespace shooter

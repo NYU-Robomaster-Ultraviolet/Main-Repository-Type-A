@@ -90,10 +90,10 @@ RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 //HoldCommandMapping eKeyPressed(drivers(), )
 // Register subsystems here -----------------------------------------------
 void registerSubsystems(src::Drivers *drivers){
-    // drivers->commandScheduler.registerSubsystem(&chassis);
-    // drivers->commandScheduler.registerSubsystem(&gimbal);
-    // drivers->commandScheduler.registerSubsystem(&feeder);
-    // drivers->commandScheduler.registerSubsystem(&shooter);
+    drivers->commandScheduler.registerSubsystem(&chassis);
+    drivers->commandScheduler.registerSubsystem(&gimbal);
+    drivers->commandScheduler.registerSubsystem(&feeder);
+    drivers->commandScheduler.registerSubsystem(&shooter);
 }
 // Initialize subsystems here ---------------------------------------------
 void initializeSubsystems() {
@@ -107,7 +107,7 @@ void setDefaultCommands(src::Drivers* drivers) {
     shooter.setDefaultCommand(&cvShooter);
     feeder.setDefaultCommand(&cvFeeder);
     gimbal.setDefaultCommand(&cvGimbal);
-    gimbal.setDefaultCommand(&cvChassis);
+    gimbal.setDefaultCommand(&chassisBeyblade);
 
 }
 // Set Commands scheduled on startup
