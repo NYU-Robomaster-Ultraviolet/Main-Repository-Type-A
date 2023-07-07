@@ -24,12 +24,8 @@ void  ShooterCommand::initialize() {shooter->changeOnFlag();}
 
 void  ShooterCommand::execute()
 {
-    drivers->music_player.execute();
-    if(drivers->music_player.finishedSong()){
-        drivers->music_player.resetSong();
-    }
     //different measured speeds based on allowed bullet speeds at each level. Defaults level 1 if ref data isn't read
-    uint8_t level = drivers->ref_interface.getLevel();
+    uint8_t level = drivers->ref_interface.refDataValid() ? drivers->ref_interface.getLevel() : 1;
     // #if  defined (TARGET_STANDARD) || defined (TARGET_SENTRY)
     if(level == 3)
         shooter->setDesiredOutput(LEVEL_THREE_FLYWHEEL);

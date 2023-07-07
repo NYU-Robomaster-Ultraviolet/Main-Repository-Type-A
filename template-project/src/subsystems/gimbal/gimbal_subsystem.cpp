@@ -69,21 +69,17 @@ void GimbalSubsystem::initialize()
     pitchMotor.initialize();
     pitchMotor.setDesiredOutput(0);
 
-    //due to 2 motor build
-    #if defined (TARGET_SENTRY) || defined (TARGET_HERO)
-        pitchMotorL.initialize();
-        pitchMotorL.setDesiredOutput(0);
-    #endif
     uint32_t currentPitchEncoder = pitchMotor.getEncoderWrapped();
     uint32_t currentYawEncoder = yawMotor.getEncoderWrapped();
     setEncoderPitchAngle(wrappedEncoderValueToRadians(currentPitchEncoder));
     setEncoderYawAngle(wrappedEncoderValueToRadians(currentYawEncoder));
     startingPitch = encoderPitch;
     startingYaw = encoderYaw;
-    currentYaw = startingYaw;
     currentPitch = startingPitch;
-    targetYaw = startingYaw;
+    
     targetPitch = startingPitch;
+    currentYaw = startingYaw;
+    targetYaw = startingYaw;
 }
 
 void GimbalSubsystem::refresh()
@@ -100,7 +96,10 @@ void GimbalSubsystem::refresh()
         {
         currentYawMotorSpeed = getYawMotorRPM();  // gets the rotational speed from motor
         setEncoderYawAngle(wrappedEncoderValueToRadians(yawMotor.getEncoderWrapped()));
+        
         currentYaw = encoderYaw;
+        applyBeybladeOffset();
+        updateYawPid();
     }
     if (pitchMotor.isMotorOnline())
         {
@@ -124,8 +123,7 @@ void GimbalSubsystem::refresh()
             //     }
             // }
             // else currentYaw = encoderYaw;
-            applyBeybladeOffset();
-            updateYawPid();
+        
         }
         if (pitchMotor.isMotorOnline())
         {
@@ -189,7 +187,11 @@ void GimbalSubsystem::updateYawPid()
         if (-constants.MIN_YAW_SPEED < yawMotorOutput && yawMotorOutput < constants.MIN_YAW_SPEED)
             yawMotorOutput = 0;
     }
+    #if defined (TARGET_HERO)
+    yawMotor.setDesiredOutput(0);
+    #else
     yawMotor.setDesiredOutput(yawMotorOutput);
+    #endif
 }
 
 // updates the pitch angle
@@ -322,11 +324,16 @@ void GimbalSubsystem::applyBeybladeOffset(){
     else if(level == 2) beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT_TWO;
     else beybladeGimbalInput = GIMBAL_BEYBLADE_INPUT;
 
+
     //apply modification to target angle to offset chassis rotation
-    if(beybladeMode == 1) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE));
+    if(beybladeMode == 1) 
+        setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE));
     else if(beybladeMode == 2) setYawAngle(targetYaw + (beybladeGimbalInput *  constants.YAW_SCALE));
+    else if(beybladeMode == 3) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * .5));
+    else if(beybladeMode == 4) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * 2));
+    else if(beybladeMode == 5) setYawAngle(targetYaw - (beybladeGimbalInput * constants.YAW_SCALE * GIMBAL_BEYBLADE_CV_OFFSET_ONE));
+
 
 }
-
 
 }  // namespace gimbal

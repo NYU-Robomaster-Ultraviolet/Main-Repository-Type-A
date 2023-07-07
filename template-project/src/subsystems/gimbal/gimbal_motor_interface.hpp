@@ -6,7 +6,7 @@ namespace gimbal{
 class GimbalInterface{
 public:
     GimbalInterface(GimbalSubsystem* gimbal) : gimbal(gimbal){}
-    
+
     //gets the yaw angle wrapped around 0 - 2pi, with the foward position treated as 0 rads
     float getYawEncoder() const {return gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET);}
 
@@ -18,6 +18,9 @@ public:
 
     //not used since no imu
     float getChassisBeybladeInput() const {return gimbal->getChassisBeybladeSpeed();}
+
+    //checks if yaw motor is online
+    bool yawMotorOnline() const {return gimbal->yawOnline();}
 
     //this allows the gimbal to check if it should be beyblading or not (from cv inputs mostly)
     bool getBeybladeMote() const {return beybladeOn;}

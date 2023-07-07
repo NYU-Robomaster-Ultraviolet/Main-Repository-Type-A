@@ -1,5 +1,5 @@
-#ifndef SHOOT_MOVEMENT_COMMAND_HPP_
-#define SHOOT_MOVEMENT_COMMAND_HPP_
+#ifndef CV_SHOOTER_COMMAND_HPP_
+#define CV_SHOOTER_COMMAND_HPP_
 
 #include "tap/control/command.hpp"
 

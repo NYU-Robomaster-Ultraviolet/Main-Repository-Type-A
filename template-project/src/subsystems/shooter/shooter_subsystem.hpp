@@ -98,6 +98,8 @@ void updateRpmPid(modm::Pid<float>* pid, tap::motor::DjiMotor* const motor, floa
 
     void initializeFlywheel();
 
+    bool getOnFlag() const {return on;}
+
 private:
 #if defined (TARGET_STANDARD)
     ///pwm ports on dev board

@@ -5,6 +5,7 @@
 #include "drivers.hpp"
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/gimbal/gimbal_motor_interface.hpp"
+#include "tap/architecture/timeout.hpp"
 
 #if defined (TARGET_STANDARD)
 #include "controls/standard/standard_constants.hpp"
@@ -46,6 +47,10 @@ private:
     GimbalSubsystem* gimbal;
     src::Drivers* drivers;
     GimbalInterface* gimbalInterface;
+    tap::arch::MilliTimeout targetFoundCooldown;
+    tap::arch::MilliTimeout targetFoundAdjustmentWindow;
+    bool beyblading;
+    bool previousTargetFound = false;
 
 }; //CVGimbal
 

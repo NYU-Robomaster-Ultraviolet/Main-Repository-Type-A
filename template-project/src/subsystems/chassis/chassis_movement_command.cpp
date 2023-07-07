@@ -43,6 +43,12 @@ void  ChassisMovementCommand::execute()
     //applies rotation matrix to inputs to change inputs based on gimbal position
     float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
     float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+
+    if(!gimbalInterface->yawMotorOnline()){
+        xOutput = xInput;
+        yOutput = yInput;
+    }
+    
     //sends values to the chassis subsystem
     chassis->setDesiredOutput(
         xOutput,

@@ -40,7 +40,7 @@ public:
         control_interface(this),
         cv_com(this),
         ref_interface(this),
-        music_player(this, music::CYBER_ANGEL, music::CYBER_ANGEL_BPM)
+        music_player(this, music::NEVER_SURRENDER, music::NEVER_SURRENDER_BPM)
          {}
 
 public:

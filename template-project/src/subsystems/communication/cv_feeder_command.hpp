@@ -4,6 +4,7 @@
 #include "tap/control/command.hpp"
 
 #include "subsystems/feeder/feeder_subsystem.hpp"
+#include "subsystems/shooter/shooter_Interface.hpp"
 #include "drivers.hpp"
 
 #if defined (TARGET_STANDARD)

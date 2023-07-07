@@ -17,7 +17,7 @@ static constexpr float LEVEL_ANGLE = 1.5708f;  // 90 degrees
 
 //offset to the angle that the encoder gives you
 static constexpr float YAW_ENCODER_OFFSET = 4.98f;          // 165.6 degrees
-static constexpr float PITCH_ENCODER_OFFSET = 3.75246f; //215 degrees //3.49066f; // 3.31613f;
+static constexpr float PITCH_ENCODER_OFFSET = 3.31613f; //190 //3.75246f;
 
 //inputs used for chassis beyblading
 static constexpr float BEYBLADE_INPUT = .7f;//.4f;
@@ -31,15 +31,17 @@ static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .
 static constexpr float GIMBAL_BEYBLADE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .645;
 
+static constexpr float GIMBAL_BEYBLADE_CV_OFFSET_ONE = 1.1;
+
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = .5f;
 static constexpr float LEVEL_TWO_FLYWHEEL = .5f;
 static constexpr float LEVEL_THREE_FLYWHEEL = .5f;
 
 //speeds feeder at different levels
-static constexpr float LEVEL_ONE_FEEDER_RPM = 6000;
-static constexpr float LEVEL_TWO_FEEDER_RPM = 6000;
-static constexpr float LEVEL_THREE_FEEDER_RPM = 6000;
+static constexpr float LEVEL_ONE_FEEDER_RPM = 1500;
+static constexpr float LEVEL_TWO_FEEDER_RPM = 2000;
+static constexpr float LEVEL_THREE_FEEDER_RPM = 2500;
 
 //constants used for feeder motor subsystem
 struct Feeder_CONSTANTS
@@ -125,7 +127,7 @@ struct GIMBAL_CONSTANTS
     static constexpr bool PITCH_LEFT_REVERSED = true;
 
     static constexpr tap::algorithms::SmoothPidConfig YAW_PID = {
-        .kp = 60000.0f,  // 600
+        .kp = 80000.0f,  // 60000
         .ki = 0,
         .kd = 920,  // 500
         .maxICumulative = 0.0f,

@@ -16,6 +16,7 @@
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/feeder/feeder_subsystem.hpp"
 #include "subsystems/shooter/shooter_subsystem.hpp"
+#include "subsystems/shooter/shooter_Interface.hpp"
 
 #include "subsystems/shooter/shoot_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
@@ -26,6 +27,7 @@
 #include "subsystems/communication/cv_command.hpp"
 #include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/communication/cv_chassis.hpp"
+
 
 
 src::driversFunc drivers = src::DoNotUse_getDrivers;
@@ -45,6 +47,7 @@ GimbalSubsystem gimbal(drivers());
 GimbalInterface gimbalInterface(&gimbal);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
+ShooterInterface shooterInterface(&shooter);
 ChassisSubsystem chassis(drivers(), &gimbalInterface);
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
@@ -55,7 +58,7 @@ ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers(), &gimbalInterface);
 CVGimbal cvGimbal(&gimbal, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
-FeederMovementCommand feederMovement(&feeder, drivers());
+FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 //CVFeeder feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
@@ -64,7 +67,7 @@ CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &cvChassis},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&chassisBeyblade},

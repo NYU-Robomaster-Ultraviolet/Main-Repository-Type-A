@@ -14,6 +14,7 @@
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 
 #include "subsystems/shooter/shoot_user_command.hpp"
+#include "subsystems/shooter/shooter_Interface.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
 #include "subsystems/gimbal/gimbal_movement_command.hpp"
 #include "subsystems/communication/cv_command.hpp"
@@ -45,6 +46,7 @@ GimbalInterface gimbalInterface(&gimbal);
 ChassisSubsystem chassis(drivers(), &gimbalInterface);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
+ShooterInterface shooterInterface(&shooter);
 
 // Robot Specific Controllers ------------------------------------------------
 MusicPlayer sound_track(drivers(), PIANO_MAN, PIANO_MAN_BPM);
@@ -54,12 +56,13 @@ ChassisMovementCommand chassisMovement(&chassis, drivers(), &gimbalInterface);
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers(), &gimbalInterface);
 CVGimbal cvGimbal(&gimbal, drivers(), &gimbalInterface);
-FeederMovementCommand feederMovement(&feeder, drivers());
+FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 CVFeeder cvFeeder(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
 FlywheelInitialization flywheelInit(&shooter, drivers());
+CVShooterCommand cvShooter(&shooter, drivers());
 
 
 // Define command mappings here -------------------------------------------
@@ -102,9 +105,9 @@ void initializeSubsystems() {
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
     shooter.setDefaultCommand(&flywheelInit);
-    feeder.setDefaultCommand(&cvFeeder);
-    gimbal.setDefaultCommand(&cvGimbal);
-    gimbal.setDefaultCommand(&cvChassis);
+    // feeder.setDefaultCommand(&cvFeeder);
+    // gimbal.setDefaultCommand(&cvGimbal);
+    // gimbal.setDefaultCommand(&cvChassis);
 
 }
 // Set Commands scheduled on startup

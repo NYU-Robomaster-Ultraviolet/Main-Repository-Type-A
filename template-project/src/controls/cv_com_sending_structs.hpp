@@ -21,7 +21,7 @@ typedef struct colorStruct
         unsigned short length = 1;
         unsigned char empty1 = 0;
         unsigned char empty2 = 0;
-        unsigned short msg_type = 2;
+        unsigned short msg_type;
         unsigned char color;
         char footer = 0;
     } ColorStructObj, *ColorStruct;

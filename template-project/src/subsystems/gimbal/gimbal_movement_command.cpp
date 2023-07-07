@@ -26,9 +26,11 @@ void  GimbalMovementCommand::initialize() {
     }
 
 void  GimbalMovementCommand::execute()
-{
-    drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET), 
+{    
+
+    drivers->cv_com.setAngles(modm::toDegree(gimbal->getPitchEncoder() - PITCH_ENCODER_OFFSET) - 90, 
         modm::toDegree(gimbal->wrapAngle(gimbal->getYawEncoder() - YAW_ENCODER_OFFSET)));
+
     //sets beyblade mode
     gimbal->setBeybladeMode(gimbalInterface->getBeybladeMote());
     if(timeout.isExpired()){

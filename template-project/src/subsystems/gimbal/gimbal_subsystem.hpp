@@ -122,6 +122,7 @@ public:
     void controllerInput(float yawInput, float pitchInput);
     void cvInput(float yawInput, float pitchInput);
 
+
     //checks if there are no inputs
     void noInputs();
 
@@ -153,7 +154,7 @@ public:
     //sets encoder offset by measuring the given encoder value against a measured angle
     void calibratePitch();
 
-    //sets the beyblade mode gimbal compesation 0: no comp 1: counter clocksise, 2: clockwise
+    //sets the beyblade mode gimbal compesation 0: no comp 1: counter clocksise, 2: clockwise, 3: half speed beyblading, 4: adjustment command
     void setBeybladeMode(unsigned char mode) {beybladeMode = mode;}
 
     //sets robot level, used for calculating beyblade offset
@@ -164,6 +165,11 @@ public:
 
     //getter for the chassis beyblade speed
     float getChassisBeybladeSpeed() const {return beybladeChassisInput;}
+
+    //wrap a given angle between 0 and 2pi
+    float wrapLargeAngle(float angle) const;
+ 
+    void changeCVMode(bool on) {cvActive = on;}
 
 private:
     //motor interfaces
@@ -247,6 +253,9 @@ private:
 
     //gimbal level
     uint8_t level = 1;
+
+    //cv is active or not
+    bool cvActive;
 
 }; //class GimbalSubsystem
 }//namespace gimbal

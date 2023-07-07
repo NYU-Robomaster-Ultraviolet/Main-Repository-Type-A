@@ -48,6 +48,8 @@ static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_TWO = -BEYBLADE_INPUT_TWO * .
 static constexpr float GIMBAL_BEYBLADE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .6f;
 static constexpr float GIMBAL_BEYBLADE_ANGLE_INPUT_THREE = -BEYBLADE_INPUT_THREE * .645;
 
+static constexpr float GIMBAL_BEYBLADE_CV_OFFSET_ONE = 1.3;
+
 //speeds of flywheels at different levels
 static constexpr float LEVEL_ONE_FLYWHEEL = .3f;
 static constexpr float LEVEL_TWO_FLYWHEEL = .35f;

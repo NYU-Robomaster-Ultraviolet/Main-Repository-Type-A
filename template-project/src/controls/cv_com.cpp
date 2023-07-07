@@ -185,7 +185,6 @@ int CVCom::readFromUart()
                     chassisR = c.chassisR / 1000.0;
                     chassisReadFlag = true;
                     beybladeMode = c.mode;
-                    drivers->music_player.execute();
                     break;
                 }
                 case 3:
@@ -293,7 +292,7 @@ void CVCom::sendColorMsg()
 {
     ColorStructObj sending = ColorStructObj();
     sending.color = color;
-
+    sending.msg_type = 2;
     char str[sizeof(sending)];
     memcpy(str, &sending, sizeof(sending));
     drivers->uart.write(
@@ -321,6 +320,7 @@ void CVCom::update()
 {
     // set the gimbal subsystem to use the cvcom
     int bytes_read = readFromUart();
+    //color = drivers->ref_interface.
     sendingLoop();
 }
 }; //namespace cv

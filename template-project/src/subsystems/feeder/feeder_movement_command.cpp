@@ -7,11 +7,12 @@
 
 namespace feeder
 {
-FeederMovementCommand::FeederMovementCommand(
-    FeederSubsystem *const feeder,
-    src::Drivers *drivers)
+FeederMovementCommand::FeederMovementCommand(FeederSubsystem *const feeder, 
+    src::Drivers *drivers, 
+    shooter::ShooterInterface* shoot)
     : feeder(feeder),
-      drivers(drivers)
+      drivers(drivers),
+      shooter(shoot)
 {
     if (feeder == nullptr)
     {
@@ -29,14 +30,14 @@ void  FeederMovementCommand::initialize() {
         else if(level == 2)
             feeder->setTargetRPM(LEVEL_TWO_FEEDER_RPM);
         else
-            feeder->setTargetRPM(LEVEL_THREE_FEEDER_RPM);
+            feeder->setTargetRPM(LEVEL_ONE_FEEDER_RPM);
         burstFireTimeout.restart(2000); //1000
     }
 }
 
 void  FeederMovementCommand::execute()
 {
-
+    
     //17mm = 10 barrel heat, 42mm = 100 barrel heat
     // if(burstFireTimeout.isExpired() || checkBarrelHeatLimit()){
     //     feeder->setTargetRPM(0);

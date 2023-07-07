@@ -53,6 +53,8 @@ public:
 
     bool getShooterPowerStatus() const {return shooterPowerStatus;}
 
+    bool getEnemyColor() const{return returnData.robotID < 10;}
+
     //bool getShooterPowerStatus() const{}
 private:
     src::Drivers * drivers;

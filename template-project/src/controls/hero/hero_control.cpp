@@ -16,6 +16,7 @@
 #include "subsystems/gimbal/gimbal_subsystem.hpp"
 #include "subsystems/feeder/feeder_subsystem.hpp"
 #include "subsystems/shooter/shooter_subsystem.hpp"
+#include "subsystems/shooter/shooter_Interface.hpp"
 
 #include "subsystems/shooter/shoot_user_command.hpp"
 #include "subsystems/chassis/chassis_movement_command.hpp"
@@ -45,6 +46,7 @@ GimbalInterface gimbalInterface(&gimbal);
 ChassisSubsystem chassis(drivers(), &gimbalInterface);
 FeederSubsystem feeder(drivers());
 ShooterSubsystem shooter(drivers());
+ShooterInterface shooterInterface(&shooter);
 // Robot Specific Controllers ------------------------------------------------
 //MusicPlayer sound_track(drivers(), NEVER_SURRENDER, NEVER_SURRENDER_BPM);
 
@@ -54,18 +56,18 @@ ChassisBeybladeCommand chassisBeyblade(&chassis, drivers(), &gimbalInterface);
 GimbalMovementCommand gimbalMovement(&gimbal, drivers(), &gimbalInterface) ;
 CVGimbal cvGimbal(&gimbal, drivers(), &gimbalInterface);
 GimbalBeybladeCommand gimbalBeyblade(&gimbal, drivers());
-FeederMovementCommand feederMovement(&feeder, drivers());
+FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 //CVFeeder feederMovement(&feeder, drivers());
 ShooterCommand shootUser(&shooter, drivers());
 
 // Define command mappings here -------------------------------------------
-HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement},
+HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
  
-HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &chassisMovement},
+HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
-HoldCommandMapping rightSwitchDown(drivers(), {&gimbalMovement},
+HoldCommandMapping rightSwitchDown(drivers(), {&chassisBeyblade},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 
 HoldCommandMapping leftSwitchDown(drivers(), {&feederMovement},
@@ -102,8 +104,8 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    chassis.setDefaultCommand(&chassisMovement);
-    gimbal.setDefaultCommand(&gimbalMovement);
+    // chassis.setDefaultCommand(&chassisMovement);
+    // gimbal.setDefaultCommand(&gimbalMovement);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {
@@ -111,7 +113,7 @@ void startupCommands(src::Drivers* drivers) {
 }
 // Register IO mappings here -----------------------------------------------
 void registerIOMappings(src::Drivers* drivers) {
-    //drivers->commandMapper.addMap(&rightSwitchMid);
+    drivers->commandMapper.addMap(&rightSwitchMid);
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchDown);

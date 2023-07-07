@@ -5,6 +5,7 @@
 
 #include "feeder_subsystem.hpp"
 #include "drivers.hpp"
+#include "subsystems/shooter/shooter_Interface.hpp"
 namespace feeder{
 
 class FeederMovementCommand : public tap::control::Command{
@@ -16,7 +17,7 @@ public:
      * @param[in] feeder a pointer to the feeder motorto be passed in that this
      *      Command will interact with.
      */
-    FeederMovementCommand(FeederSubsystem *const feeder, src::Drivers *drivers);
+    FeederMovementCommand(FeederSubsystem *const feeder, src::Drivers *drivers, shooter::ShooterInterface* shoot);
 
     FeederMovementCommand(const FeederMovementCommand &other) = delete;
 
@@ -41,6 +42,7 @@ private:
     FeederSubsystem *const feeder;
     tap::arch::MilliTimeout burstFireTimeout;
     src::Drivers *drivers;
+    shooter::ShooterInterface* shooter;
 
 }; //class FeederMovementCommand : public tap::control::Command
 
