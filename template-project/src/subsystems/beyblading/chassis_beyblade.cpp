@@ -67,7 +67,13 @@ void  ChassisBeybladeCommand::end(bool) {
      gimbalInterface->setBeyblade(false);
     }
 
-bool  ChassisBeybladeCommand::isFinished() const { return false; }
+bool  ChassisBeybladeCommand::isFinished() const { 
+    if(drivers->ref_interface.gameFinished())
+    {
+        return true;
+    }
+    return false; 
+}
 
 bool ChassisBeybladeCommand::checkPowerLimits(){
     if(drivers->ref_interface.refDataValid() && checkPowerTimeout.isExpired()){

@@ -57,6 +57,8 @@ public:
 
     bool gameStarted() const {return returnData.stage == 4;}
 
+    bool gameFinished() const {return returnData.stage == 5;}
+
     //bool getShooterPowerStatus() const{}
 private:
     src::Drivers * drivers;
