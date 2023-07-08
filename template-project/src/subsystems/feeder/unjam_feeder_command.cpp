@@ -1,4 +1,4 @@
-#include "cv_feeder_command.hpp"
+#include "unjam_feeder_command.hpp"
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/errors/create_errors.hpp"
@@ -7,8 +7,7 @@
 
 namespace feeder
 {
-CVFeeder::CVFeeder(
-    FeederSubsystem *const feeder,
+UnjamFeederCommand::UnjamFeederCommand(FeederSubsystem *const feeder, 
     src::Drivers *drivers)
     : feeder(feeder),
       drivers(drivers)
@@ -20,40 +19,25 @@ CVFeeder::CVFeeder(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem *>(feeder));
 }
 
-void  CVFeeder::initialize() {
+void  UnjamFeederCommand::initialize() {
     feeder->setTargetRPM(0);
-    burstFireCooldown.restart(10);
-    burstFireTimeout.restart(10);
-    }
-
-void  CVFeeder::execute()
-{
-    //if(!drivers->ref_interface.gameStarted()) return;
-    
-    //checking if getting near heat limit, or checks if target is lost every second
-    if(checkBarrelHeatLimit() || (burstFireTimeout.isExpired() && !drivers->cv_com.foundTarget())) 
-        feeder->setTargetRPM(0);
-    else if(drivers->cv_com.foundTarget()){
-        feeder->setTargetRPM(LEVEL_ONE_FEEDER_RPM);
-        burstFireTimeout.restart(1000);
-    }
-#ifdef TARGET_SENTRY
-    // if(burstFireTimeout.isExpired() || checkBarrelHeatLimit()){
-    //     feeder->setTargetRPM(0);
-    // }
-    // else if(drivers->cv_com.foundTarget() && burstFireCooldown.isExpired()){
-    //         feeder->setTargetRPM(3000);
-    //         burstFireTimeout.restart(1000);
-    //         burstFireCooldown.restart(6000);
-    // }
-#endif
+    keyPressTimeout.restart(10);
 }
 
-void  CVFeeder::end(bool) { feeder->setTargetRPM(0); }
+void  UnjamFeederCommand::execute()
+{ 
+    if(drivers->control_interface.getFPressed()){
+        feeder->setTargetRPM(-LEVEL_ONE_FEEDER_RPM / 2);
+        keyPressTimeout.restart(1000);
+    }
+    else(feeder->setTargetRPM(0));
+}
 
-bool  CVFeeder::isFinished() const { return false; }
+void  UnjamFeederCommand::end(bool) { feeder->setTargetRPM(0); }
 
-bool CVFeeder::checkBarrelHeatLimit() const {
+bool  UnjamFeederCommand::isFinished() const { return false; }
+
+bool UnjamFeederCommand::checkBarrelHeatLimit() const {
     if(drivers->ref_interface.refDataValid()){
         #if defined(Target_STANDARD)
             std::pair<uint16_t, uint16_t> heatLimits = drivers->ref_interface.getShooterHeat();
@@ -69,5 +53,4 @@ bool CVFeeder::checkBarrelHeatLimit() const {
     }
     return false;
 }
-
 }  // namespace feeder

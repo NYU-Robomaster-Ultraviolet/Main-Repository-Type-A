@@ -21,6 +21,7 @@ class ControlInterface{
         uint32_t prevUpdateCounterX = 0;
         uint32_t prevUpdateCounterY = 0;
         uint32_t prevUpdateCounterRotation = 0;
+        uint32_t previousUpdateCounterF = 0;
 
         //sensitivity for inputs
         uint32_t X_SENSITIVITY = 3.96f; //Max Input of 660 multiplied by sensitivity of .006
@@ -32,9 +33,17 @@ class ControlInterface{
 
         tap::arch::MilliTimeout shiftCheckTimeout;
         tap::arch::MilliTimeout ctrChecKTimeout;
+        tap::arch::MilliTimeout fChecKTimeout;
+        tap::arch::MilliTimeout MouseXCheckTimeout;
 
         bool shiftMode = false;
         bool ctrMode = false;
+        bool fPressed = false;
+        float mouseValX = 0;
+        float mouseReturnValX = 0;
+        uint32_t lastMouseCheckTime = 0;
+
+
 
     public:
         ControlInterface(tap::Drivers *drivers) : drivers(drivers) {}
@@ -46,6 +55,9 @@ class ControlInterface{
 
         mockable float getGimbalYawInput();
         mockable float getGimbalPitchInput();
+
+        bool getFPressed() const{ return fPressed;}
+
 
         //initializes timeouts for checking key presses
         void init();

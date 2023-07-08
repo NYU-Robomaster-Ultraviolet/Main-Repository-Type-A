@@ -70,7 +70,7 @@ FirstMove firstMove(&chassis, drivers(), &gimbalInterface);
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::MID));
 
-HoldCommandMapping rightSwitchUp(drivers(), {&cvGimbal, &chassisBeyblade},
+HoldCommandMapping rightSwitchUp(drivers(), {&firstMove},//{&cvGimbal, &chassisBeyblade},
 RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 HoldCommandMapping rightSwitchDown(drivers(), {&gimbalBeyblade, &chassisBeyblade},
@@ -105,10 +105,15 @@ void initializeSubsystems() {
 }
 // Set default command here -----------------------------------------------
 void setDefaultCommands(src::Drivers* drivers) {
-    // shooter.setDefaultCommand(&cvShooter);
-    // feeder.setDefaultCommand(&cvFeeder);
-    gimbal.setDefaultCommand(&cvGimbal);
+
+    // gimbal.setDefaultCommand(&cvGimbal);
+
+
+    //crazy movement strat
     chassis.setDefaultCommand(&chassisBeyblade);
+    gimbal.setDefaultCommand(&gimbalBeyblade);
+    shooter.setDefaultCommand(&cvShooter);
+    feeder.setDefaultCommand(&cvFeeder);
 
 }
 // Set Commands scheduled on startup

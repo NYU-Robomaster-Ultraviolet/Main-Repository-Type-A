@@ -24,12 +24,15 @@ ChassisBeybladeCommand::ChassisBeybladeCommand(
 void  ChassisBeybladeCommand::initialize() {
     chassis->setDesiredOutput(0, 0, 0);
     checkPowerTimeout.restart(10);
+    #if defined (TARGET_SENTRY)
+    switchTurnTimeout.restart(10);
+    #endif
 }
 
 void  ChassisBeybladeCommand::execute()
 {   
     #if defined (TARGET_SENTRY)
-    if(!drivers->ref_interface.gameStarted()) return;
+    //if(!drivers->ref_interface.gameStarted()) return;
     #endif
     //if(drivers->ref_interface.)
     //checks level and updates the level of chassis
@@ -53,6 +56,16 @@ void  ChassisBeybladeCommand::execute()
     //applies rotation matrix to inputs to change inputs based on gimbal position
     float xOutput = ((cosYaw * xInput) - (sinYaw * yInput));
     float yOutput = ((cosYaw * yInput) + (sinYaw * xInput));
+    #if defined (TARGET_SENTRY)
+    if(switchTurnTimeout.isExpired()) {
+        turningRight = !turningRight;
+        switchTurnTimeout.restart(timeoutInterval);
+    }
+    // if(turningRight) yOutput = inputVal;
+    // else yOutput = -inputVal;
+    if(turningRight) xOutput = inputVal;
+    else xOutput = -inputVal;
+    #endif 
     //sends values to the chassis subsystem
     chassis->setDesiredOutput(
         xOutput * .8, //limits movement when beyblading

@@ -99,12 +99,12 @@ int main()
         drivers->control_interface.checkKeyPresses();
         drivers->cv_com.update();
         drivers->ref_interface.updateData();
-        if(drivers->ref_interface.getData().stage == 4){
-            drivers->music_player.execute();
-            if(drivers->music_player.finishedSong())
-                drivers->music_player.resetSong();
-        }
-        else drivers->music_player.clearNote();
+        // if(drivers->ref_interface.getData().stage == 4){
+        //     drivers->music_player.execute();
+        //     if(drivers->music_player.finishedSong())
+        //         drivers->music_player.resetSong();
+        // }
+        // else drivers->music_player.clearNote();
         modm::delay_us(10);
     }
     return 0;

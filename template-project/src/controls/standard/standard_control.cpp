@@ -28,6 +28,7 @@
 #include "subsystems/communication/cv_feeder_command.hpp"
 #include "subsystems/communication/cv_chassis.hpp"
 #include "subsystems/shooter/flywheel_initialization.hpp"
+#include "subsystems/feeder/unjam_feeder_command.hpp"
 
 
 
@@ -64,6 +65,7 @@ FeederMovementCommand feederMovement(&feeder, drivers(), &shooterInterface);
 ShooterCommand shootUser(&shooter, drivers());
 CVChassisCommand cvChassis(&chassis, drivers(), &gimbalInterface);
 FlywheelInitialization stopShooter(&shooter, drivers());
+UnjamFeederCommand unjam(&feeder, drivers());
 
 // Define command mappings here -------------------------------------------
 HoldCommandMapping rightSwitchMid(drivers(), {&chassisMovement, &gimbalMovement},
@@ -114,6 +116,7 @@ void setDefaultCommands(src::Drivers* drivers) {
     chassis.setDefaultCommand(&chassisMovement);
     gimbal.setDefaultCommand(&gimbalMovement);
     shooter.setDefaultCommand(&shootUser);
+    feeder.setDefaultCommand(&unjam);
 }
 // Set Commands scheduled on startup
 void startupCommands(src::Drivers* drivers) {

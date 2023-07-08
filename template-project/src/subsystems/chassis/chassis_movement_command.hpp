@@ -72,6 +72,7 @@ private:
     float limitValueRange = 1;
 
     tap::arch::MicroTimeout checkPowerTimeout;
+
 }; //class ChassisMovementCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 
