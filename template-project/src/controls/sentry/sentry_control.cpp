@@ -110,8 +110,8 @@ void setDefaultCommands(src::Drivers* drivers) {
 
 
     //crazy movement strat
-    chassis.setDefaultCommand(&chassisBeyblade);
-    gimbal.setDefaultCommand(&gimbalBeyblade);
+    // chassis.setDefaultCommand(&chassisBeyblade);
+    // gimbal.setDefaultCommand(&gimbalBeyblade);
     shooter.setDefaultCommand(&cvShooter);
     feeder.setDefaultCommand(&cvFeeder);
 

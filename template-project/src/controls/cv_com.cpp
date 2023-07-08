@@ -170,7 +170,7 @@ int CVCom::readFromUart()
 
                     readingState = WAITING_FOR_HEADER;
                     byteIndex = 0;
-                    
+                    if(!drivers->ref_interface.refDataValid()) drivers->music_player.execute(); 
                     // //for debugging
                     // drivers->music_player.execute();
                     // if(drivers->music_player.finishedSong()) drivers->music_player.resetSong();

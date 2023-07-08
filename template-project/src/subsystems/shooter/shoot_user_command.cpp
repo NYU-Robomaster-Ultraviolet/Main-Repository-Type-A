@@ -27,7 +27,8 @@ void  ShooterCommand::initialize() {
 
 void  ShooterCommand::execute()
 {  
-    if(!drivers->ref_interface.refDataValid()) drivers->music_player.execute(); 
+    //if(!drivers->ref_interface.refDataValid()) drivers->music_player.execute(); 
+    //else drivers->music_player.clearNote();
     if(initTimeout.isExpired()){
         if(drivers->ref_interface.getShooterPowerStatus() && !wasOffline){
             //different measured speeds based on allowed bullet speeds at each level. Defaults level 1 if ref data isn't read
