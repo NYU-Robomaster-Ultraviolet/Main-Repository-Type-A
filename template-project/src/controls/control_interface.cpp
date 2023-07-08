@@ -19,8 +19,14 @@ namespace src::control{
 
     float keyboardX = drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
 
-    if(ctrMode) keyboardX *= .3;
-    else if(!shiftMode) keyboardX *= .6;
+    #if defined(TARGET_HERO)
+        if(ctrMode) keyboardX *= .1;
+        else if(!shiftMode) keyboardX *= .2;
+        else keyboardX *= .4;
+        #else
+        if(ctrMode) keyboardX *= .3;
+        else if(!shiftMode) keyboardX *= .6;
+        #endif
     
     if (prevUpdateCounterX != updateCounter) {
         chassisXInput.update(drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL) + keyboardX, currTime);
@@ -43,9 +49,14 @@ namespace src::control{
         //this is for mouse commands
         float keyboardY = drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
 
-
+        #if defined(TARGET_HERO)
+        if(ctrMode) keyboardY *= .1;
+        else if(!shiftMode) keyboardY *= .2;
+        else keyboardY *= .4;
+        #else
         if(ctrMode) keyboardY *= .3;
         else if(!shiftMode) keyboardY *= .6;
+        #endif
 
         //check if reading a different remote input
         if (prevUpdateCounterY != updateCounter) {
@@ -79,8 +90,14 @@ namespace src::control{
         else if(!shiftMode) keyBoardR *= .6;
         //float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime)) * Y_SENSITIVITY, -Y_SENSITIVITY, Y_SENSITIVITY);
         #if defined TARGET_HERO
-        float MouseX = drivers->remote.getMouseX();
-        float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR + MouseX), -1, 1);
+        float mouseInput = 0;
+        if(mouseReturnValX > .1) mouseInput = .1;
+        else if(mouseReturnValX < -.1) mouseInput = -.1;
+        if(mouseReturnValX > .4) mouseInput = .2;
+        else if(mouseReturnValX < -.4) mouseInput = -.2;
+        if(mouseReturnValX > .7) mouseInput = .3;
+        else if(mouseReturnValX < -.7) mouseInput = -.3;
+        float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR + (mouseInput)), -1, 1);
         #else
         float finalRotation = limitVal<float>((chassisRotationInput.getInterpolatedValue(currTime) + keyBoardR), -1, 1);
         #endif
@@ -94,12 +111,18 @@ namespace src::control{
 
     float ControlInterface::getGimbalPitchInput() {
         float MouseY = drivers->remote.getMouseY();
+        #if defined(TARGET_HERO)
+        return limitVal<float>(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL) - MouseY * 0.002, -1, 1);
+        #else
         return limitVal<float>(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL) - MouseY * 0.1, -1, 1);
+        #endif
     }
 
     void ControlInterface::init(){
         shiftCheckTimeout.restart(10);
         ctrChecKTimeout.restart(10);
+        fChecKTimeout.restart(10);
+        MouseXCheckTimeout.restart(10);
     }
 
     void ControlInterface::checkKeyPresses() {
@@ -118,5 +141,24 @@ namespace src::control{
                 ctrChecKTimeout.restart(1000);
             }
         }
+        if(fChecKTimeout.isExpired()){
+            if(drivers->remote.keyPressed(Remote::Key::F)){
+                fPressed = true;
+                fChecKTimeout.restart(1000);
+            }
+            else
+                fPressed = false;
+        }
+        //gets avereage mouse input in time period
+        if(MouseXCheckTimeout.isExpired()){
+            uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
+            uint32_t timeError = currTime - lastMouseCheckTime;
+            mouseReturnValX = limitVal<float>(mouseValX / timeError, -1, 1);
+            lastMouseCheckTime = currTime;
+            mouseValX = 0;
+            MouseXCheckTimeout.restart(200);
+        }
+        mouseValX += drivers->remote.getMouseX() * .0003; 
+        
     }
 }

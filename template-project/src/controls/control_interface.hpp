@@ -33,9 +33,16 @@ class ControlInterface{
 
         tap::arch::MilliTimeout shiftCheckTimeout;
         tap::arch::MilliTimeout ctrChecKTimeout;
+        tap::arch::MilliTimeout fChecKTimeout;
+        tap::arch::MilliTimeout MouseXCheckTimeout;
 
         bool shiftMode = false;
         bool ctrMode = false;
+        bool fPressed = false;
+        float mouseValX = 0;
+        float mouseReturnValX = 0;
+        uint32_t lastMouseCheckTime = 0;
+
 
 
     public:
@@ -48,6 +55,8 @@ class ControlInterface{
 
         mockable float getGimbalYawInput();
         mockable float getGimbalPitchInput();
+
+        bool getFPressed() const{ return fPressed;}
 
 
         //initializes timeouts for checking key presses

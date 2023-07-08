@@ -296,6 +296,9 @@ void GimbalSubsystem::findVelocityImu(uint32_t time){
 }
 
 void GimbalSubsystem::allignGimbal(){
+    #if defined (TARGET_SENTRY)
+    return;
+    #endif
     if(!alligned){
         cvInput(findRotation(YAW_ENCODER_OFFSET, 1), findRotation(pitchEncoderOffset + LEVEL_ANGLE, 0));
         alligned = true;

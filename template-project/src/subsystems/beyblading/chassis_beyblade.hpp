@@ -80,7 +80,14 @@ private:
 
     uint8_t robotLevel = 1;
 
-    tap::arch::MicroTimeout checkPowerTimeout;
+    tap::arch::MilliTimeout checkPowerTimeout;
+
+    #if defined (TARGET_SENTRY)
+    tap::arch::MilliTimeout switchTurnTimeout;
+    bool turningRight = true;
+    float inputVal = .35;
+    uint32_t timeoutInterval = 3000;
+    #endif
 }; //class ChassisBeybladeCommand : public tap::control::Command
 } //namespace Chassis
 #endif //CHASSIS_MOVEMENT_COMMAND_HPP_ 

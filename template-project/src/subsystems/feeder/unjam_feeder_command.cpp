@@ -25,10 +25,10 @@ void  UnjamFeederCommand::initialize() {
 }
 
 void  UnjamFeederCommand::execute()
-{   
-    if(drivers->remote.keyPressed(tap::communication::serial::Remote::Key::F) || !keyPressTimeout.isExpired()){
+{ 
+    if(drivers->control_interface.getFPressed()){
         feeder->setTargetRPM(-LEVEL_ONE_FEEDER_RPM / 2);
-        keyPressTimeout.restart(100);
+        keyPressTimeout.restart(1000);
     }
     else(feeder->setTargetRPM(0));
 }

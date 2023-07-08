@@ -34,10 +34,12 @@ void  FirstMove::execute()
     if(!drivers->ref_interface.gameStarted()) return;
     if(chassis->getTargetDistance() || chassis->getTargetRotation()) return;
     if(!movingFoward){
+        chassis->setTargetVelocity(3, 0);
         chassis->setFowardMovement(10000);
         movingFoward = true;
     }
     else if(movingFoward && !rotating && !finishedRotation){
+        chassis->setRotationVelocity(2);
         chassis->setRotationRadians(M_PI_2);
         rotating = true;
     }
