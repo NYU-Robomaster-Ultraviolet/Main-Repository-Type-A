@@ -87,6 +87,7 @@ private:
     bool turningRight = true;
     float inputVal = .35;
     uint32_t timeoutInterval = 3000;
+    bool spent_already = false;
     #endif
 }; //class ChassisBeybladeCommand : public tap::control::Command
 } //namespace Chassis

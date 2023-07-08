@@ -59,6 +59,8 @@ public:
 
     bool gameFinished() const {return returnData.stage == 5;}
 
+    bool spentMoney() const {return spent_money;}
+
     //bool getShooterPowerStatus() const{}
 private:
     src::Drivers * drivers;
@@ -77,6 +79,8 @@ private:
     uint16_t heatLimit42;            ///< 42mm turret heat limit.
 
     bool shooterPowerStatus;         ///< shooter power status true: has power false: no power
+
+    bool spent_money;                ///< Checks if we have spent money at the beginning of the match
     
     cv::RefStructObj returnData;
 

@@ -49,7 +49,14 @@ void RefInterface::updateData(){
    returnData.receivedDpms = data.receivedDps * 1000; //converts dps to dpms to avoid floats
    returnData.lastReceivedWarningRobotTime = data.refereeWarningData.lastReceivedWarningRobotTime;  ///< Last time (in milliseconds) that a warning was received.
 
-
+   if (data.remainingCoins < 200 && gameData.stageTimeRemaining > 240)
+   {
+      spent_money = true;
+   }
+   else
+   {
+      spent_money = false;
+   }
 
    // //chassis data
    powerUsage = data.chassis.power;

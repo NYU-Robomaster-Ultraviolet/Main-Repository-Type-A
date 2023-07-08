@@ -32,7 +32,14 @@ void  ChassisBeybladeCommand::initialize() {
 void  ChassisBeybladeCommand::execute()
 {   
     #if defined (TARGET_SENTRY)
-    //if(!drivers->ref_interface.gameStarted()) return;
+    if(drivers->ref_interface.gameStarted() && drivers->ref_interface.spentMoney() && !spent_already)
+    {
+        spent_already = true;
+    }
+    if(!drivers->ref_interface.gameStarted() && !spent_already)
+    {
+        return;
+    }
     #endif
     //if(drivers->ref_interface.)
     //checks level and updates the level of chassis
